@@ -1,8 +1,9 @@
 import { create } from 'zustand';
-// import { StorageAdapter } from '../../../config/adapters/storage-adapter';
 import { User } from '@/core/auth/interfaces/user';
 import { RegisterData } from '@/core/auth/interfaces/register.data';
 import { checkStatus, signin, signup, verifyCode } from '@/core/auth/actions';
+
+import * as SecureStore from 'expo-secure-store';
 
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
@@ -13,38 +14,35 @@ export interface AuthState {
 
   signin: (email: string, password: string) => Promise<any>;
   signup: (values: RegisterData) => Promise<any>;
-  checkStatus: () => Promise<boolean>;
+  checkStatus: () => Promise<any>;
   logout: () => Promise<boolean>;
   verifyCode: (phone_number: string, verfication_code: string) => Promise<any>;
+  setAuthenticated: (token: string, user: User) => void;
+  setUnauthenticated: () => void;
 }
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   status: 'checking',
   token: undefined,
   user: undefined,
 
   signin: async (username: string, password: string) => {
     const response = await signin(username, password);
-    console.warn(response);
 
     if (response.token) {
-      // await StorageAdapter.setItem('token', response.token);
-      set({
-        status: 'authenticated',
-        token: response.token,
-        user: response.user,
-      });
+      await SecureStore.setItemAsync('token', response.token);
+      get().setAuthenticated(response.token, response.user);
       return response;
     }
 
-    set({ status: 'unauthenticated', token: undefined, user: undefined });
+    get().setUnauthenticated();
     return response;
   },
 
   signup: async (values: RegisterData) => {
     const response = await signup(values);
     if (response.verification_code) {
-      set({ status: 'unauthenticated', token: undefined, user: response });
+      get().setUnauthenticated();
     }
     return response;
   },
@@ -52,14 +50,16 @@ export const useAuthStore = create<AuthState>()((set) => ({
   checkStatus: async () => {
     const response = await checkStatus();
 
+    if (response.message === 'Network request failed') {
+      get().setUnauthenticated();
+      return { code: 500, message: 'Network request failed' };
+    }
+
     if (response.token) {
-      // await StorageAdapter.setItem('token', response.token);
-      set({
-        status: 'authenticated',
-        token: response.token,
-        user: response.user,
-      });
-      return true;
+      await SecureStore.setItemAsync('token', response.token);
+
+      get().setAuthenticated(response.token, response.user);
+      return { code: 200, message: 'Authenticated', data: response };
     }
 
     if (response.statusCode === 401) {
@@ -73,9 +73,10 @@ export const useAuthStore = create<AuthState>()((set) => ({
 
   logout: async () => {
     // const response = await StorageAdapter.removeItem('token');
+    await SecureStore.deleteItemAsync('token');
     // if (response) {
-    //   set({ status: 'unauthenticated', token: undefined, user: undefined });
-    //   return true;
+    set({ status: 'unauthenticated', token: undefined, user: undefined });
+    //   return true;7u7
     // }
     return false;
   },
@@ -92,5 +93,20 @@ export const useAuthStore = create<AuthState>()((set) => ({
       });
     }
     return response;
+  },
+
+  setAuthenticated: (token: string, user: User) => {
+    set({
+      status: 'authenticated',
+      token: token,
+      user: user,
+    });
+  },
+  setUnauthenticated: () => {
+    set({
+      status: 'unauthenticated',
+      token: undefined,
+      user: undefined,
+    });
   },
 }));

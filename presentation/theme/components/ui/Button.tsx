@@ -1,46 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
 import {
-  TouchableOpacity,
-  TouchableOpacityProps,
-} from 'react-native-gesture-handler';
+  Pressable,
+  type PressableProps,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { theme } from './Theme';
+import { Feather } from '@expo/vector-icons';
 
-interface ButtonProps extends TouchableOpacityProps {
-  title?: string;
+interface ButtonProps extends PressableProps {
   onPress?: () => void;
   disabled?: boolean;
   children?: React.ReactNode;
+  loading?: boolean;
 }
 
 export const Button = ({
-  title,
   onPress,
   disabled,
   children,
+  loading,
+  style,
   ...rest
 }: ButtonProps) => {
-  const buttonStyles: any[] = [styles.button];
-  const textStyles: any[] = [styles.buttonText];
-
-  if (disabled) {
-    buttonStyles.push(styles.disabledButton);
-    textStyles.push(styles.disabledButtonText);
-  }
+  const primaryColor = theme.primary || 'blue';
 
   return (
-    <TouchableOpacity
-      style={buttonStyles}
-      onPress={disabled ? () => {} : onPress}
+    <Pressable
+      style={({ pressed }) => [
+        {
+          backgroundColor: pressed ? primaryColor + '90' : primaryColor,
+        },
+        { backgroundColor: disabled ? primaryColor + '70' : primaryColor },
+        styles.button,
+      ]}
+      onPress={disabled || loading ? () => {} : onPress}
       {...rest}
     >
-      {children ? children : <Text style={textStyles}>{title}</Text>}
-    </TouchableOpacity>
+      {loading ? (
+        <View
+          style={{
+            flexDirection: 'row',
+            gap: 8,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Feather name="loader" size={24} color="black" />
+          <Text style={[styles.buttonText]}>Loading</Text>
+        </View>
+      ) : (
+        <Text style={[styles.buttonText]}>{children}</Text>
+      )}
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'white',
     borderRadius: 30,
     paddingVertical: 10,
     alignItems: 'center',
@@ -51,14 +69,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textTransform: 'uppercase',
-  },
-  disabledButton: {
-    backgroundColor: '#D3D3D3',
-    opacity: 0.6,
-  },
-  disabledButtonText: {
-    color: '#444',
-    fontWeight: 'bold',
   },
 });
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Link, Redirect } from 'expo-router';
+import { Link, Redirect, router } from 'expo-router';
 
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -68,6 +68,7 @@ const Signin = () => {
       return;
     }
     if (response.token) {
+      router.replace('/');
     }
   };
 
@@ -193,10 +194,13 @@ const Signin = () => {
             )}
 
             <Button
+              loading={isLoading}
               disabled={isLoading}
               onPress={handleSubmit(handleSignin)}
-              title="Login"
-            />
+              style={{ backgroundColor: 'blue' }}
+            >
+              Login
+            </Button>
           </View>
         </View>
       </ScrollView>

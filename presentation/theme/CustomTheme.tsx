@@ -2,7 +2,7 @@ import { Theme } from '@react-navigation/native';
 import { fonts } from '@react-navigation/native/src/theming/fonts';
 
 export const CustomTheme: Theme = {
-  dark: true,
+  dark: false,
   colors: {
     primary: 'rgb(0, 122, 255)',
     background: 'rgb(0, 46, 93)',

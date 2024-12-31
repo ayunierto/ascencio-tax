@@ -310,10 +310,12 @@ const Signup = () => {
               </Text>
             )}
             <Button
-              title="Sign up"
+              loading={isLoading}
               disabled={isLoading}
               onPress={handleSubmit(onRegister)}
-            />
+            >
+              Sign up
+            </Button>
           </View>
         </View>
       </ScrollView>

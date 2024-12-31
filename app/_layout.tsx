@@ -30,12 +30,12 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView>
       <ThemeProvider value={CustomTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" /> */}
-        </Stack>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        />
         <StatusBar style="auto" />
-
         <Toast />
       </ThemeProvider>
     </GestureHandlerRootView>

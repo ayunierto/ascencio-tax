@@ -1,12 +1,11 @@
-// import {StorageAdapter} from '../../config/adapters/storage-adapter';
-
-import Toast from 'react-native-toast-message';
+import * as SecureStore from 'expo-secure-store';
 
 export const checkStatus = async () => {
   try {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
-    // const token = (await StorageAdapter.getItem('token')) || '';
-    const token = '';
+
+    const token = (await SecureStore.getItemAsync('token')) || '';
+
     const response = await fetch(`${API_URL}/auth/check-status`, {
       method: 'GET',
       headers: {

@@ -22,8 +22,8 @@ export const theme = {
   inputBorder: 'hsl(214, 31.8%, 91.4%)',
 
   // Primary colors for <Button />
-  primary: 'hsl(221, 83.2%, 53.3%)',
-  primaryForeground: 'hsl(210, 40%, 98%)',
+  primary: '#FFFFFF',
+  primaryForeground: '#212121',
 
   // Secondary colors for <Button />
   secondary: 'hsl(210, 40%, 96.1%)',
