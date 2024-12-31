@@ -30,7 +30,7 @@ export const theme = {
   secondaryForeground: 'hsl(222, 47.4%, 11.2%)',
 
   // Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc
-  accent: 'hsl(210, 40%, 96.1%)',
+  accent: 'hsl(209, 57.40%, 90.80%)',
   accentForeground: 'hsl(222, 47.4%, 11.2%)',
 
   // Used for destructive actions such as <Button variant="destructive">
@@ -38,5 +38,5 @@ export const theme = {
   destructiveForeground: 'hsl(210, 40%, 98%)',
 
   // Border radius for card, input and buttons
-  radius: 30,
+  radius: 20,
 };

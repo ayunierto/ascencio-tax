@@ -4,6 +4,7 @@ import {
   type PressableProps,
   StyleSheet,
   Text,
+  TextStyle,
   View,
 } from 'react-native';
 import { theme } from './Theme';
@@ -14,6 +15,7 @@ interface ButtonProps extends PressableProps {
   disabled?: boolean;
   children?: React.ReactNode;
   loading?: boolean;
+  textStyle?: TextStyle;
 }
 
 export const Button = ({
@@ -21,7 +23,7 @@ export const Button = ({
   disabled,
   children,
   loading,
-  style,
+  textStyle,
   ...rest
 }: ButtonProps) => {
   const primaryColor = theme.primary || 'blue';
@@ -51,7 +53,7 @@ export const Button = ({
           <Text style={[styles.buttonText]}>Loading</Text>
         </View>
       ) : (
-        <Text style={[styles.buttonText]}>{children}</Text>
+        <Text style={[styles.buttonText, textStyle]}>{children}</Text>
       )}
     </Pressable>
   );

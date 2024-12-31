@@ -6,6 +6,7 @@ import { Stack } from 'expo-router/stack';
 import Toast from 'react-native-toast-message';
 import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
+import Loader from '@/presentation/theme/components/Loader';
 
 const CheckAuthenticationLayout = () => {
   const { status, checkStatus } = useAuthStore();
@@ -31,11 +32,7 @@ const CheckAuthenticationLayout = () => {
   }, [status]);
 
   if (status === 'checking') {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <Loader />;
   }
 
   if (status === 'unauthenticated') {
