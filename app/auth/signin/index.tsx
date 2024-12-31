@@ -197,7 +197,6 @@ const Signin = () => {
               loading={isLoading}
               disabled={isLoading}
               onPress={handleSubmit(handleSignin)}
-              style={{ backgroundColor: 'blue' }}
             >
               Login
             </Button>

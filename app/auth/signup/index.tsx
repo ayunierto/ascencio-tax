@@ -59,16 +59,17 @@ const Signup = () => {
 
   const { signup } = useAuthStore();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const onRegister = async (values: z.infer<typeof registerUserSchema>) => {
-    setIsLoading(true);
-
+  const handleSignup = async (values: z.infer<typeof registerUserSchema>) => {
+    setLoading(true);
     const response = await signup(values);
-    setIsLoading(false);
-    if (response.verification_code) {
-      // navigation.navigate('VerifyScreen');
-    }
+    setLoading(false);
+
+    // if (response.verification_code) {
+    // navigation.navigate('VerifyScreen');
+    // }
+
     if (response.statusCode === 400) {
       setError('root', {
         type: 'manual',
@@ -234,21 +235,44 @@ const Signup = () => {
                 {errors.email?.message as string}
               </Text>
             )}
-            <Controller
-              control={control}
-              name="phone_number"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  keyboardType="phone-pad"
-                  placeholder="Phone Number"
-                  autoCapitalize="none"
-                  autoComplete="tel"
-                />
-              )}
-            />
+            <View style={{ flexDirection: 'row', gap: 20 }}>
+              <Controller
+                control={control}
+                name="phone_number"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    keyboardType="phone-pad"
+                    placeholder="Country"
+                    autoCapitalize="none"
+                    autoComplete="tel"
+                    style={{
+                      flex: 1,
+                    }}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
+                name="phone_number"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    keyboardType="phone-pad"
+                    placeholder="Phone Number"
+                    autoCapitalize="none"
+                    autoComplete="tel"
+                    style={{
+                      flex: 3,
+                    }}
+                  />
+                )}
+              />
+            </View>
             {errors.phone_number && (
               <Text
                 style={{
@@ -310,9 +334,9 @@ const Signup = () => {
               </Text>
             )}
             <Button
-              loading={isLoading}
-              disabled={isLoading}
-              onPress={handleSubmit(onRegister)}
+              loading={loading}
+              disabled={loading}
+              onPress={handleSubmit(handleSignup)}
             >
               Sign up
             </Button>

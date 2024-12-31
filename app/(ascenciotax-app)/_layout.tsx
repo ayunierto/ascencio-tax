@@ -7,10 +7,10 @@ import Toast from 'react-native-toast-message';
 import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import Loader from '@/presentation/theme/components/Loader';
+import { theme } from '@/presentation/theme/components/ui/Theme';
 
 const CheckAuthenticationLayout = () => {
-  const { status, checkStatus } = useAuthStore();
-  const backgroundColor = useThemeColor({}, 'background');
+  const { status, checkStatus, logout } = useAuthStore();
 
   useEffect(() => {
     checkStatus().then((res) => {
@@ -24,7 +24,7 @@ const CheckAuthenticationLayout = () => {
       if (res.code === 200) {
         Toast.show({
           type: 'success',
-          text1: 'Log in',
+          text1: 'Log in success',
           text2: `Welcome ${res.data.name} `,
         });
       }
@@ -43,14 +43,38 @@ const CheckAuthenticationLayout = () => {
   return (
     <Stack
       screenOptions={{
-        headerShown: false,
+        // headerShown: false,
+        headerStyle: { backgroundColor: theme.background },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
       }}
     >
       <Stack.Screen
         name="(home)/index"
         options={{
-          title: 'Services',
-          headerLeft: () => <Ionicons name="log-out" />,
+          title: '',
+          headerRight: () => (
+            <Ionicons
+              name="log-out-outline"
+              size={24}
+              color="white"
+              onPress={logout}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="booking/index"
+        options={{
+          title: 'Booking',
+        }}
+      />
+      <Stack.Screen
+        name="booking/resume"
+        options={{
+          title: 'Booking Details',
         }}
       />
     </Stack>
