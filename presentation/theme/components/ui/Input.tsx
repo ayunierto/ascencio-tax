@@ -1,13 +1,15 @@
 import { TextInput, type TextInputProps, StyleSheet } from 'react-native';
 
-export type InputProps = TextInputProps & {};
+export type InputProps = TextInputProps & {
+  className?: string;
+};
 
-export function Input({ style, ...props }: InputProps) {
+export function Input({ style, className, ...props }: InputProps) {
   return (
     <TextInput
-      style={[styles.input, style]}
+      className={`border border-white py-4 px-5 color-white  rounded-full  ${className}`}
+      placeholderTextColor={'#ccc'}
       {...props}
-      placeholderTextColor={'#CCCCCC'}
     />
   );
 }

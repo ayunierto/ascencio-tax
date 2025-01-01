@@ -2,10 +2,11 @@ import { RegisterData } from '../interfaces/register.data';
 
 export const signup = async ({
   email,
-  last_name,
+  lastName,
   name,
   password,
-  phone_number,
+  phoneNumber,
+  countryCode,
 }: RegisterData) => {
   email = email.toLocaleLowerCase().trim();
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -17,10 +18,11 @@ export const signup = async ({
       },
       body: JSON.stringify({
         email,
-        last_name,
+        lastName,
         name,
         password,
-        phone_number,
+        countryCode,
+        phoneNumber,
       }),
     }).then((data) => data.json());
 

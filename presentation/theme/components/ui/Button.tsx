@@ -36,7 +36,7 @@ export const Button = ({
     <Pressable
       onPress={disabled || loading ? () => {} : onPress}
       {...rest}
-      className={`bg-white rounded-full px-4 h-10 flex items-center justify-center ${
+      className={`bg-white rounded-full px-4 h-11 flex items-center justify-center ${
         disabled && 'opacity-60'
       } ${className}`}
     >

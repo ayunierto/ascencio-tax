@@ -1,7 +1,8 @@
 export interface RegisterData {
   name: string;
-  last_name: string;
+  lastName: string;
   email: string;
-  phone_number: string;
+  countryCode: string;
+  phoneNumber: string;
   password: string;
 }

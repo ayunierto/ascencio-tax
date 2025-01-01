@@ -16,7 +16,7 @@ export interface AuthState {
   signup: (values: RegisterData) => Promise<any>;
   checkStatus: () => Promise<any>;
   logout: () => Promise<boolean>;
-  verifyCode: (phone_number: string, verfication_code: string) => Promise<any>;
+  verifyCode: (phoneNumber: string, verfication_code: string) => Promise<any>;
   setAuthenticated: (token: string, user: User) => void;
   setUnauthenticated: () => void;
 }
@@ -31,7 +31,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     if (response.token) {
       await SecureStore.setItemAsync('token', response.token);
-      get().setAuthenticated(response.token, response.user);
+      get().setAuthenticated(response.token, response);
       return response;
     }
 
@@ -41,14 +41,21 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   signup: async (values: RegisterData) => {
     const response = await signup(values);
-    if (response.verification_code) {
-      get().setUnauthenticated();
+    // if (response.verification_code) {
+    //   get().setUnauthenticated();
+    // }
+    if (response.token) {
+      await SecureStore.setItemAsync('token', response.token);
+      get().setAuthenticated(response.token, response);
+      return response;
     }
+    get().setUnauthenticated();
     return response;
   },
 
   checkStatus: async () => {
     const response = await checkStatus();
+    console.warn({ checkStatus: response });
 
     if (response.message === 'Network request failed') {
       get().setUnauthenticated();
@@ -81,8 +88,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     return false;
   },
 
-  verifyCode: async (phone_number: string, verification_code: string) => {
-    const response = await verifyCode(phone_number, verification_code);
+  verifyCode: async (phoneNumber: string, verification_code: string) => {
+    const response = await verifyCode(phoneNumber, verification_code);
     if (response.token) {
       // await StorageAdapter.setItem('token', response.token);
 

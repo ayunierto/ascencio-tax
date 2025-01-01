@@ -12,15 +12,32 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { useState } from 'react';
 import { Input } from '@/presentation/theme/components/ui/Input';
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import Button from '@/presentation/theme/components/ui/Button';
+import Select from '@/presentation/theme/components/ui/Select';
+import { countries } from '@/countryData';
+import Toast from 'react-native-toast-message';
+
+const countryCodes: { label: string; value: string }[] = [];
+
+const transformCountries = () => {
+  countries.map((country) => {
+    countryCodes.push({
+      label: `${country.name} (${country.phone_code})`,
+      value: country.phone_code,
+    });
+  });
+};
+
+transformCountries();
 
 const registerUserSchema = z
   .object({
     name: z.string().min(3, 'First name must be at least 3 characters'),
-    last_name: z.string().min(3, 'First name must be at least 3 characters'),
+    lastName: z.string().min(3, 'First name must be at least 3 characters'),
     email: z.string().email('Invalid email address'),
-    phone_number: z.string().nonempty('The phone number is required'),
+    countryCode: z.string().nonempty('The country code is required'),
+    phoneNumber: z.string().nonempty('The phone number is required'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters')
@@ -28,14 +45,14 @@ const registerUserSchema = z
         /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
         'Password must include uppercase, lowercase and numbers'
       ),
-    confirm_password: z
+    confirmPassword: z
       .string()
       .min(8, 'Confirm Password must be at least 8 characters')
       .optional(),
   })
-  .refine((data) => data.password === data.confirm_password, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords must match',
-    path: ['confirm_password'],
+    path: ['confirmPassword'],
   });
 
 const Signup = () => {
@@ -45,15 +62,17 @@ const Signup = () => {
     formState: { errors },
     setError,
     setFocus,
+    setValue,
   } = useForm<z.infer<typeof registerUserSchema>>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: {
-      confirm_password: '',
+      confirmPassword: '',
       password: '',
       email: '',
-      last_name: '',
+      lastName: '',
       name: '',
-      phone_number: '',
+      countryCode: '',
+      phoneNumber: '',
     },
   });
 
@@ -64,6 +83,15 @@ const Signup = () => {
   const handleSignup = async (values: z.infer<typeof registerUserSchema>) => {
     setLoading(true);
     const response = await signup(values);
+    if (response.id) {
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Your account has been created successfully',
+      });
+      router.replace('/');
+    }
+    console.warn(response);
     setLoading(false);
 
     // if (response.verification_code) {
@@ -87,9 +115,9 @@ const Signup = () => {
         });
         return;
       }
-      if (response.cause === 'phone_number') {
-        setFocus('phone_number');
-        setError('phone_number', {
+      if (response.cause === 'phoneNumber') {
+        setFocus('phoneNumber');
+        setError('phoneNumber', {
           type: 'manual',
           message:
             'Your phone number is already being used by an existing AscencioTax account. You can go the AscencioTax login screen to login using this phone number.',
@@ -188,7 +216,7 @@ const Signup = () => {
             )}
             <Controller
               control={control}
-              name="last_name"
+              name="lastName"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   placeholder="Last name"
@@ -200,14 +228,14 @@ const Signup = () => {
                 />
               )}
             />
-            {errors.last_name && (
+            {errors.lastName && (
               <Text
                 style={{
                   marginTop: -15,
                   color: 'yellow',
                 }}
               >
-                {errors.last_name?.message as string}
+                {errors.lastName?.message as string}
               </Text>
             )}
             <Controller
@@ -236,27 +264,17 @@ const Signup = () => {
               </Text>
             )}
             <View style={{ flexDirection: 'row', gap: 20 }}>
-              <Controller
-                control={control}
-                name="phone_number"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    value={value}
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    keyboardType="phone-pad"
-                    placeholder="Country"
-                    autoCapitalize="none"
-                    autoComplete="tel"
-                    style={{
-                      flex: 1,
-                    }}
-                  />
-                )}
+              <Select
+                options={countryCodes}
+                onSelect={(item) => setValue('countryCode', item?.value)}
+                placeholder="Country"
+                style={{
+                  flex: 1,
+                }}
               />
               <Controller
                 control={control}
-                name="phone_number"
+                name="phoneNumber"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
                     value={value}
@@ -265,7 +283,7 @@ const Signup = () => {
                     keyboardType="phone-pad"
                     placeholder="Phone Number"
                     autoCapitalize="none"
-                    autoComplete="tel"
+                    autoComplete="tel-device"
                     style={{
                       flex: 3,
                     }}
@@ -273,14 +291,14 @@ const Signup = () => {
                 )}
               />
             </View>
-            {errors.phone_number && (
+            {errors.phoneNumber && (
               <Text
                 style={{
                   marginTop: -15,
                   color: 'yellow',
                 }}
               >
-                {errors.phone_number?.message as string}
+                {errors.phoneNumber?.message as string}
               </Text>
             )}
             <Controller
@@ -310,7 +328,7 @@ const Signup = () => {
             )}
             <Controller
               control={control}
-              name="confirm_password"
+              name="confirmPassword"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Input
                   value={value}
@@ -323,14 +341,14 @@ const Signup = () => {
                 />
               )}
             />
-            {errors.confirm_password && (
+            {errors.confirmPassword && (
               <Text
                 style={{
                   marginTop: -15,
                   color: 'yellow',
                 }}
               >
-                {errors.confirm_password?.message as string}
+                {errors.confirmPassword?.message as string}
               </Text>
             )}
             <Button

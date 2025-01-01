@@ -53,6 +53,7 @@ const Signin = () => {
   const handleSignin = async (values: z.infer<typeof loginUserSchema>) => {
     setIsLoading(true);
     const response = await signin(values.username, values.password);
+    console.warn({ sigin: response });
     setIsLoading(false);
     if (response.error === 'Inactive') {
       // navigation.navigate('VerifyScreen');

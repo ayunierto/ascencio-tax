@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,13 @@ import {
   Modal,
   TouchableOpacity,
   FlatList,
+  StyleProp,
+  ViewStyle,
+  ScrollView,
+  TextInputChangeEventData,
+  NativeSyntheticEvent,
 } from 'react-native';
+import { Input } from './Input';
 // import Icon from '@react-native-vector-icons/ionicons';
 
 interface Option {
@@ -19,11 +25,20 @@ interface SelectProps {
   options: Option[];
   onSelect: (item: Option | null) => void;
   placeholder?: string;
+  style?: StyleProp<ViewStyle>;
+  className?: string;
 }
 
-const Select: React.FC<SelectProps> = ({options, onSelect, placeholder}) => {
+const Select = ({
+  options: items,
+  style,
+  onSelect,
+  className,
+  placeholder,
+}: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
+  const [options, setOptions] = useState(items);
 
   const handleSelect = (item: Option) => {
     setSelectedValue(item);
@@ -31,17 +46,21 @@ const Select: React.FC<SelectProps> = ({options, onSelect, placeholder}) => {
     setModalVisible(false);
   };
 
-  const renderItem = ({item}: {item: Option}) => (
-    <TouchableOpacity style={styles.option} onPress={() => handleSelect(item)}>
-      <Text>{item.label}</Text>
-    </TouchableOpacity>
-  );
+  function filterOptions(
+    e: NativeSyntheticEvent<TextInputChangeEventData>
+  ): void {
+    const newItems = items.filter((item) =>
+      item.label.toLowerCase().includes(e.nativeEvent.text.toLowerCase())
+    );
+    setOptions(newItems);
+  }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, style]} className={`${className}`}>
       <TouchableOpacity
         style={styles.selectButton}
-        onPress={() => setModalVisible(true)}>
+        onPress={() => setModalVisible(true)}
+      >
         <Text style={styles.selectButtonText}>
           {selectedValue ? selectedValue.label : placeholder || 'Seleccionar'}
         </Text>
@@ -52,18 +71,33 @@ const Select: React.FC<SelectProps> = ({options, onSelect, placeholder}) => {
         animationType="fade"
         transparent={true}
         visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}>
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={options}
-              renderItem={renderItem}
-              keyExtractor={item => item.value.toString()}
+          <View style={styles.modalContent} className="flex gap-4">
+            <Input
+              placeholder="Search"
+              className="border-gray-400 color-slate-900"
+              onChange={filterOptions}
+              placeholderTextColor={'#ccc'}
             />
+            <ScrollView>
+              {options.map((item) => (
+                <TouchableOpacity
+                  key={item.label}
+                  style={styles.option}
+                  onPress={() => handleSelect(item)}
+                >
+                  <Text>{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}>
-              <Text style={{color: 'red'}}>Cerrar</Text>
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={{ color: 'red' }}>Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -107,7 +141,7 @@ const styles = StyleSheet.create({
   option: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#ccc',
   },
   closeButton: {
     padding: 10,
