@@ -29,7 +29,7 @@ const CheckAuthenticationLayout = () => {
         });
       }
     });
-  }, [status]);
+  }, []);
 
   if (status === 'checking') {
     return <Loader />;
