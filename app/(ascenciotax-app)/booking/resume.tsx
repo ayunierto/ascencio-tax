@@ -23,7 +23,7 @@ const ResumeScreen = () => {
         text1: 'Appointment booked',
         text2: 'Your appointment has been booked successfully',
       });
-      return <Redirect href={'/'} />;
+      router.replace('/');
     }
   };
   return (
