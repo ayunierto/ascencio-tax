@@ -21,13 +21,13 @@ const CheckAuthenticationLayout = () => {
           text2: res.message,
         });
       }
-      if (res.code === 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Log in success',
-          text2: `Welcome ${res.data.name} `,
-        });
-      }
+      // if (res.code === 200) {
+      //   Toast.show({
+      //     type: 'success',
+      //     text1: 'Log in success',
+      //     text2: `Welcome ${res.data.name} `,
+      //   });
+      // }
     });
   }, []);
 

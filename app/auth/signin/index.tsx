@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Link, Redirect, router } from 'expo-router';
+import { Link, router } from 'expo-router';
 
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -55,10 +55,10 @@ const Signin = () => {
     const response = await signin(values.username, values.password);
     console.warn({ sigin: response });
     setIsLoading(false);
-    if (response.error === 'Inactive') {
-      // navigation.navigate('VerifyScreen');
-      return;
-    }
+    // if (response.error === 'Inactive') {
+    // navigation.navigate('VerifyScreen');
+    // return;
+    // }
     if (response.error === 'Unauthorized') {
       setError('root', {
         type: 'manual',
@@ -69,8 +69,12 @@ const Signin = () => {
       return;
     }
     if (response.token) {
+      // Toast.show({
+      //   type: 'success',
+      //   text1: 'Log in success',
+      //   text2: `Welcome ${response.data.name}`,
+      // });
       router.replace('/');
-      // return <Redirect href={'/'} />;
     }
   };
 
