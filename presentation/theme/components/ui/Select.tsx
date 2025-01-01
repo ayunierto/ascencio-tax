@@ -77,7 +77,7 @@ const Select = ({
           <View style={styles.modalContent} className="flex gap-4">
             <Input
               placeholder="Search"
-              className="border-gray-400 color-slate-900"
+              className="border-gray-400 color-slate-900 border"
               onChange={filterOptions}
               placeholderTextColor={'#ccc'}
             />

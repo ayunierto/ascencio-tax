@@ -1,6 +1,8 @@
+import { config } from '@/core/config';
+
 export const signin = async (username: string, password: string) => {
   try {
-    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    const API_URL = config.apiUrl;
     const response = await fetch(`${API_URL}/auth/signin`, {
       method: 'POST',
       headers: {

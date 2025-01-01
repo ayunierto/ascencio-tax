@@ -1,3 +1,4 @@
+import { config } from '@/core/config';
 import * as SecureStore from 'expo-secure-store';
 
 interface Appointment {
@@ -15,7 +16,7 @@ export const saveAppointment = async ({
   staff,
   comments = '',
 }: Appointment) => {
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const API_URL = config.apiUrl;
 
   const token = (await SecureStore.getItemAsync('token')) || '';
 

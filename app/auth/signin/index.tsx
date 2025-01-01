@@ -70,6 +70,7 @@ const Signin = () => {
     }
     if (response.token) {
       router.replace('/');
+      // return <Redirect href={'/'} />;
     }
   };
 
@@ -176,8 +177,7 @@ const Signin = () => {
                   value={value}
                   onBlur={onBlur}
                   onChangeText={onChange}
-                  autoCapitalize="words"
-                  secureTextEntry
+                  secureTextEntry={true}
                   placeholder="Enter password"
                   autoComplete="password"
                 />

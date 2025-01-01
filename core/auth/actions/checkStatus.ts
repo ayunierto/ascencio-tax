@@ -1,8 +1,9 @@
+import { config } from '@/core/config';
 import * as SecureStore from 'expo-secure-store';
 
 export const checkStatus = async () => {
   try {
-    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+    const API_URL = config.apiUrl;
 
     const token = (await SecureStore.getItemAsync('token')) || '';
 

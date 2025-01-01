@@ -1,3 +1,4 @@
+import { config } from '@/core/config';
 import { RegisterData } from '../interfaces/register.data';
 
 export const signup = async ({
@@ -9,7 +10,8 @@ export const signup = async ({
   countryCode,
 }: RegisterData) => {
   email = email.toLocaleLowerCase().trim();
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const API_URL = config.apiUrl;
+  console.warn(API_URL);
   try {
     const response = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',
@@ -28,6 +30,7 @@ export const signup = async ({
 
     return response;
   } catch (error) {
+    console.error(error);
     return error;
   }
 };

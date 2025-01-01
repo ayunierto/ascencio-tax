@@ -115,7 +115,7 @@ const Signup = () => {
         });
         return;
       }
-      if (response.cause === 'phoneNumber') {
+      if (response.cause.includes('phoneNumber')) {
         setFocus('phoneNumber');
         setError('phoneNumber', {
           type: 'manual',

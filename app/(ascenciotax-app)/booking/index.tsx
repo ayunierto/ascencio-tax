@@ -7,6 +7,7 @@ import { useBookingStore } from '@/presentation/services/store/useBookingStore';
 import Select from '@/presentation/theme/components/ui/Select';
 import { Calendar } from 'react-native-calendars';
 import { router } from 'expo-router';
+import { config } from '@/core/config';
 
 interface Option {
   label: string;
@@ -55,7 +56,7 @@ const BookingScreen = () => {
     })
   );
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const API_URL = config.apiUrl;
 
   // Fetch availability
   useEffect(() => {

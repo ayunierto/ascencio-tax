@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import Button from '@/presentation/theme/components/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { useBookingStore } from '@/presentation/services/store/useBookingStore';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { theme } from '@/presentation/theme/components/ui/Theme';
-import { useQuery } from '@tanstack/react-query';
 
 const ResumeScreen = () => {
   const { selectedService, staffName, startDateAndTime, bookNow } =
@@ -24,7 +23,7 @@ const ResumeScreen = () => {
         text1: 'Appointment booked',
         text2: 'Your appointment has been booked successfully',
       });
-      router.replace('/');
+      return <Redirect href={'/'} />;
     }
   };
   return (

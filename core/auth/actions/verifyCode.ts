@@ -1,8 +1,10 @@
+import { config } from '@/core/config';
+
 export const verifyCode = async (
   phone_number: string,
   verfication_code: string
 ) => {
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const API_URL = config.apiUrl;
   try {
     const response = await fetch(`${API_URL}/auth/verify-code`, {
       method: 'POST',

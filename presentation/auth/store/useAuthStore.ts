@@ -79,12 +79,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   logout: async () => {
-    // const response = await StorageAdapter.removeItem('token');
     await SecureStore.deleteItemAsync('token');
-    // if (response) {
-    set({ status: 'unauthenticated', token: undefined, user: undefined });
-    //   return true;7u7
-    // }
+    get().setUnauthenticated();
     return false;
   },
 
