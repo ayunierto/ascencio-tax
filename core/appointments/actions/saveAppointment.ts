@@ -16,7 +16,7 @@ export const saveAppointment = async ({
   staff,
   comments = '',
 }: Appointment) => {
-  const API_URL = config.apiUrl;
+  const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
 
   const token = (await SecureStore.getItemAsync('token')) || '';
 

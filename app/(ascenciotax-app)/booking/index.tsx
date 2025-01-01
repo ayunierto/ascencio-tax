@@ -56,7 +56,7 @@ const BookingScreen = () => {
     })
   );
 
-  const API_URL = config.apiUrl;
+  const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
 
   // Fetch availability
   useEffect(() => {

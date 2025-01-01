@@ -4,7 +4,7 @@ export const verifyCode = async (
   phone_number: string,
   verfication_code: string
 ) => {
-  const API_URL = config.apiUrl;
+  const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
   try {
     const response = await fetch(`${API_URL}/auth/verify-code`, {
       method: 'POST',
