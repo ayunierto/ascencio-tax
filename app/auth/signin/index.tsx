@@ -198,7 +198,7 @@ const Signin = () => {
               disabled={isLoading}
               onPress={handleSubmit(handleSignin)}
             >
-              Login
+              Log in
             </Button>
           </View>
         </View>

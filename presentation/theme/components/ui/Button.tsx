@@ -2,13 +2,12 @@ import React from 'react';
 import {
   Pressable,
   type PressableProps,
-  StyleSheet,
   Text,
   TextStyle,
   View,
 } from 'react-native';
 import { theme } from './Theme';
-import { Feather } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 
 interface ButtonProps extends PressableProps {
   onPress?: () => void;
@@ -16,6 +15,9 @@ interface ButtonProps extends PressableProps {
   children?: React.ReactNode;
   loading?: boolean;
   textStyle?: TextStyle;
+  className?: string;
+  textClassName?: string;
+  icon?: React.ReactNode;
 }
 
 export const Button = ({
@@ -24,54 +26,48 @@ export const Button = ({
   children,
   loading,
   textStyle,
+  className,
+  textClassName,
+  //
+  icon,
   ...rest
 }: ButtonProps) => {
-  const primaryColor = theme.primary || 'blue';
-
   return (
     <Pressable
-      style={({ pressed }) => [
-        {
-          backgroundColor: pressed ? primaryColor + '90' : primaryColor,
-        },
-        { backgroundColor: disabled ? primaryColor + '70' : primaryColor },
-        styles.button,
-      ]}
       onPress={disabled || loading ? () => {} : onPress}
       {...rest}
+      className={`bg-white rounded-full px-4 h-10 flex items-center justify-center ${
+        disabled && 'opacity-60'
+      } ${className}`}
     >
       {loading ? (
-        <View
-          style={{
-            flexDirection: 'row',
-            gap: 8,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <Feather name="loader" size={24} color="black" />
-          <Text style={[styles.buttonText]}>Loading</Text>
+        <View className="flex-row gap-2 justify-center items-center">
+          <AntDesign
+            name="loading1"
+            size={24}
+            color="black"
+            className="animate-spin"
+          />
+          <Text
+            style={textStyle}
+            className={` ${disabled && 'text-gray-500'} ${textClassName}`}
+          >
+            Loading
+          </Text>
         </View>
       ) : (
-        <Text style={[styles.buttonText, textStyle]}>{children}</Text>
+        <View className="flex-row gap-2 justify-center items-center">
+          {icon && icon}
+          <Text
+            style={textStyle}
+            className={` ${disabled && 'text-gray-500'} ${textClassName}`}
+          >
+            {children}
+          </Text>
+        </View>
       )}
     </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 30,
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-  },
-});
 
 export default Button;
