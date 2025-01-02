@@ -14,6 +14,7 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { Input } from './Input';
+import { AntDesign } from '@expo/vector-icons';
 // import Icon from '@react-native-vector-icons/ionicons';
 
 interface Option {
@@ -56,14 +57,29 @@ const Select = ({
   }
 
   return (
-    <View style={[styles.container, style]} className={`${className}`}>
+    <View style={style} className={`${className}`}>
       <TouchableOpacity
-        style={styles.selectButton}
+        className="border border-white rounded-full h-12 flex flex-row px-5 justify-between items-center"
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.selectButtonText}>
           {selectedValue ? selectedValue.label : placeholder || 'Seleccionar'}
         </Text>
+        {modalVisible ? (
+          <AntDesign
+            className="transition-all duration-300"
+            name="up"
+            size={16}
+            color={'white'}
+          />
+        ) : (
+          <AntDesign
+            className="transition-all duration-300"
+            name="down"
+            size={16}
+            color={'white'}
+          />
+        )}
       </TouchableOpacity>
       {/* <Icon name="chevron-down" color="white" size={20} /> */}
 
@@ -73,20 +89,20 @@ const Select = ({
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent} className="flex gap-4">
+        <View className="flex-1 justify-center items-center bg-['#0009']">
+          <View className="flex gap-4 bg-white p-5 rounded-2xl w-10/12 max-h-['80%'] ">
             <Input
               placeholder="Search"
-              className="border-gray-400 color-slate-900 border"
               onChange={filterOptions}
               placeholderTextColor={'#ccc'}
+              style={{ color: 'black', borderColor: '#ccc' }}
             />
             <ScrollView>
               {options.map((item) => (
                 <TouchableOpacity
                   key={item.label}
-                  style={styles.option}
                   onPress={() => handleSelect(item)}
+                  className="px-2 py-3"
                 >
                   <Text>{item.label}</Text>
                 </TouchableOpacity>
@@ -97,7 +113,7 @@ const Select = ({
               style={styles.closeButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={{ color: 'red' }}>Close</Text>
+              <Text className="text-red-500">Close</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -107,42 +123,10 @@ const Select = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: 'auto',
-  },
-  selectButton: {
-    borderWidth: 1,
-    borderColor: 'white',
-    padding: 10,
-    borderRadius: 30,
-    paddingHorizontal: 20,
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    fontSize: 16,
-    color: 'white',
-    height: 50,
-  },
   selectButtonText: {
     color: 'white',
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    maxHeight: '50%',
-  },
-  option: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
+
   closeButton: {
     padding: 10,
     alignItems: 'center',

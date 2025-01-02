@@ -11,7 +11,6 @@ export const signup = async ({
 }: RegisterData) => {
   email = email.toLocaleLowerCase().trim();
   const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
-  console.warn(API_URL);
   try {
     const response = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',

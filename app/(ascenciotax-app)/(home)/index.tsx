@@ -52,7 +52,7 @@ const HomeScreen = () => {
   return (
     <SafeAreaView>
       <ScrollView>
-        <View style={{ padding: 20 }}>
+        <View className="p-5">
           <Image
             source={require('../../../assets/images/logo.webp')}
             style={{
@@ -62,63 +62,42 @@ const HomeScreen = () => {
           />
           {isError && <Text>{error.message}</Text>}
 
-          {data &&
-            data.map((service: ServiceResponse) => (
-              <View
-                key={service.id}
-                style={{
-                  borderRadius: theme.radius,
-                  overflow: 'hidden',
-                  backgroundColor: theme.card,
-                  marginBottom: 20,
-                }}
-              >
-                <Image
-                  style={{
-                    width: '100%',
-                    height: 200,
-                    resizeMode: 'cover',
-                  }}
-                  source={{ uri: service.images[0].url }}
-                />
-                <View style={{ padding: 10 }}>
-                  <Text
-                    style={{
-                      color: theme.cardForeground,
-                      fontSize: 18,
-                    }}
-                  >
-                    {service.name}
-                  </Text>
-                  <Text
-                    style={{
-                      color: theme.cardForeground,
-                      paddingVertical: 10,
-                    }}
-                  >
-                    {minutesToHoursAndMinutes(service.duration)}
-                  </Text>
-                  {service.isAvailableOnline && (
-                    <Chip text="Available Online" icon="videocam-outline" />
-                  )}
-                  <View style={{ alignSelf: 'flex-end' }}>
-                    <Button
-                      style={{
-                        backgroundColor: theme.background,
-                        alignSelf: 'flex-start',
-                        paddingVertical: 6,
-                        paddingHorizontal: 20,
-                        borderRadius: theme.radius,
-                      }}
-                      textStyle={{ color: 'white' }}
-                      onPress={() => handleSelectService(service)}
-                    >
-                      BookNow
-                    </Button>
+          <View className="flex-row flex flex-wrap gap-4 justify-evenly">
+            {data &&
+              data.map((service: ServiceResponse) => (
+                <View
+                  className="w-full sm:w-5/12 mb-5 bg-white rounded-3xl overflow-hidden "
+                  key={service.id}
+                >
+                  <Image
+                    className="w-full h-48"
+                    source={{ uri: service.images[0].url }}
+                  />
+                  <View className="p-4 gap-2">
+                    <Text className="text-xl">{service.name}</Text>
+                    <Text>{minutesToHoursAndMinutes(service.duration)}</Text>
+                    {service.isAvailableOnline && (
+                      <Chip text="Available Online" icon="videocam-outline" />
+                    )}
+                    <View style={{ alignSelf: 'flex-end' }}>
+                      <Button
+                        style={{
+                          backgroundColor: theme.background,
+                          alignSelf: 'flex-start',
+                          paddingVertical: 6,
+                          paddingHorizontal: 20,
+                          borderRadius: theme.radius,
+                        }}
+                        textStyle={{ color: 'white' }}
+                        onPress={() => handleSelectService(service)}
+                      >
+                        BookNow
+                      </Button>
+                    </View>
                   </View>
                 </View>
-              </View>
-            ))}
+              ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>

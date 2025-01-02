@@ -12,11 +12,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { useState } from 'react';
 import { Input } from '@/presentation/theme/components/ui/Input';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 import Button from '@/presentation/theme/components/ui/Button';
 import Select from '@/presentation/theme/components/ui/Select';
 import { countries } from '@/countryData';
 import Toast from 'react-native-toast-message';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const countryCodes: { label: string; value: string }[] = [];
 
@@ -91,7 +92,6 @@ const Signup = () => {
       });
       router.replace('/');
     }
-    console.warn(response);
     setLoading(false);
 
     // if (response.verification_code) {
@@ -129,238 +129,178 @@ const Signup = () => {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-      <ScrollView>
-        <View
-          style={{
-            padding: 20,
-            height: '100%',
-          }}
-        >
-          <View
-            style={{
-              paddingBottom: 40,
-              alignItems: 'center',
-            }}
-          >
-            <Image
-              source={require('../../../assets/images/logo.webp')}
-              style={{
-                width: '100%',
-                resizeMode: 'contain',
-              }}
-            />
-            <Text
-              style={{
-                textAlign: 'center',
-                fontWeight: '300',
-                color: 'white',
-                fontSize: 60,
-              }}
-            >
-              Sign up
-            </Text>
-            <Text style={{ color: 'white', fontSize: 16 }}>
-              Already have an account?{' '}
-              <Link
-                href={'/auth/signin'}
+      <SafeAreaView>
+        <ScrollView>
+          <View className="flex flex-col gap-5 p-5 max-w-['500'] mx-auto">
+            <View className="flex gap-5">
+              <Image
+                source={require('../../../assets/images/logo.webp')}
                 style={{
-                  color: 'orange',
-                  textDecorationLine: 'underline',
-                  fontSize: 16,
-                }}
-              >
-                Log in
-              </Link>
-            </Text>
-          </View>
-
-          <View
-            style={{
-              gap: 20,
-            }}
-          >
-            {errors.root && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.root?.message as string}
-              </Text>
-            )}
-
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  placeholder="First name"
-                  autoCapitalize="words"
-                  autoComplete="name"
-                />
-              )}
-            />
-            {errors.name && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.name?.message as string}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              name="lastName"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder="Last name"
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  autoCapitalize="words"
-                  autoComplete="name-family"
-                />
-              )}
-            />
-            {errors.lastName && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.lastName?.message as string}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              name="email"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  keyboardType="email-address"
-                  placeholder="Email"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
-              )}
-            />
-            {errors.email && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.email?.message as string}
-              </Text>
-            )}
-            <View style={{ flexDirection: 'row', gap: 20 }}>
-              <Select
-                options={countryCodes}
-                onSelect={(item) => setValue('countryCode', item?.value)}
-                placeholder="Country"
-                style={{
-                  flex: 1,
+                  width: '100%',
+                  resizeMode: 'contain',
                 }}
               />
+              <Text className="text-4xl color-white text-center">Sign up</Text>
+              <Text className="text-white text-center ">
+                Already have an account?{' '}
+                <Text
+                  onPress={() => router.replace('/auth/signin')}
+                  className="text-blue-100 underline"
+                >
+                  Log in
+                </Text>
+              </Text>
+            </View>
+
+            <View className="flex gap-5">
+              {errors.root && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.root?.message as string}
+                </Text>
+              )}
+
               <Controller
                 control={control}
-                name="phoneNumber"
+                name="name"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    keyboardType="phone-pad"
-                    placeholder="Phone Number"
-                    autoCapitalize="none"
-                    autoComplete="tel-device"
-                    style={{
-                      flex: 3,
-                    }}
+                    placeholder="First name"
+                    autoCapitalize="words"
+                    autoComplete="name"
                   />
                 )}
               />
+              {errors.name && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.name?.message as string}
+                </Text>
+              )}
+              <Controller
+                control={control}
+                name="lastName"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    placeholder="Last name"
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize="words"
+                    autoComplete="name-family"
+                  />
+                )}
+              />
+              {errors.lastName && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.lastName?.message as string}
+                </Text>
+              )}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    placeholder="Email"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                  />
+                )}
+              />
+              {errors.email && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.email?.message as string}
+                </Text>
+              )}
+              <View style={{ flexDirection: 'row', gap: 20 }}>
+                <Select
+                  options={countryCodes}
+                  onSelect={(item) => setValue('countryCode', item?.value)}
+                  placeholder="Country"
+                  style={{
+                    flex: 1,
+                  }}
+                />
+                <Controller
+                  control={control}
+                  name="phoneNumber"
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <Input
+                      value={value}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      keyboardType="phone-pad"
+                      placeholder="Phone Number"
+                      autoCapitalize="none"
+                      autoComplete="tel-device"
+                      style={{
+                        flex: 2,
+                      }}
+                    />
+                  )}
+                />
+              </View>
+              {errors.phoneNumber && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.phoneNumber?.message as string}
+                </Text>
+              )}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize="none"
+                    secureTextEntry
+                    placeholder="Password"
+                    autoComplete="password-new"
+                  />
+                )}
+              />
+              {errors.password && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.password?.message as string}
+                </Text>
+              )}
+              <Controller
+                control={control}
+                name="confirmPassword"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    autoCapitalize="none"
+                    secureTextEntry
+                    placeholder="Confirm Password"
+                    autoComplete="password-new"
+                  />
+                )}
+              />
+              {errors.confirmPassword && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.confirmPassword?.message as string}
+                </Text>
+              )}
+              <Button
+                loading={loading}
+                disabled={loading}
+                onPress={handleSubmit(handleSignup)}
+              >
+                Sign up
+              </Button>
             </View>
-            {errors.phoneNumber && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.phoneNumber?.message as string}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  autoCapitalize="none"
-                  secureTextEntry
-                  placeholder="Password"
-                  autoComplete="password-new"
-                />
-              )}
-            />
-            {errors.password && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.password?.message as string}
-              </Text>
-            )}
-            <Controller
-              control={control}
-              name="confirmPassword"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  autoCapitalize="none"
-                  secureTextEntry
-                  placeholder="Confirm Password"
-                  autoComplete="password-new"
-                />
-              )}
-            />
-            {errors.confirmPassword && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.confirmPassword?.message as string}
-              </Text>
-            )}
-            <Button
-              loading={loading}
-              disabled={loading}
-              onPress={handleSubmit(handleSignup)}
-            >
-              Sign up
-            </Button>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };

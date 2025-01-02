@@ -55,7 +55,6 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   checkStatus: async () => {
     const response = await checkStatus();
-    console.warn({ checkStatus: response });
 
     if (response.message === 'Network request failed') {
       get().setUnauthenticated();

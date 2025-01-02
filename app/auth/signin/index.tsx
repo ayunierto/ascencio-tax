@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, KeyboardAvoidingView, Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Link, router } from 'expo-router';
+import { router } from 'expo-router';
 
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -11,6 +11,7 @@ import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
 import Toast from 'react-native-toast-message';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const loginUserSchema = z.object({
   username: z
@@ -53,12 +54,7 @@ const Signin = () => {
   const handleSignin = async (values: z.infer<typeof loginUserSchema>) => {
     setIsLoading(true);
     const response = await signin(values.username, values.password);
-    console.warn({ sigin: response });
     setIsLoading(false);
-    // if (response.error === 'Inactive') {
-    // navigation.navigate('VerifyScreen');
-    // return;
-    // }
     if (response.error === 'Unauthorized') {
       setError('root', {
         type: 'manual',
@@ -69,145 +65,94 @@ const Signin = () => {
       return;
     }
     if (response.token) {
-      // Toast.show({
-      //   type: 'success',
-      //   text1: 'Log in success',
-      //   text2: `Welcome ${response.data.name}`,
-      // });
       router.replace('/');
     }
   };
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-      <ScrollView>
-        <View
-          style={{
-            padding: 20,
-            height: '100%',
-          }}
-        >
-          <View
-            style={{
-              paddingTop: 40,
-              paddingBottom: 40,
-              alignItems: 'center',
-            }}
-          >
-            <Image
-              source={require('../../../assets/images/logo.webp')}
-              style={{
-                width: '100%',
-                resizeMode: 'contain',
-              }}
-            />
-            <Text
-              style={{
-                fontSize: 60,
-                textAlign: 'center',
-                fontWeight: '300',
-                color: 'white',
-              }}
-            >
-              Log in
-            </Text>
-            <Text
-              style={{
-                marginTop: 20,
-                color: 'white',
-                fontSize: 16,
-              }}
-            >
-              Don’t have an account?{' '}
-              <Link
-                href={'/auth/signup'}
+      <SafeAreaView>
+        <ScrollView>
+          <View className="flex flex-col gap-5 p-5 max-w-['500'] mx-auto">
+            <View className="flex gap-5">
+              <Image
+                source={require('../../../assets/images/logo.webp')}
                 style={{
-                  color: 'orange',
-                  textDecorationLine: 'underline',
-                  fontSize: 16,
+                  width: '100%',
+                  height: 200,
+                  resizeMode: 'contain',
                 }}
-              >
-                Sign up.
-              </Link>
-            </Text>
-          </View>
-
-          <View
-            style={{
-              gap: 20,
-            }}
-          >
-            {errors.root && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.root?.message as string}
+              />
+              <Text className="text-4xl color-white text-center">Log in</Text>
+              <Text className="color-white text-center">
+                Don’t have an account?{' '}
+                <Text
+                  onPress={() => router.replace('/auth/signup')}
+                  className="text-blue-100 underline"
+                >
+                  Sign up.
+                </Text>
               </Text>
-            )}
-            <Controller
-              control={control}
-              name="username"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  keyboardType="email-address"
-                  placeholder="Email or phone number"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
+            </View>
+
+            <View className="flex gap-5">
+              {errors.root && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.root?.message as string}
+                </Text>
               )}
-            />
-            {errors.username && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.username?.message as string}
-              </Text>
-            )}
-
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  secureTextEntry={true}
-                  placeholder="Enter password"
-                  autoComplete="password"
-                />
+              <Controller
+                control={control}
+                name="username"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    placeholder="Email or phone number"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                  />
+                )}
+              />
+              {errors.username && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.username?.message as string}
+                </Text>
               )}
-            />
-            {errors.password && (
-              <Text
-                style={{
-                  marginTop: -15,
-                  color: 'yellow',
-                }}
-              >
-                {errors.password?.message as string}
-              </Text>
-            )}
 
-            <Button
-              loading={isLoading}
-              disabled={isLoading}
-              onPress={handleSubmit(handleSignin)}
-            >
-              Log in
-            </Button>
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    secureTextEntry={true}
+                    placeholder="Enter password"
+                    autoComplete="password"
+                  />
+                )}
+              />
+              {errors.password && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.password?.message as string}
+                </Text>
+              )}
+
+              <Button
+                loading={isLoading}
+                disabled={isLoading}
+                onPress={handleSubmit(handleSignin)}
+              >
+                Log in
+              </Button>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 };
