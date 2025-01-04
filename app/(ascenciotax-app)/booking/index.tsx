@@ -58,7 +58,7 @@ const BookingScreen = () => {
     })
   );
 
-  const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
   // Fetch availability
   useEffect(() => {
@@ -74,6 +74,7 @@ const BookingScreen = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
+        console.warn(data);
         setAvailableSlots(data);
       } catch (error) {
         console.error('Error fetching availability:', error);
@@ -110,10 +111,10 @@ const BookingScreen = () => {
 
   const { saveDetails } = useBookingStore();
   function handleBookNow() {
-    if (selectedSlot) {
+    if (selectedSlot && selectedStaff) {
       saveDetails(
-        selectedStaff!.value,
-        selectedStaff!.label,
+        selectedStaff.value,
+        selectedStaff.label,
         selectedSlot.start,
         selectedSlot.end
       );
@@ -146,7 +147,6 @@ const BookingScreen = () => {
                     selectedDayBackgroundColor: '#2596be',
                   }}
                   onDayPress={(day: Day) => {
-                    console.log(day);
                     setSelectedDate(day.dateString);
                   }}
                   markedDates={{

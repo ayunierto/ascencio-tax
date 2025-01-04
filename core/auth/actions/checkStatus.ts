@@ -3,7 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 
 export const checkStatus = async () => {
   try {
-    const API_URL = 'https://ascenciotaxinc-a2594d75dc54.herokuapp.com/api';
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
     const token = (await SecureStore.getItemAsync('token')) || '';
 

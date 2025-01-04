@@ -1,4 +1,3 @@
-import { View, ActivityIndicator, Text } from 'react-native';
 import React, { useEffect } from 'react';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { Redirect } from 'expo-router';
