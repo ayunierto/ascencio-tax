@@ -1,7 +1,8 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
 .env
-ascencioapp-1b829293aeb0.json
+.env.prod
+
 
 # dependencies
 node_modules/
