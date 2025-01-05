@@ -221,7 +221,7 @@ const Signup = () => {
                 <Select
                   options={countryCodes}
                   onSelect={(item) => setValue('countryCode', item?.value)}
-                  placeholder="Country"
+                  placeholder="+1"
                   style={{
                     flex: 1,
                   }}
@@ -239,7 +239,7 @@ const Signup = () => {
                       autoCapitalize="none"
                       autoComplete="tel-device"
                       style={{
-                        flex: 2,
+                        flex: 1,
                       }}
                     />
                   )}
