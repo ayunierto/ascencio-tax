@@ -1,14 +1,11 @@
 import { View, Text, SafeAreaView, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { ThemedText } from '@/presentation/theme/components/ThemedText';
 import Button from '@/presentation/theme/components/ui/Button';
 import Chip from '@/presentation/theme/components/ui/Chip';
 import { useBookingStore } from '@/presentation/services/store/useBookingStore';
 import Select from '@/presentation/theme/components/ui/Select';
 import { Calendar } from 'react-native-calendars';
 import { router } from 'expo-router';
-import { config } from '@/core/config';
-import { Ionicons } from '@expo/vector-icons';
 import Alert from '@/presentation/theme/components/ui/Alert';
 
 interface Option {
@@ -58,9 +55,8 @@ const BookingScreen = () => {
     })
   );
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
   // Fetch availability
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   useEffect(() => {
     const fetchAvailability = async () => {
       if (!selectedStaff) {
@@ -74,11 +70,14 @@ const BookingScreen = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.warn(data);
         setAvailableSlots(data);
+        if (data.length === 0) {
+          setSelectedSlot(undefined);
+        }
       } catch (error) {
         console.error('Error fetching availability:', error);
         setAvailableSlots([]); // Manejar el error mostrando que no hay disponibilidad
+        setSelectedSlot(undefined);
       }
     };
 

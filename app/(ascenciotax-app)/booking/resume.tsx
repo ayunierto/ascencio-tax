@@ -62,27 +62,6 @@ const ResumeScreen = () => {
             gap: 10,
           }}
         >
-          <Ionicons
-            size={40}
-            color={theme.background}
-            name="calendar-outline"
-          />
-          <View>
-            <Text style={{ fontSize: 16 }}>Service</Text>
-            <Text>{new Date(startDateAndTime!).toLocaleDateString()}</Text>
-          </View>
-        </View>
-
-        <View
-          style={{
-            backgroundColor: theme.card,
-            borderRadius: 14,
-            padding: 20,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
           <Ionicons size={40} color={theme.background} name="map-outline" />
           <View style={{ width: '80%' }}>
             <Text style={{ fontSize: 16 }}>Address</Text>
@@ -106,6 +85,27 @@ const ResumeScreen = () => {
           <View>
             <Text style={{ fontSize: 16 }}>Staff</Text>
             <Text>{staffName}</Text>
+          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: theme.card,
+            borderRadius: 14,
+            padding: 20,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <Ionicons
+            size={40}
+            color={theme.background}
+            name="calendar-outline"
+          />
+          <View>
+            <Text style={{ fontSize: 16 }}>Date</Text>
+            <Text>{new Date(startDateAndTime!).toLocaleDateString()}</Text>
           </View>
         </View>
 

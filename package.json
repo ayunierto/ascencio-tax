@@ -10,10 +10,10 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint",
-    "build:android": "dotenv -e .env.prod -- eas build --platform android",
-    "build:android:preview": "dotenv -e .env.prod -- eas build --platform android --profile preview",
-    "build:ios": "dotenv -e .env.prod -- eas build --platform ios",
-    "build:ios:preview": "dotenv -e .env.prod -- eas build --platform ios --profile preview"
+    "build:android": "eas build --platform android",
+    "build:android:preview": "eas build --platform android --profile preview",
+    "build:ios": "xeas build --platform ios",
+    "build:ios:preview": "eas build --platform ios --profile preview"
   },
   "jest": {
     "preset": "jest-expo"
