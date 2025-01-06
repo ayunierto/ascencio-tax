@@ -73,7 +73,7 @@ const Signup = () => {
         });
         return;
       }
-      if (response.message.toLowerCase().includes('phoneNumber')) {
+      if (response.message.includes('phoneNumber')) {
         setError('phoneNumber', {
           type: 'manual',
           message:
