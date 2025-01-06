@@ -24,6 +24,7 @@ export const signup = async ({
         password,
         countryCode,
         phoneNumber,
+        verificationPlatform: 'email',
       }),
     }).then((data) => data.json());
 

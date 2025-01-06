@@ -16,9 +16,10 @@ export interface AuthState {
   signup: (values: RegisterData) => Promise<any>;
   checkStatus: () => Promise<any>;
   logout: () => Promise<boolean>;
-  verifyCode: (phoneNumber: string, verfication_code: string) => Promise<any>;
+  verifyCode: (username: string, verificationCode: string) => Promise<any>;
   setAuthenticated: (token: string, user: User) => void;
   setUnauthenticated: () => void;
+  setUser: (user: User) => void;
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -41,9 +42,14 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   signup: async (values: RegisterData) => {
     const response = await signup(values);
-    // if (response.verification_code) {
-    //   get().setUnauthenticated();
-    // }
+    if (response.verificationCode) {
+      set({
+        status: 'unauthenticated',
+        token: undefined,
+        user: response,
+      });
+      return response;
+    }
     if (response.token) {
       await SecureStore.setItemAsync('token', response.token);
       get().setAuthenticated(response.token, response);
@@ -63,17 +69,16 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     if (response.token) {
       await SecureStore.setItemAsync('token', response.token);
-
       get().setAuthenticated(response.token, response.user);
       return { code: 200, message: 'Authenticated', data: response };
     }
 
     if (response.statusCode === 401) {
-      set({ status: 'unauthenticated', token: undefined, user: undefined });
+      get().setUnauthenticated();
       return false;
     }
 
-    set({ status: 'unauthenticated', token: undefined, user: undefined });
+    get().setUnauthenticated();
     return false;
   },
 
@@ -83,16 +88,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     return false;
   },
 
-  verifyCode: async (phoneNumber: string, verification_code: string) => {
-    const response = await verifyCode(phoneNumber, verification_code);
+  verifyCode: async (username: string, verificationCode: string) => {
+    const response = await verifyCode(username, verificationCode);
     if (response.token) {
-      // await StorageAdapter.setItem('token', response.token);
-
-      set({
-        status: 'authenticated',
-        token: response.token,
-        user: response.user,
-      });
+      await SecureStore.setItemAsync('token', response.token);
+      get().setAuthenticated(response.token, response.user);
+      return response;
     }
     return response;
   },
@@ -104,11 +105,18 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       user: user,
     });
   },
+
   setUnauthenticated: () => {
     set({
       status: 'unauthenticated',
       token: undefined,
       user: undefined,
+    });
+  },
+
+  setUser: (user: User) => {
+    set({
+      user: user,
     });
   },
 }));

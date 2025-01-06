@@ -16,6 +16,7 @@ const ResumeScreen = () => {
   const handleConfirm = async () => {
     setLoading(true);
     const appointment = await bookNow();
+    console.log(appointment);
     setLoading(false);
     if (appointment.id) {
       Toast.show({

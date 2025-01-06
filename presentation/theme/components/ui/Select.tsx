@@ -1,12 +1,11 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Modal,
   TouchableOpacity,
-  FlatList,
   StyleProp,
   ViewStyle,
   ScrollView,
@@ -15,12 +14,6 @@ import {
 } from 'react-native';
 import { Input } from './Input';
 import { AntDesign } from '@expo/vector-icons';
-// import Icon from '@react-native-vector-icons/ionicons';
-
-interface Option {
-  label: string;
-  value: any;
-}
 
 interface SelectProps {
   options: Option[];
@@ -30,8 +23,13 @@ interface SelectProps {
   className?: string;
 }
 
+interface Option {
+  label: string;
+  value: any;
+}
+
 const Select = ({
-  options: items,
+  options: initialOptions,
   style,
   onSelect,
   className,
@@ -39,22 +37,31 @@ const Select = ({
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
-  const [options, setOptions] = useState(items);
+  const [searchText, setSearchText] = useState('');
+  const [filteredOptions, setFilteredOptions] =
+    useState<Option[]>(initialOptions);
+
+  useEffect(() => {
+    if (searchText === '') {
+      setFilteredOptions(initialOptions);
+    } else {
+      const newItems = initialOptions.filter((item) =>
+        item.label.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setFilteredOptions(newItems);
+    }
+  }, [searchText, initialOptions]); // It runs when search text or items changes
 
   const handleSelect = (item: Option) => {
     setSelectedValue(item);
     onSelect(item);
     setModalVisible(false);
+    setSearchText(''); // Clean the search text when selecting an option
   };
 
-  function filterOptions(
-    e: NativeSyntheticEvent<TextInputChangeEventData>
-  ): void {
-    const newItems = items.filter((item) =>
-      item.label.toLowerCase().includes(e.nativeEvent.text.toLowerCase())
-    );
-    setOptions(newItems);
-  }
+  const handleSearchChange = (text: string) => {
+    setSearchText(text);
+  };
 
   return (
     <View style={style} className={`${className}`}>
@@ -63,25 +70,15 @@ const Select = ({
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.selectButtonText}>
-          {selectedValue ? selectedValue.label : placeholder || 'Seleccionar'}
+          {selectedValue ? selectedValue.label : placeholder || 'Select'}
         </Text>
-        {modalVisible ? (
-          <AntDesign
-            className="transition-all duration-300"
-            name="up"
-            size={16}
-            color={'white'}
-          />
-        ) : (
-          <AntDesign
-            className="transition-all duration-300"
-            name="down"
-            size={16}
-            color={'white'}
-          />
-        )}
+        <AntDesign
+          className="transition-all duration-300"
+          name={modalVisible ? 'up' : 'down'}
+          size={16}
+          color={'white'}
+        />
       </TouchableOpacity>
-      {/* <Icon name="chevron-down" color="white" size={20} /> */}
 
       <Modal
         animationType="fade"
@@ -93,12 +90,13 @@ const Select = ({
           <View className="flex gap-4 bg-white p-5 rounded-2xl w-10/12 max-h-['80%'] ">
             <Input
               placeholder="Search"
-              onChange={filterOptions}
+              onChange={(e) => handleSearchChange(e.nativeEvent.text)}
+              value={searchText}
               placeholderTextColor={'#ccc'}
               style={{ color: 'black', borderColor: '#ccc' }}
             />
             <ScrollView>
-              {options.map((item) => (
+              {filteredOptions.map((item) => (
                 <TouchableOpacity
                   key={item.label}
                   onPress={() => handleSelect(item)}
@@ -111,7 +109,10 @@ const Select = ({
 
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalVisible(false)}
+              onPress={() => {
+                setModalVisible(false);
+                setSearchText('');
+              }}
             >
               <Text className="text-red-500">Close</Text>
             </TouchableOpacity>

@@ -1,8 +1,6 @@
-import { config } from '@/core/config';
-
 export const verifyCode = async (
-  phone_number: string,
-  verfication_code: string
+  username: string,
+  verificationCode: string
 ) => {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   try {
@@ -11,7 +9,7 @@ export const verifyCode = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ phone_number, verfication_code }),
+      body: JSON.stringify({ username, verificationCode }),
     }).then((data) => data.json());
 
     return response;

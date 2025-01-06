@@ -1,14 +1,19 @@
 import { TextInput, type TextInputProps } from 'react-native';
 
-export type InputProps = TextInputProps & {
+interface InputProps extends TextInputProps {
   className?: string;
-};
+  placeholderTextColor?: string;
+}
 
-export function Input({ className, ...props }: InputProps) {
+export function Input({
+  className,
+  placeholderTextColor,
+  ...props
+}: InputProps) {
   return (
     <TextInput
       className={`border border-white h-12 px-5 color-white rounded-full ${className}`}
-      placeholderTextColor={'#ccc'}
+      placeholderTextColor={placeholderTextColor || '#ccc'}
       {...props}
     />
   );
