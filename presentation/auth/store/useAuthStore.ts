@@ -4,6 +4,8 @@ import { RegisterData } from '@/core/auth/interfaces/register.data';
 import { checkStatus, signin, signup, verifyCode } from '@/core/auth/actions';
 
 import * as SecureStore from 'expo-secure-store';
+import { changePassword } from '@/core/auth/actions/changePassword';
+import { resetPassword } from '@/core/auth/actions/resetPassword';
 
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
@@ -20,6 +22,8 @@ export interface AuthState {
   setAuthenticated: (token: string, user: User) => void;
   setUnauthenticated: () => void;
   setUser: (user: User) => void;
+  resetPassword: (username: string) => Promise<any>;
+  changePassword: (password: string) => Promise<any>;
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
@@ -118,5 +122,21 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     set({
       user: user,
     });
+  },
+
+  resetPassword: async (username: string) => {
+    const response = await resetPassword(username);
+    if (response.email) {
+      set({ user: response });
+    }
+    return response;
+  },
+
+  changePassword: async (password: string) => {
+    const response = await changePassword(password);
+    if (response.token) {
+      set({ user: response });
+    }
+    return response;
   },
 }));

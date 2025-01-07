@@ -1,4 +1,3 @@
-import { config } from '@/core/config';
 import * as SecureStore from 'expo-secure-store';
 
 export const checkStatus = async () => {

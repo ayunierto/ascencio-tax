@@ -35,13 +35,13 @@ const Signup = () => {
   } = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      confirmPassword: 'Alcides.92',
-      password: 'Alcides.92',
-      email: 'aytodev@gmail.com',
-      lastName: 'Turruellas',
-      name: 'Alcides',
+      confirmPassword: '',
+      password: '',
+      email: '',
+      lastName: '',
+      name: '',
       countryCode: '',
-      phoneNumber: '917732227',
+      phoneNumber: '',
     },
   });
 

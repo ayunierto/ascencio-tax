@@ -12,7 +12,7 @@ import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
-const verifyCode = () => {
+const verifyCodeResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { user, verifyCode } = useAuthStore();
   const {
@@ -36,7 +36,7 @@ const verifyCode = () => {
       setIsLoading(false);
 
       if (response.token) {
-        router.replace('/(ascenciotax-app)/(home)');
+        router.replace('/auth/forgotPassword/newPassword');
       }
 
       if (response.statusCode === 401) {
@@ -81,12 +81,13 @@ const verifyCode = () => {
 
   return (
     <View className="flex justify-center gap-5">
-      <Header title={'Verify'} subtitle={'Please verify your account'} />
+      <Header
+        title={'Enter security code'}
+        subtitle={
+          'Please check your email for a message with your code. Your code is 6 numbers long.'
+        }
+      />
 
-      <Alert type="info">
-        We have sent a verification code to your email. Please enter the code
-        sent to verify your account.
-      </Alert>
       <Controller
         control={control}
         name="verificationCode"
@@ -123,4 +124,4 @@ const verifyCode = () => {
   );
 };
 
-export default verifyCode;
+export default verifyCodeResetPassword;

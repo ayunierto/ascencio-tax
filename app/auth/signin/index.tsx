@@ -139,6 +139,13 @@ const Signin = () => {
         </Text>
       )}
 
+      <Text
+        className="text-blue-300 text-center"
+        onPress={() => router.push('/auth/forgotPassword')}
+      >
+        Forgot password?
+      </Text>
+
       {userInactive && (
         <>
           <Text className="-mt-4 text-yellow-400">

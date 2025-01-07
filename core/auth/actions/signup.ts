@@ -1,4 +1,3 @@
-import { config } from '@/core/config';
 import { RegisterData } from '../interfaces/register.data';
 
 export const signup = async ({
