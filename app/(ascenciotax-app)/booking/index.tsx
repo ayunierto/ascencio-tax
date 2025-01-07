@@ -7,6 +7,7 @@ import Select from '@/presentation/theme/components/ui/Select';
 import { Calendar } from 'react-native-calendars';
 import { router } from 'expo-router';
 import Alert from '@/presentation/theme/components/ui/Alert';
+import Loader from '@/presentation/theme/components/Loader';
 
 interface Option {
   label: string;
@@ -25,27 +26,25 @@ const BookingScreen = () => {
   const getCurrentDate = () => {
     const date = new Date();
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mes empieza desde 0 (enero es 0)
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // month begins from 0 (January is 0)
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
 
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getCurrentDate());
   const [selectedStaff, setSelectedStaff] = useState<Option | null>(null);
   const [availableSlots, setAvailableSlots] = useState<
-    { start: string; end: string }[]
-  >([]);
-
-  const [selectedSlot, setSelectedSlot] = useState<{
-    start: string;
-    end: string;
-  }>();
-  const [slotsToDisplay, setSlotsToDisplay] = useState<
     {
       start: string;
       end: string;
     }[]
-  >();
+  >([]);
+  const [selectedSlot, setSelectedSlot] = useState<{
+    start: string;
+    end: string;
+  }>();
+
   const { selectedService } = useBookingStore();
 
   const staff: Option[] = selectedService!.staff.map(
@@ -55,58 +54,37 @@ const BookingScreen = () => {
     })
   );
 
-  // Fetch availability
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   useEffect(() => {
-    const fetchAvailability = async () => {
-      if (!selectedStaff) {
-        return;
-      }
-      try {
-        const response = await fetch(
-          `${API_URL}/availability?staffMemberId=${selectedStaff.value}&date=${selectedDate}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setAvailableSlots(data);
-        if (data.length === 0) {
+    if (selectedStaff) {
+      const fetchAvailability = async () => {
+        setAvailableSlots([]);
+
+        setLoading(true);
+        try {
+          const response = await fetch(
+            `${API_URL}/availability?staff=${selectedStaff.value}&date=${selectedDate}`
+          );
+          const data = await response.json();
+          setAvailableSlots(data);
+
+          if (data.length === 0) {
+            setSelectedSlot(undefined);
+          }
+        } catch (error) {
+          console.error('Error fetching availability:', error);
+          setAvailableSlots([]);
           setSelectedSlot(undefined);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error('Error fetching availability:', error);
-        setAvailableSlots([]); // Manejar el error mostrando que no hay disponibilidad
-        setSelectedSlot(undefined);
-      }
-    };
-
-    fetchAvailability();
-  }, [API_URL, selectedDate, selectedStaff]);
-
-  // Generate all day slots
-  useEffect(() => {
-    const generateAllDaySlots = () => {
-      const allDaySlots = [];
-
-      for (const slot of availableSlots) {
-        const startTime = new Date(slot.start);
-        const endTime = new Date(slot.end);
-        let currentTime = new Date(startTime);
-
-        while (currentTime < endTime) {
-          allDaySlots.push({
-            start: currentTime.toISOString(),
-            end: new Date(currentTime.getTime() + 60 * 60 * 1000).toISOString(), // Intervalo de 1 hora
-          });
-          currentTime.setTime(currentTime.getTime() + 60 * 60 * 1000);
-        }
-      }
-      return allDaySlots;
-    };
-
-    setSlotsToDisplay(generateAllDaySlots());
-  }, [availableSlots]);
+      };
+      fetchAvailability();
+    } else {
+      setAvailableSlots([]);
+      setSelectedSlot(undefined);
+    }
+  }, [selectedDate, selectedStaff]);
 
   const { saveDetails } = useBookingStore();
   function handleBookNow() {
@@ -164,34 +142,37 @@ const BookingScreen = () => {
                 Available times
               </Text>
               <View className="flex flex-row flex-wrap justify-between p-2">
-                {!selectedStaff ? (
+                {loading ? (
+                  <Loader />
+                ) : !selectedStaff ? (
                   <Alert type="info">
-                    Select a staff member to show the available schedules.
+                    Select a staff member to see the schedules available.
                   </Alert>
                 ) : availableSlots.length === 0 ? (
                   <Alert type="info">
                     There are no appointments available for this day.
                   </Alert>
                 ) : (
-                  slotsToDisplay &&
-                  slotsToDisplay.map((slot) => {
-                    const startTime = new Date(slot.start).toLocaleTimeString(
-                      [],
-                      {
+                  availableSlots.map((slot) => (
+                    <Chip
+                      text={new Date(slot.start).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
+                      })}
+                      key={slot.start}
+                      icon={'alarm-outline'}
+                      onPress={() => setSelectedSlot(slot)}
+                      style={
+                        selectedSlot?.start === slot.start && {
+                          backgroundColor: '#3b82f6',
+                        }
                       }
-                    );
-                    return (
-                      <Chip
-                        text={startTime}
-                        key={slot.start}
-                        icon="alarm-outline"
-                        onPress={() => setSelectedSlot(slot)}
-                        className="w-2/5 m-2"
-                      />
-                    );
-                  })
+                      color={
+                        selectedSlot?.start === slot.start ? 'white' : 'black'
+                      }
+                      className={`w-2/5 m-2`}
+                    />
+                  ))
                 )}
               </View>
               <View>

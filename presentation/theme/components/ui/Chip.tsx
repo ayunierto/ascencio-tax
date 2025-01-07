@@ -1,6 +1,7 @@
 import {
   StyleProp,
   Text,
+  TextStyle,
   TouchableOpacity,
   ViewStyle,
   type TouchableOpacityProps,
@@ -12,10 +13,20 @@ import { Ionicons } from '@expo/vector-icons';
 interface ChipProps extends TouchableOpacityProps {
   text: string;
   icon?: keyof typeof Ionicons.glyphMap;
-  style?: StyleProp<ViewStyle>;
+  color?: string;
+  className?: string;
+  classNameText?: string;
 }
 
-const Chip = ({ text, icon, style, ...props }: ChipProps) => {
+const Chip = ({
+  text,
+  icon,
+  style,
+  className,
+  classNameText,
+  color,
+  ...props
+}: ChipProps) => {
   return (
     <TouchableOpacity
       style={[
@@ -32,10 +43,13 @@ const Chip = ({ text, icon, style, ...props }: ChipProps) => {
         },
         style,
       ]}
+      className={className}
       {...props}
     >
-      {icon && <Ionicons name={icon} size={22} />}
-      <Text>{text}</Text>
+      {icon && <Ionicons color={color || 'black'} name={icon} size={22} />}
+      <Text className={`${classNameText}`} style={{ color: color || 'black' }}>
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 };

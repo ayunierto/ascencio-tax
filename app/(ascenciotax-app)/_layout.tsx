@@ -3,7 +3,6 @@ import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { Redirect } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import Toast from 'react-native-toast-message';
-import { useThemeColor } from '@/presentation/theme/hooks/useThemeColor';
 import { Ionicons } from '@expo/vector-icons';
 import Loader from '@/presentation/theme/components/Loader';
 import { theme } from '@/presentation/theme/components/ui/Theme';
@@ -20,13 +19,6 @@ const CheckAuthenticationLayout = () => {
           text2: res.message,
         });
       }
-      // if (res.code === 200) {
-      //   Toast.show({
-      //     type: 'success',
-      //     text1: 'Log in success',
-      //     text2: `Welcome ${res.data.name} `,
-      //   });
-      // }
     });
   }, []);
 
@@ -35,7 +27,6 @@ const CheckAuthenticationLayout = () => {
   }
 
   if (status === 'unauthenticated') {
-    // Guardar ruta dle usuario en el storage para volver despues del login
     return <Redirect href="/auth/signin" />;
   }
 
