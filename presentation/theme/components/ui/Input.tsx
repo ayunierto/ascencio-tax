@@ -12,7 +12,7 @@ export function Input({
 }: InputProps) {
   return (
     <TextInput
-      className={`border border-white h-12 px-5 color-white rounded-full ${className}`}
+      className={`border border-white h-[48] px-5 color-white rounded-full text-[16px] ${className}`}
       placeholderTextColor={placeholderTextColor || '#ccc'}
       {...props}
     />

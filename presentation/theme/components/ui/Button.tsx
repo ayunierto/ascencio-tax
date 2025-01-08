@@ -6,7 +6,6 @@ import {
   TextStyle,
   View,
 } from 'react-native';
-import { theme } from './Theme';
 import { AntDesign, Feather } from '@expo/vector-icons';
 
 interface ButtonProps extends PressableProps {
@@ -28,17 +27,16 @@ export const Button = ({
   textStyle,
   className,
   textClassName,
-  //
   icon,
   ...rest
 }: ButtonProps) => {
   return (
     <Pressable
       onPress={disabled || loading ? () => {} : onPress}
-      {...rest}
-      className={`bg-white rounded-full px-4 h-11 flex items-center justify-center ${
+      className={`bg-white rounded-full px-4 h-[48] flex items-center justify-center ${
         disabled && 'opacity-60'
       } ${className}`}
+      {...rest}
     >
       {loading ? (
         <View className="flex-row gap-2 justify-center items-center">
@@ -59,7 +57,7 @@ export const Button = ({
         <View className="flex-row gap-2 justify-center items-center">
           {icon && icon}
           <Text
-            style={textStyle}
+            style={[{ fontSize: 16, fontWeight: '500' }, textStyle]}
             className={` ${disabled && 'text-gray-500'} ${textClassName}`}
           >
             {children}
