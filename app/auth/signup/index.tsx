@@ -176,7 +176,7 @@ const Signup = () => {
                 keyboardType="phone-pad"
                 placeholder="Phone Number"
                 autoCapitalize="none"
-                autoComplete="tel-device"
+                autoComplete="tel"
                 className="flex-1"
               />
             )}

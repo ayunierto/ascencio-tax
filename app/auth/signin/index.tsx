@@ -129,6 +129,7 @@ const Signin = () => {
             secureTextEntry={true}
             placeholder="Enter password"
             autoComplete="password"
+            autoCapitalize="none"
           />
         )}
       />
