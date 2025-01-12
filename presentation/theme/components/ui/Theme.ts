@@ -1,7 +1,7 @@
 export const theme = {
   // Default background color of <screens />...etc
   background: '#002e5d',
-  foreground: 'hsl(0, 0.00%, 100.00%)',
+  foreground: '#ffffff',
 
   // Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch />
   muted: 'hsl(210, 40%, 96.1%)',
@@ -22,11 +22,11 @@ export const theme = {
   inputBorder: 'hsl(214, 31.8%, 91.4%)',
 
   // Primary colors for <Button />
-  primary: '#FFFFFF',
-  primaryForeground: '#212121',
+  primary: '#3b82f6',
+  primaryForeground: '#ffffff',
 
   // Secondary colors for <Button />
-  secondary: 'hsl(210, 40%, 96.1%)',
+  secondary: '#ffffff',
   secondaryForeground: 'hsl(222, 47.4%, 11.2%)',
 
   // Used for accents such as hover effects on <DropdownMenuItem>, <SelectItem>...etc
