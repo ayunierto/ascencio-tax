@@ -4,22 +4,22 @@ export const theme = {
   foreground: '#ffffff',
 
   // Muted backgrounds such as <TabsList />, <Skeleton /> and <Switch />
-  muted: 'hsl(210, 40%, 96.1%)',
-  mutedForeground: 'hsl(215, 16.3%, 46.9%)',
+  muted: '#aaaaaa',
+  mutedForeground: '#64748b',
 
   // Background color for <Card />
-  card: 'hsl(0, 0%, 100%)',
-  cardForeground: 'hsl(222, 84%, 4.9%)',
+  card: '#3b82f622',
+  cardForeground: '#333333',
 
   // Background color for popovers such as <DropdownMenu />, <HoverCard />, <Popover />
   popover: 'hsl(0, 0%, 100%)',
   popoverForeground: 'hsl(222, 84%, 4.9%)',
 
   // Border color
-  border: 'hsl(214, 31.8%, 91.4%)',
+  border: '#3b82f655',
 
   // Border color for inputs such as <Input />, <Select />, <Textarea />
-  inputBorder: 'hsl(214, 31.8%, 91.4%)',
+  input: 'hsl(214, 31.8%, 91.4%)',
 
   // Primary colors for <Button />
   primary: '#3b82f6',

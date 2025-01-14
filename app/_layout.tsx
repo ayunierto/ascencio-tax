@@ -1,8 +1,8 @@
 import { CustomTheme } from '@/presentation/theme/CustomTheme';
 import { ThemeProvider } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
+import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -37,11 +37,10 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView>
         <ThemeProvider value={CustomTheme}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-            }}
-          />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
+
           <StatusBar style="light" />
           <Toast />
         </ThemeProvider>

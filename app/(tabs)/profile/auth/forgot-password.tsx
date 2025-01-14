@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native';
 import React, { useState } from 'react';
-import Header from '../components/Header';
+import Header from '../../../../presentation/theme/components/auth/Header';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -30,7 +30,7 @@ const ForgotPassword = () => {
   }: z.infer<typeof forgotPasswordSchema>) => {
     const response = await resetPassword(username);
     if (response.email) {
-      router.push('/auth/forgotPassword/verifyCodeResetPassword');
+      router.push('/(tabs)/auth/verifyCodeResetPassword');
       return;
     }
     Toast.show({

@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, Platform } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Button from '@/presentation/theme/components/ui/Button';
 import Chip from '@/presentation/theme/components/ui/Chip';
@@ -95,14 +95,21 @@ const BookingScreen = () => {
         selectedSlot.start,
         selectedSlot.end
       );
-      router.push('/(ascenciotax-app)/booking/resume');
+      router.push('/booking/resume');
     }
   }
 
   return (
     <SafeAreaView>
       <ScrollView>
-        <View className="flex flex-col gap-5 p-5">
+        <View
+          // className="flex flex-col gap-5 p-5"
+          style={{
+            padding: 20,
+            gap: 20,
+            // marginTop: Platform.OS === 'android' ? 20 : 0,
+          }}
+        >
           <Text className="color-white text-3xl">Select your preferences</Text>
           <Text className="color-white">
             Check out our availability and book the date and time that works for
@@ -138,18 +145,15 @@ const BookingScreen = () => {
             </View>
 
             <View className="sm:w-1/2 p-5">
-              <Text className="text-white text-2xl text-center mb-4 ">
-                Available times
-              </Text>
               <View className="flex flex-row flex-wrap justify-between p-2">
                 {loading ? (
                   <Loader />
                 ) : !selectedStaff ? (
-                  <Alert type="info">
+                  <Alert>
                     Select a staff member to see the schedules available.
                   </Alert>
                 ) : availableSlots.length === 0 ? (
-                  <Alert type="info">
+                  <Alert>
                     There are no appointments available for this day.
                   </Alert>
                 ) : (

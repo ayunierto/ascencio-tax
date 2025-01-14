@@ -6,10 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
-import Header from '../components/Header';
+import Header from '../../../../presentation/theme/components/auth/Header';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import { changePassword } from '../../../core/auth/actions/changePassword';
 
 export const newPasswordSchema = z.object({
   password: z
@@ -43,7 +42,7 @@ const newPassword = () => {
     setIsLoading(false);
 
     if (response.token) {
-      router.replace('/(ascenciotax-app)/(home)');
+      router.replace('/(tabs)/home');
       Toast.show({
         type: 'success',
         text1: 'Password changed successfully',

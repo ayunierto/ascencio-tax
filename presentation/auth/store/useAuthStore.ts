@@ -1,11 +1,15 @@
+import * as SecureStore from 'expo-secure-store';
 import { create } from 'zustand';
 import { User } from '@/core/auth/interfaces/user';
 import { RegisterData } from '@/core/auth/interfaces/register.data';
-import { checkStatus, signin, signup, verifyCode } from '@/core/auth/actions';
-
-import * as SecureStore from 'expo-secure-store';
-import { changePassword } from '@/core/auth/actions/changePassword';
-import { resetPassword } from '@/core/auth/actions/resetPassword';
+import {
+  checkStatus,
+  signin,
+  signup,
+  verifyCode,
+  changePassword,
+  resetPassword,
+} from '@/core/auth/actions';
 
 export type AuthStatus = 'authenticated' | 'unauthenticated' | 'checking';
 
@@ -102,6 +106,22 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     return response;
   },
 
+  resetPassword: async (username: string) => {
+    const response = await resetPassword(username);
+    if (response.email) {
+      set({ user: response });
+    }
+    return response;
+  },
+
+  changePassword: async (password: string) => {
+    const response = await changePassword(password);
+    if (response.token) {
+      set({ user: response });
+    }
+    return response;
+  },
+
   setAuthenticated: (token: string, user: User) => {
     set({
       status: 'authenticated',
@@ -122,21 +142,5 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     set({
       user: user,
     });
-  },
-
-  resetPassword: async (username: string) => {
-    const response = await resetPassword(username);
-    if (response.email) {
-      set({ user: response });
-    }
-    return response;
-  },
-
-  changePassword: async (password: string) => {
-    const response = await changePassword(password);
-    if (response.token) {
-      set({ user: response });
-    }
-    return response;
   },
 }));

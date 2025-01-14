@@ -1,32 +1,31 @@
-import { View, Text, type ViewProps } from 'react-native';
+import { View, Text, type ViewProps, ViewStyle, StyleProp } from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import { theme } from './Theme';
+import { StyleSheet } from 'react-native';
 
 interface AlertProps extends ViewProps {
-  type: 'info' | 'warning' | 'error' | 'success';
+  variant?: 'info' | 'warning' | 'error' | 'success';
+  style?: StyleProp<ViewStyle>;
 }
 
-const Alert = ({ type, children, ...props }: AlertProps) => {
+const Alert = ({ variant = 'info', children, style, ...props }: AlertProps) => {
+  const variantStyles = {
+    info: styles.info,
+    warning: styles.warning,
+    error: styles.error,
+    success: styles.success,
+  };
+
   return (
-    <View
-      className={`${
-        type === 'info'
-          ? 'bg-blue-500'
-          : type === 'warning'
-          ? 'bg-orange-500'
-          : type === 'success'
-          ? 'bg-green-500'
-          : 'bg-red-500'
-      } py-2 px-5 rounded-xl opacity-80 flex flex-row items-center justify-center gap-2`}
-      {...props}
-    >
+    <View style={[styles.alert, variantStyles[variant], style]} {...props}>
       <Ionicons
         name={
-          type === 'info'
+          variant === 'info'
             ? 'information-circle-outline'
-            : type === 'warning'
+            : variant === 'warning'
             ? 'warning-outline'
-            : type === 'success'
+            : variant === 'success'
             ? 'checkmark-circle-outline'
             : 'alert-circle-outline'
         }
@@ -40,5 +39,28 @@ const Alert = ({ type, children, ...props }: AlertProps) => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  alert: {
+    borderRadius: theme.radius,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+  },
+  info: {
+    backgroundColor: theme.primary,
+  },
+  warning: {
+    backgroundColor: '#f97316',
+  },
+  error: {
+    backgroundColor: theme.destructive,
+  },
+  success: {
+    backgroundColor: '#22c55e',
+  },
+});
 
 export default Alert;

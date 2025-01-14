@@ -2,18 +2,14 @@ import React, { useEffect, useRef } from 'react';
 import {
   Pressable,
   type PressableProps,
-  PressableStateCallbackType,
   StyleProp,
   Text,
   TextStyle,
   View,
   ViewStyle,
   StyleSheet,
-  Animated,
-  Easing,
   ActivityIndicator,
 } from 'react-native';
-import { AntDesign, Feather } from '@expo/vector-icons';
 import { theme } from './Theme';
 
 interface ButtonProps extends PressableProps {
@@ -26,6 +22,7 @@ interface ButtonProps extends PressableProps {
 
   textStyle?: TextStyle;
   variant?: 'primary' | 'secondary' | 'destructive' | 'outlined' | 'ghost';
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const Button = ({
@@ -37,32 +34,21 @@ export const Button = ({
   style,
   textStyle,
   variant = 'primary',
+  size = 'medium',
   ...rest
 }: ButtonProps) => {
-  const spinValue = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(spinValue, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true, // Important for performance
-      })
-    ).start();
-  }, [spinValue]);
-
-  const spin = spinValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
-
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
     destructive: styles.destructive,
     outlined: styles.outlined,
     ghost: styles.ghost,
+  };
+
+  const sizeStyles = {
+    small: styles.small,
+    medium: styles.medium,
+    large: styles.large,
   };
 
   const variantTextStyles = {
@@ -77,8 +63,11 @@ export const Button = ({
     <Pressable
       onPress={disabled || loading ? () => {} : onPress}
       style={[
-        styles.button, // base styles
+        styles.button,
         variantStyles[variant],
+        sizeStyles[size],
+        disabled && styles.disabled,
+        loading && styles.disabled,
         style,
       ]}
       {...rest}
@@ -89,15 +78,23 @@ export const Button = ({
             size="small"
             color={variant === 'outlined' ? 'blue' : 'white'}
           />
-          <Text style={[styles.buttonText, styles.disabledText, textStyle]}>
-            Please wait ...{' '}
+          <Text
+            style={[styles.buttonText, variantTextStyles[variant], textStyle]}
+          >
+            Please wait ...
           </Text>
         </View>
       ) : (
         <View className="flex-row gap-2 justify-center items-center">
           {icon && icon}
           <Text
-            style={[styles.buttonText, variantTextStyles[variant], textStyle]}
+            style={[
+              styles.buttonText,
+              variantTextStyles[variant],
+              disabled && styles.disabledText,
+              ,
+              textStyle,
+            ]}
           >
             {children}
           </Text>
@@ -111,7 +108,6 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: theme.radius,
     paddingHorizontal: 16,
-    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -135,6 +131,15 @@ const styles = StyleSheet.create({
   ghost: {
     backgroundColor: 'transparent',
   },
+  small: {
+    height: 32,
+  },
+  medium: {
+    height: 48,
+  },
+  large: {
+    height: 56,
+  },
   buttonText: {
     fontSize: 16,
     fontWeight: '500',
@@ -155,7 +160,7 @@ const styles = StyleSheet.create({
     color: theme.primaryForeground,
   },
   disabledText: {
-    color: '#cccccc',
+    color: '#888',
   },
   loadingContainer: {
     flexDirection: 'row',

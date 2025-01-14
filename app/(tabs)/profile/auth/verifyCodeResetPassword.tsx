@@ -7,7 +7,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
 import Alert from '@/presentation/theme/components/ui/Alert';
-import Header from '../components/Header';
+import Header from '../../../../presentation/theme/components/auth/Header';
 import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
@@ -36,7 +36,7 @@ const verifyCodeResetPassword = () => {
       setIsLoading(false);
 
       if (response.token) {
-        router.replace('/auth/forgotPassword/newPassword');
+        router.replace('/auth/newPassword');
       }
 
       if (response.statusCode === 401) {
