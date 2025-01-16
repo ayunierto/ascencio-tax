@@ -103,11 +103,9 @@ const BookingScreen = () => {
     <SafeAreaView>
       <ScrollView>
         <View
-          // className="flex flex-col gap-5 p-5"
           style={{
             padding: 20,
             gap: 20,
-            // marginTop: Platform.OS === 'android' ? 20 : 0,
           }}
         >
           <Text className="color-white text-3xl">Select your preferences</Text>

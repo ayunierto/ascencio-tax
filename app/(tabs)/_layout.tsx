@@ -54,7 +54,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="my-bookings/index"
+        name="my-bookings"
         options={{
           href: status === 'authenticated' ? '/(tabs)/my-bookings' : null,
           title: 'My Bookings',
