@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
-  Dimensions,
 } from 'react-native';
 import { router } from 'expo-router';
 
@@ -25,17 +24,17 @@ const Signin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userInactive, setUserInactive] = useState(false);
   const { signin, setUser } = useAuthStore();
-  const [screenDimensions, setScreenDimensions] = useState(
-    Dimensions.get('window')
-  );
+  // const [screenDimensions, setScreenDimensions] = useState(
+  //   Dimensions.get('window')
+  // );
 
-  useEffect(() => {
-    const subscription = Dimensions.addEventListener('change', ({ window }) => {
-      setScreenDimensions(window);
-    });
-    console.log(screenDimensions);
-    return () => subscription?.remove();
-  }, []);
+  // useEffect(() => {
+  //   const subscription = Dimensions.addEventListener('change', ({ window }) => {
+  //     setScreenDimensions(window);
+  //   });
+  //   console.log(screenDimensions);
+  //   return () => subscription?.remove();
+  // }, []);
 
   const {
     control,
@@ -66,7 +65,7 @@ const Signin = () => {
       });
     }
     if (response.token) {
-      router.replace('/(tabs)/profile/profile');
+      router.push('/(tabs)/(home)');
     }
   };
 
@@ -105,15 +104,16 @@ const Signin = () => {
     <SafeAreaView>
       <ScrollView>
         <KeyboardAvoidingView>
+          <Logo />
           <View
             style={{
               flex: 1,
               gap: 20,
+              width: '100%',
               maxWidth: 320,
               marginHorizontal: 'auto',
             }}
           >
-            <Logo />
             <Header
               subtitle=" Don’t have an account?"
               title={'Sign In'}

@@ -77,7 +77,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     if (response.token) {
       await SecureStore.setItemAsync('token', response.token);
-      get().setAuthenticated(response.token, response.user);
+      get().setAuthenticated(response.token, response);
       return { code: 200, message: 'Authenticated', data: response };
     }
 

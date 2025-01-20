@@ -4,7 +4,7 @@ import { theme } from '@/presentation/theme/components/ui/Theme';
 import Loader from '@/presentation/theme/components/Loader';
 import { getUserAppointments } from '@/core/appointments/actions/getUserAppointments';
 import { useQuery } from '@tanstack/react-query';
-import SimpleCard from '@/presentation/theme/components/ui/SimpleCard';
+import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 import { AppointmentResponse } from '../../../core/appointments/interfaces/appointmentResponse';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DateTime } from 'luxon';
@@ -36,7 +36,7 @@ const PastBookings = () => {
             <SimpleCard
               key={appt.id}
               title={appt.service.name}
-              icon="business-outline"
+              icon="calendar-outline"
               subtitle={DateTime.fromISO(appt.startDateAndTime).toLocaleString({
                 year: 'numeric',
                 month: '2-digit',

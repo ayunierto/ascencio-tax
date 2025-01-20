@@ -4,7 +4,7 @@ import Button from '@/presentation/theme/components/ui/Button';
 import { useBookingStore } from '@/presentation/services/store/useBookingStore';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import SimpleCard from '@/presentation/theme/components/ui/SimpleCard';
+import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 
 const ResumeScreen = () => {
   const { selectedService, staffName, startDateAndTime, bookNow } =
@@ -26,6 +26,9 @@ const ResumeScreen = () => {
       router.replace('/(tabs)/my-bookings');
     }
   };
+
+  // TODO: Mostrar al usuario informacion sobre la cancelacion de la cita
+
   return (
     <ScrollView>
       <View style={{ padding: 20, gap: 20 }}>

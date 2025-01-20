@@ -4,7 +4,7 @@ export interface User {
   id?: string;
   isActive?: boolean;
   lastLogin?: null;
-  last_Name?: string;
+  lastName?: string;
   name?: string;
   password?: string;
   phoneNumber?: string;

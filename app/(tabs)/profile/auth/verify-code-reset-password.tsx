@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
@@ -12,8 +12,9 @@ import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
-const verifyCodeResetPassword = () => {
+const VerifyCodeResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingResend, setIsLoadingResend] = useState(false);
   const { user, verifyCode } = useAuthStore();
   const {
     control,
@@ -36,7 +37,7 @@ const verifyCodeResetPassword = () => {
       setIsLoading(false);
 
       if (response.token) {
-        router.replace('/auth/newPassword');
+        router.push('/(tabs)/profile/auth/new-password');
       }
 
       if (response.statusCode === 401) {
@@ -53,7 +54,7 @@ const verifyCodeResetPassword = () => {
   };
 
   const handleResendCode = async () => {
-    setIsLoading(true);
+    setIsLoadingResend(true);
     try {
       const API_URL = process.env.EXPO_PUBLIC_API_URL;
       const response = await fetch(`${API_URL}/auth/resend-code`, {
@@ -75,53 +76,64 @@ const verifyCodeResetPassword = () => {
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingResend(false);
     }
   };
 
   return (
-    <View className="flex justify-center gap-5">
-      <Header
-        title={'Enter security code'}
-        subtitle={
-          'Please check your email for a message with your code. Your code is 6 numbers long.'
-        }
-      />
+    <ScrollView>
+      <View
+        style={{
+          flex: 1,
+          gap: 20,
+          marginTop: 20,
+          padding: 20,
+          maxWidth: 320,
+          marginHorizontal: 'auto',
+        }}
+      >
+        <Header
+          title={'Enter security code'}
+          subtitle={
+            'Please check your email for a message with your code. Your code is 6 numbers long.'
+          }
+        />
 
-      <Controller
-        control={control}
-        name="verificationCode"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Input
-            value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="Verification code"
-            keyboardType="numeric"
-          />
+        <Controller
+          control={control}
+          name="verificationCode"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="Verification code"
+              keyboardType="numeric"
+            />
+          )}
+        />
+        {errors.verificationCode && (
+          <Text className="-mt-4 text-yellow-500 mb-5">
+            {errors.verificationCode?.message as string}
+          </Text>
         )}
-      />
-      {errors.verificationCode && (
-        <Text className="-mt-4 text-yellow-500 mb-5">
-          {errors.verificationCode?.message as string}
-        </Text>
-      )}
-      <Button
-        // disabled={isLoading}
-        // loading={isLoading}
-        onPress={handleResendCode}
-      >
-        Resend code
-      </Button>
-      <Button
-        disabled={isLoading}
-        loading={isLoading}
-        onPress={handleSubmit(handleVerify)}
-      >
-        Verify
-      </Button>
-    </View>
+        <Button
+          disabled={isLoadingResend}
+          loading={isLoadingResend}
+          onPress={handleResendCode}
+        >
+          Resend code
+        </Button>
+        <Button
+          disabled={isLoading}
+          loading={isLoading}
+          onPress={handleSubmit(handleVerify)}
+        >
+          Verify
+        </Button>
+      </View>
+    </ScrollView>
   );
 };
 
-export default verifyCodeResetPassword;
+export default VerifyCodeResetPassword;

@@ -19,7 +19,7 @@ import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import Logo from '@/presentation/theme/components/Logo';
 
-const verifyCode = () => {
+const VerifyCode = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingResend, setIsLoadingResend] = useState(false);
   const [timer, setTimer] = useState(30);
@@ -122,7 +122,7 @@ const verifyCode = () => {
             <Logo />
             <Header title={'Verify'} subtitle={'Please verify your account'} />
 
-            <Alert type="info">
+            <Alert variant="info">
               We have sent a verification code to your email. Please enter the
               code sent to verify your account.
             </Alert>
@@ -148,13 +148,13 @@ const verifyCode = () => {
               disabled={!canResend}
               loading={isLoadingResend}
               onPress={handleResendCode}
-              variant="secondary"
+              variant="outlined"
             >
               {canResend ? 'Resend code' : `Resend in ${timer}s`}
             </Button>
             <Button
               disabled={isLoading}
-              loading={isLoadingResend}
+              loading={isLoading}
               onPress={handleSubmit(handleVerify)}
             >
               Verify
@@ -166,4 +166,4 @@ const verifyCode = () => {
   );
 };
 
-export default verifyCode;
+export default VerifyCode;

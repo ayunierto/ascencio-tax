@@ -95,15 +95,16 @@ const Signup = () => {
     <SafeAreaView>
       <ScrollView>
         <KeyboardAvoidingView>
+          <Logo />
           <View
             style={{
               flex: 1,
               gap: 20,
+              width: '100%',
               maxWidth: 320,
               marginHorizontal: 'auto',
             }}
           >
-            <Logo />
             <Header
               link={'/(tabs)/profile/auth/sign-in'}
               linkText="Sign In"

@@ -6,13 +6,15 @@ import {
   StyleProp,
   ViewStyle,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from './Theme';
+import { theme } from '../Theme';
 
 interface SimpleCardProps extends ViewProps {
   icon?: keyof typeof Ionicons.glyphMap;
   title?: string;
+  titleLink: string;
   subtitle?: string;
   text?: string;
   style?: StyleProp<ViewStyle>;
@@ -21,6 +23,7 @@ interface SimpleCardProps extends ViewProps {
 const SimpleCard = ({
   icon,
   title,
+  titleLink,
   subtitle,
   text,
   style,
@@ -29,17 +32,28 @@ const SimpleCard = ({
 }: SimpleCardProps) => {
   return (
     <View style={[styles.card, style]} {...props}>
-      <Ionicons size={40} color={theme.foreground} name={icon} />
+      {icon && <Ionicons size={40} color={theme.foreground} name={icon} />}
       <View
         style={{
           flex: 1,
         }}
       >
         <View style={{ marginBottom: 10 }}>
-          <Text style={{ fontSize: 18, color: theme.foreground }}>{title}</Text>
+          <Text
+            onPress={titleLink ? () => Linking.openURL(titleLink) : undefined}
+            style={[
+              { fontSize: 18, color: theme.foreground },
+              titleLink && {
+                textDecorationLine: 'underline',
+                color: theme.primary,
+              },
+            ]}
+          >
+            {title}
+          </Text>
           <Text
             style={{ color: theme.mutedForeground, fontSize: 12 }}
-            numberOfLines={1}
+            numberOfLines={2}
             ellipsizeMode="tail"
           >
             {subtitle}

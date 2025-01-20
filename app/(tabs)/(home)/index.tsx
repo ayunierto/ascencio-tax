@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getServices } from '@/core/services/actions';
 import Loader from '@/presentation/theme/components/Loader';
 import { ServiceResponse } from '@/core/services/interfaces/services.response';
@@ -16,6 +16,8 @@ import Toast from 'react-native-toast-message';
 const Services = () => {
   const { selectService } = useBookingStore();
   const { token } = useAuthStore();
+
+  // Access the client
 
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['services'],

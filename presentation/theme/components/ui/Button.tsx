@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
   type PressableProps,
@@ -15,7 +15,8 @@ import { theme } from './Theme';
 interface ButtonProps extends PressableProps {
   children?: React.ReactNode;
   disabled?: boolean;
-  icon?: React.ReactNode;
+  iconLeft?: React.ReactNode;
+  iconRight?: React.ReactNode;
   loading?: boolean;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
@@ -28,15 +29,18 @@ interface ButtonProps extends PressableProps {
 export const Button = ({
   children,
   disabled,
-  icon,
+  iconLeft,
+  iconRight,
   loading,
   onPress,
   style,
   textStyle,
   variant = 'primary',
   size = 'medium',
-  ...rest
+  ...props
 }: ButtonProps) => {
+  const [pressed, setPressed] = useState(false);
+
   const variantStyles = {
     primary: styles.primary,
     secondary: styles.secondary,
@@ -68,9 +72,16 @@ export const Button = ({
         sizeStyles[size],
         disabled && styles.disabled,
         loading && styles.disabled,
+        pressed && styles.disabled,
         style,
       ]}
-      {...rest}
+      onPressIn={() => {
+        setPressed(true);
+      }}
+      onPressOut={() => {
+        setPressed(false);
+      }}
+      {...props}
     >
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -86,7 +97,7 @@ export const Button = ({
         </View>
       ) : (
         <View className="flex-row gap-2 justify-center items-center">
-          {icon && icon}
+          {iconLeft && iconLeft}
           <Text
             style={[
               styles.buttonText,
@@ -98,6 +109,7 @@ export const Button = ({
           >
             {children}
           </Text>
+          {iconRight && iconRight}
         </View>
       )}
     </Pressable>

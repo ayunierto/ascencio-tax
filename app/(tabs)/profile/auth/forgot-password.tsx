@@ -1,19 +1,29 @@
-import { View, Text } from 'react-native';
 import React, { useState } from 'react';
-import Header from '../../../../presentation/theme/components/auth/Header';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
+import { View, Text } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { router } from 'expo-router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
+import Toast from 'react-native-toast-message';
+
+import Header from '../../../../presentation/theme/components/auth/Header';
+import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { z } from 'zod';
-import { forgotPasswordSchema } from '@/core/auth/schemas/forgotPasswordSchema';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
-import { router } from 'expo-router';
-import Toast from 'react-native-toast-message';
+
+// export const forgotPasswordSchema = z.object({
+//   username: z.string(),
+//   // .nonempty('You must write your email or password.'),
+// });
+export const forgotPasswordSchema = z.object({
+  username: z.string(),
+});
 
 const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { resetPassword } = useAuthStore();
+
   const {
     control,
     handleSubmit,
@@ -28,9 +38,11 @@ const ForgotPassword = () => {
   const handleResetPassword = async ({
     username,
   }: z.infer<typeof forgotPasswordSchema>) => {
+    setIsLoading(true);
     const response = await resetPassword(username);
+    setIsLoading(false);
     if (response.email) {
-      router.push('/(tabs)/auth/verifyCodeResetPassword');
+      router.push('/(tabs)/profile/auth/verify-code-reset-password');
       return;
     }
     Toast.show({
@@ -41,35 +53,58 @@ const ForgotPassword = () => {
   };
 
   return (
-    <View className="flex gap-5">
-      <Header
-        title="Find your account"
-        subtitle="Please enter your email or mobile number to search for your account."
-      />
-
-      <Controller
-        control={control}
-        name="username"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Input
-            value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="Email or phone number"
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-        )}
-      />
-
-      <Button
-        disabled={isLoading}
-        loading={isLoading}
-        onPress={handleSubmit(handleResetPassword)}
+    <ScrollView>
+      <View
+        style={{
+          flex: 1,
+          gap: 20,
+          marginTop: 20,
+          padding: 20,
+          maxWidth: 320,
+          marginHorizontal: 'auto',
+        }}
       >
-        Reset Password
-      </Button>
-    </View>
+        <Header
+          title="Find your account"
+          subtitle="Please enter your email or mobile number to search for your account."
+        />
+
+        <Controller
+          control={control}
+          name="username"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="Email or phone number"
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          )}
+        />
+
+        {errors.username && (
+          <Text className="-mt-4 text-yellow-400">
+            {errors.username?.message}
+          </Text>
+        )}
+
+        <Button
+          disabled={isLoading}
+          loading={isLoading}
+          onPress={handleSubmit(handleResetPassword)}
+        >
+          Reset Password
+        </Button>
+        <Button
+          variant="outlined"
+          onPress={() => router.replace('/(tabs)/profile/auth/sign-in')}
+        >
+          Back
+        </Button>
+      </View>
+    </ScrollView>
   );
 };
 

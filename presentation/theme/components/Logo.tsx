@@ -8,6 +8,7 @@ const Logo = () => {
         source={require('../../../assets/images/logo.png')}
         style={{
           width: '80%',
+          maxWidth: 300,
           resizeMode: 'contain',
           height: 200,
         }}

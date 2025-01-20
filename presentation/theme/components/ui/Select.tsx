@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import { Input } from './Input';
 import { AntDesign } from '@expo/vector-icons';
+import Button from './Button';
+import { theme } from './Theme';
 
 interface SelectProps {
   options: Option[];
@@ -65,20 +67,23 @@ const Select = ({
 
   return (
     <View style={style} className={`${className}`}>
-      <TouchableOpacity
-        className="border border-white rounded-full h-12 flex flex-row px-5 justify-between items-center"
+      <Button
+        iconRight={
+          <AntDesign
+            name={modalVisible ? 'up' : 'down'}
+            size={16}
+            color={'white'}
+          />
+        }
+        variant="outlined"
+        style={{ borderColor: theme.input }}
+        textStyle={{ fontWeight: 'normal', fontSize: 14 }}
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.selectButtonText}>
           {selectedValue ? selectedValue.label : placeholder || 'Select'}
         </Text>
-        <AntDesign
-          className="transition-all duration-300"
-          name={modalVisible ? 'up' : 'down'}
-          size={16}
-          color={'white'}
-        />
-      </TouchableOpacity>
+      </Button>
 
       <Modal
         animationType="fade"

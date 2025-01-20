@@ -1,4 +1,4 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
@@ -19,7 +19,7 @@ export const newPasswordSchema = z.object({
     ),
 });
 
-const newPassword = () => {
+const NewPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { changePassword } = useAuthStore();
   const {
@@ -42,7 +42,7 @@ const newPassword = () => {
     setIsLoading(false);
 
     if (response.token) {
-      router.replace('/(tabs)/home');
+      router.replace('/(tabs)/(home)');
       Toast.show({
         type: 'success',
         text1: 'Password changed successfully',
@@ -62,41 +62,52 @@ const newPassword = () => {
   };
 
   return (
-    <View className="flex justify-center gap-5">
-      <Header
-        title="Choose a new password"
-        subtitle={
-          'Create a new password that is at least 6 characters long. A strong password is combination of letters, numbers, and punctuation marks.'
-        }
-      />
-
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Input
-            value={value}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            placeholder="New Password"
-            autoCapitalize="none"
-          />
-        )}
-      />
-      {errors.password && (
-        <Text className="-mt-4 text-yellow-500 mb-5">
-          {errors.password?.message as string}
-        </Text>
-      )}
-      <Button
-        disabled={isLoading}
-        loading={isLoading}
-        onPress={handleSubmit(handleChangePassword)}
+    <ScrollView>
+      <View
+        style={{
+          flex: 1,
+          gap: 20,
+          marginTop: 20,
+          padding: 20,
+          maxWidth: 320,
+          marginHorizontal: 'auto',
+        }}
       >
-        Change Password
-      </Button>
-    </View>
+        <Header
+          title="Choose a new password"
+          subtitle={
+            'Create a new password that is at least 6 characters long. A strong password is combination of letters, numbers, and punctuation marks.'
+          }
+        />
+
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input
+              value={value}
+              onBlur={onBlur}
+              onChangeText={onChange}
+              placeholder="New Password"
+              autoCapitalize="none"
+            />
+          )}
+        />
+        {errors.password && (
+          <Text className="-mt-4 text-yellow-500 mb-5">
+            {errors.password?.message as string}
+          </Text>
+        )}
+        <Button
+          disabled={isLoading}
+          loading={isLoading}
+          onPress={handleSubmit(handleChangePassword)}
+        >
+          Change Password
+        </Button>
+      </View>
+    </ScrollView>
   );
 };
 
-export default newPassword;
+export default NewPassword;

@@ -4,7 +4,7 @@ import { theme } from '@/presentation/theme/components/ui/Theme';
 import Loader from '@/presentation/theme/components/Loader';
 import { getUserAppointments } from '@/core/appointments/actions/getUserAppointments';
 import { useQuery } from '@tanstack/react-query';
-import SimpleCard from '@/presentation/theme/components/ui/SimpleCard';
+import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 import { AppointmentResponse } from '../../../core/appointments/interfaces/appointmentResponse';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DateTime } from 'luxon';
@@ -16,12 +16,14 @@ const MyBookings = () => {
       const data = await getUserAppointments('pending');
       return data;
     },
-    staleTime: 1000 * 60, // 1 min
+    // staleTime: 1000, // 1 min
   });
 
   if (isPending) {
     return <Loader />;
   }
+
+  // TODO: Agregar boton para cancelar
 
   return (
     <SafeAreaView>
@@ -37,7 +39,7 @@ const MyBookings = () => {
               <SimpleCard
                 key={appt.id}
                 title={appt.service.name}
-                icon="business-outline"
+                icon="calendar-outline"
                 subtitle={DateTime.fromISO(
                   appt.startDateAndTime
                 ).toLocaleString({

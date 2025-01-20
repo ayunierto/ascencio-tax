@@ -4,7 +4,7 @@ import { Href, router } from 'expo-router';
 
 interface HeaderProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   link?: Href;
   linkText?: string;
 }
@@ -14,10 +14,10 @@ const Header = ({ link, linkText = '', subtitle, title }: HeaderProps) => {
     <View className="flex gap-5">
       <Text className="text-4xl color-white text-center">{title}</Text>
       <View className="flex flex-row gap-2 justify-center">
-        <Text className="text-white">{subtitle}</Text>
+        {subtitle && <Text className="text-white">{subtitle}</Text>}
         {link && (
           <Text
-            onPress={() => router.replace(link)}
+            onPress={() => router.push(link)}
             className="text-blue-100 underline"
           >
             {linkText ? linkText : ''}

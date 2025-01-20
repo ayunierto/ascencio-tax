@@ -1,4 +1,3 @@
-import { config } from '@/core/config';
 import { ServiceResponse } from '../interfaces/services.response';
 
 export const getServices = async (): Promise<ServiceResponse[] | null> => {

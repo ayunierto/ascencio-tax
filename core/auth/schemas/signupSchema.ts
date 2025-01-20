@@ -7,16 +7,14 @@ export const signupSchema = z
     email: z.string().email('Invalid email address'),
     countryCode: z.string().nonempty('The country code is required'),
     phoneNumber: z.string().nonempty('The phone number is required'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .regex(
-        /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
-        'Password must include uppercase, lowercase and numbers'
-      ),
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    // .regex(
+    //   /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+    //   'Password must include uppercase, lowercase and numbers'
+    // ),
     confirmPassword: z
       .string()
-      .min(8, 'Confirm Password must be at least 8 characters')
+      .min(6, 'Confirm Password must be at least 6 characters')
       .optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
