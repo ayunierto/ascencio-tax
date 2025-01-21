@@ -11,9 +11,11 @@ export const signinSchema = z.object({
         message: 'Username must be a valid email address or phone number',
       }
     ),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  // .regex(
-  //   /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
-  //   'Password must include uppercase, lowercase and numbers'
-  // ),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .regex(
+      /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+      'Password must include uppercase, lowercase and numbers'
+    ),
 });

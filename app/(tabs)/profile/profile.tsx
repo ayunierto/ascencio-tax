@@ -11,6 +11,8 @@ import { z } from 'zod';
 import { Ionicons } from '@expo/vector-icons';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { updateProfile } from '@/core/user/actions';
+import Toast from 'react-native-toast-message';
 
 export const profileSchema = z
   .object({
@@ -44,6 +46,7 @@ const Profile = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -62,15 +65,29 @@ const Profile = () => {
 
   const handleUpdateProfile = async (values: z.infer<typeof profileSchema>) => {
     setLoading(true);
-    // const response = await updateProfile(values);
+    const response = await updateProfile({
+      name: values.name,
+      lastName: values.lastName,
+      phoneNumber: values.phoneNumber,
+      password: values.password,
+    });
     setLoading(false);
+    console.warn(response);
 
-    // if (response.statusCode === 400) {
-    //   setError('root', {
-    //     type: 'manual',
-    //     message: response.message[0],
-    //   });
-    // }
+    // Unauthorized
+
+    if (response.statusCode === 400) {
+      setError('root', {
+        type: 'manual',
+        message: response.message[0],
+      });
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: response.message[0],
+      });
+      return;
+    }
 
     // if (response.statusCode === 409) {
     //   if (response.message.includes('phoneNumber')) {

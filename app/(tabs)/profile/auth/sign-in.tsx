@@ -52,7 +52,9 @@ const Signin = () => {
   const handleSignin = async (values: z.infer<typeof signinSchema>) => {
     setIsLoading(true);
     const response = await signin(values.username, values.password);
+    console.warn(response);
     setIsLoading(false);
+
     if (response.error === 'Unauthorized') {
       if (response.cause === 'verify') {
         setUserInactive(true);
@@ -66,6 +68,15 @@ const Signin = () => {
     }
     if (response.token) {
       router.push('/(tabs)/(home)');
+    }
+
+    if (response.error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: response.message[0],
+      });
+      return;
     }
   };
 

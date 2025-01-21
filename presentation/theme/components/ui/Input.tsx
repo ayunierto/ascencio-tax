@@ -21,12 +21,9 @@ export function Input({
   ...props
 }: InputProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const inputRef = useRef(null);
-  console.warn({ isFocused });
 
   return (
     <TextInput
-      ref={inputRef}
       style={[
         {
           borderWidth: 1,
