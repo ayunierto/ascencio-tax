@@ -22,7 +22,7 @@ export default function AuthLayout() {
       <Stack.Screen
         name="new-password"
         options={{
-          title: 'New password',
+          title: '',
         }}
       />
       <Stack.Screen

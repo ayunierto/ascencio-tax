@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Platform } from 'react-native';
+import { View, SafeAreaView, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Button from '@/presentation/theme/components/ui/Button';
 import Chip from '@/presentation/theme/components/ui/Chip';
@@ -8,6 +8,7 @@ import { Calendar } from 'react-native-calendars';
 import { router } from 'expo-router';
 import Alert from '@/presentation/theme/components/ui/Alert';
 import Loader from '@/presentation/theme/components/Loader';
+import Header from '@/presentation/theme/components/auth/Header';
 
 interface Option {
   label: string;
@@ -99,6 +100,11 @@ const BookingScreen = () => {
     }
   }
 
+  const handleSelectStaff = (item: Option | null): void => {
+    setSelectedSlot(undefined);
+    setSelectedStaff(item);
+  };
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -108,17 +114,17 @@ const BookingScreen = () => {
             gap: 20,
           }}
         >
-          <Text className="color-white text-3xl">Select your preferences</Text>
-          <Text className="color-white">
-            Check out our availability and book the date and time that works for
-            you.
-          </Text>
+          <Header
+            title="Select your preferences"
+            subtitle="Check out our availability and book the date and time that works for
+            you."
+          />
 
           <View className="sm:flex sm:flex-row">
             <View className="flex gap-5 flex-col sm:w-1/2">
               <Select
                 options={staff}
-                onSelect={(item) => setSelectedStaff(item)}
+                onSelect={(item) => handleSelectStaff(item)}
                 placeholder="Select Staff Member..."
               />
 

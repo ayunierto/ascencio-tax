@@ -1,8 +1,8 @@
 import React from 'react';
-import { Stack, Tabs } from 'expo-router';
+import { Stack } from 'expo-router';
 import { theme } from '@/presentation/theme/components/ui/Theme';
 
-const MyBookingsLayout = () => {
+const MyProfileLayout = () => {
   return (
     <Stack
       screenOptions={{
@@ -11,11 +11,11 @@ const MyBookingsLayout = () => {
         },
         headerTitleAlign: 'center',
         headerTintColor: theme.foreground,
-        title: 'Bookings',
+        title: 'Profile',
         headerShadowVisible: false,
       }}
     />
   );
 };
 
-export default MyBookingsLayout;
+export default MyProfileLayout;

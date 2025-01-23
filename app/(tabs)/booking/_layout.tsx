@@ -8,6 +8,7 @@ export default function BookingLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.background },
         headerTintColor: theme.foreground,
+        headerTitleAlign: 'center',
       }}
     >
       <Stack.Screen

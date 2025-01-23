@@ -58,8 +58,8 @@ const ForgotPassword = () => {
         style={{
           flex: 1,
           gap: 20,
-          marginTop: 20,
           padding: 20,
+          width: '100%',
           maxWidth: 320,
           marginHorizontal: 'auto',
         }}

@@ -12,33 +12,26 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
-import Alert from '@/presentation/theme/components/ui/Alert';
 import Header from '../../../../presentation/theme/components/auth/Header';
 import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import Logo from '@/presentation/theme/components/Logo';
+import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
+import { resendCode } from '@/core/auth/actions/resend-code';
 
 const VerifyCode = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingResend, setIsLoadingResend] = useState(false);
-  const [timer, setTimer] = useState(30);
-  const [canResend, setCanResend] = useState(false);
+
   const { user, verifyCode } = useAuthStore();
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout | undefined;
-
-    if (timer > 0) {
-      interval = setInterval(() => {
-        setTimer(timer - 1);
-      }, 1000);
-    } else {
-      setCanResend(true);
-    }
-
-    return () => clearInterval(interval);
-  }, [timer]);
+  const {
+    timer,
+    canResend,
+    isLoadingResend,
+    setIsLoadingResend,
+    setTimer,
+    setCanResend,
+  } = useCanResendCode();
 
   const {
     control,
@@ -80,31 +73,16 @@ const VerifyCode = () => {
   const handleResendCode = async () => {
     if (!canResend) return;
     setIsLoadingResend(true);
-    try {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      const response = await fetch(`${API_URL}/auth/resend-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: user?.email,
-          verificationPlatform: 'email',
-        }),
-      }).then((data) => data.json());
-      Toast.show({
-        type: 'success',
-        text1: 'Code sent',
-        text2: 'Please check your email',
-      });
-      return response;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoadingResend(false);
-      setTimer(30);
-      setCanResend(false);
-    }
+    const response = await resendCode(user!.email, 'email');
+    console.log(response);
+    Toast.show({
+      type: 'success',
+      text1: 'Code sent',
+      text2: 'Please check your email',
+    });
+    setIsLoadingResend(false);
+    setTimer(30);
+    setCanResend(false);
   };
 
   return (
@@ -119,13 +97,13 @@ const VerifyCode = () => {
               marginHorizontal: 'auto',
             }}
           >
-            <Logo />
-            <Header title={'Verify'} subtitle={'Please verify your account'} />
+            <Header
+              title={'Verify'}
+              subtitle={
+                'Please check your email for a message with your code. Your code is 6 numbers long.'
+              }
+            />
 
-            <Alert variant="info">
-              We have sent a verification code to your email. Please enter the
-              code sent to verify your account.
-            </Alert>
             <Controller
               control={control}
               name="verificationCode"
@@ -145,19 +123,19 @@ const VerifyCode = () => {
               </Text>
             )}
             <Button
+              disabled={isLoading}
+              loading={isLoading}
+              onPress={handleSubmit(handleVerify)}
+            >
+              Verify
+            </Button>
+            <Button
               disabled={!canResend}
               loading={isLoadingResend}
               onPress={handleResendCode}
               variant="outlined"
             >
               {canResend ? 'Resend code' : `Resend in ${timer}s`}
-            </Button>
-            <Button
-              disabled={isLoading}
-              loading={isLoading}
-              onPress={handleSubmit(handleVerify)}
-            >
-              Verify
             </Button>
           </View>
         </KeyboardAvoidingView>

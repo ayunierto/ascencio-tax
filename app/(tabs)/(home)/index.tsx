@@ -53,10 +53,13 @@ const Services = () => {
             data.map((service: ServiceResponse) => (
               <View
                 style={{
+                  flex: 1,
+                  overflow: 'hidden',
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   gap: 10,
+                  // backgroundColor: 'red',
                 }}
                 key={service.id}
               >
@@ -101,7 +104,7 @@ const Services = () => {
                     />
                   </View>
                 </View>
-                <View style={{}}>
+                <View style={{ flex: 1 }}>
                   <Button
                     onPress={() => handleSelectService(service)}
                     size="small"

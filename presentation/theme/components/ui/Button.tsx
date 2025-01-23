@@ -22,6 +22,7 @@ interface ButtonProps extends PressableProps {
   style?: StyleProp<ViewStyle>;
 
   textStyle?: TextStyle;
+  containerTextAndIconsStyle?: StyleProp<ViewStyle>;
   variant?: 'primary' | 'secondary' | 'destructive' | 'outlined' | 'ghost';
   size?: 'small' | 'medium' | 'large';
 }
@@ -35,6 +36,7 @@ export const Button = ({
   onPress,
   style,
   textStyle,
+  containerTextAndIconsStyle,
   variant = 'primary',
   size = 'medium',
   ...props
@@ -87,7 +89,11 @@ export const Button = ({
         <View style={styles.loadingContainer}>
           <ActivityIndicator
             size="small"
-            color={variant === 'outlined' ? 'blue' : 'white'}
+            color={
+              variant === 'outlined'
+                ? theme.foreground
+                : theme.primaryForeground
+            }
           />
           <Text
             style={[styles.buttonText, variantTextStyles[variant], textStyle]}
@@ -96,7 +102,19 @@ export const Button = ({
           </Text>
         </View>
       ) : (
-        <View className="flex-row gap-2 justify-center items-center">
+        <View
+          style={[
+            {
+              flex: 1,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              width: '100%',
+              justifyContent: 'center',
+            },
+            containerTextAndIconsStyle,
+          ]}
+        >
           {iconLeft && iconLeft}
           <Text
             style={[

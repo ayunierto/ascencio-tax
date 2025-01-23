@@ -5,7 +5,7 @@ import Loader from '@/presentation/theme/components/Loader';
 import { getUserAppointments } from '@/core/appointments/actions/getUserAppointments';
 import { useQuery } from '@tanstack/react-query';
 import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
-import { AppointmentResponse } from '../../../core/appointments/interfaces/appointmentResponse';
+import { AppointmentResponse } from '../../../../core/appointments/interfaces/appointmentResponse';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DateTime } from 'luxon';
 

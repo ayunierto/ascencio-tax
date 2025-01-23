@@ -5,29 +5,52 @@ import { useBookingStore } from '@/presentation/services/store/useBookingStore';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const ResumeScreen = () => {
   const { selectedService, staffName, startDateAndTime, bookNow } =
     useBookingStore();
 
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+  const {
+    mutateAsync: mutate,
+    data,
+    isPending,
+    isSuccess,
+  } = useMutation({
+    mutationFn: async () => {
+      const data = await bookNow();
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['pendingAppts'] });
+    },
+  });
 
   const handleConfirm = async () => {
-    setLoading(true);
-    const appointment = await bookNow();
-    console.log(appointment);
-    setLoading(false);
-    if (appointment.id) {
-      Toast.show({
-        type: 'success',
-        text1: 'Appointment booked',
-        text2: 'Your appointment has been booked successfully',
+    await mutate()
+      .then((data) => {
+        if (data.id) {
+          Toast.show({
+            type: 'success',
+            text1: 'Appointment booked',
+            text2: 'Your appointment has been booked successfully',
+          });
+          router.replace('/(tabs)/my-bookings/bookings');
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Something went wrong',
+          });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
       });
-      router.replace('/(tabs)/my-bookings');
-    }
   };
 
-  // TODO: Mostrar al usuario informacion sobre la cancelacion de la cita
+  // TODO: Accept terms and conditions of the appointment where you will explain about your cancellation
 
   return (
     <ScrollView>
@@ -62,8 +85,8 @@ const ResumeScreen = () => {
         />
 
         <Button
-          loading={loading}
-          disabled={loading}
+          loading={isPending}
+          disabled={isPending}
           onPress={() => handleConfirm()}
         >
           Confirm Appointment

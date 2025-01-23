@@ -14,7 +14,7 @@ import { theme } from '../Theme';
 interface SimpleCardProps extends ViewProps {
   icon?: keyof typeof Ionicons.glyphMap;
   title?: string;
-  titleLink: string;
+  titleLink?: string;
   subtitle?: string;
   text?: string;
   style?: StyleProp<ViewStyle>;

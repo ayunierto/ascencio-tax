@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -9,8 +8,6 @@ import {
   StyleProp,
   ViewStyle,
   ScrollView,
-  TextInputChangeEventData,
-  NativeSyntheticEvent,
 } from 'react-native';
 import { Input } from './Input';
 import { AntDesign } from '@expo/vector-icons';
@@ -22,7 +19,6 @@ interface SelectProps {
   onSelect: (item: Option | null) => void;
   placeholder?: string;
   style?: StyleProp<ViewStyle>;
-  className?: string;
 }
 
 interface Option {
@@ -34,7 +30,6 @@ const Select = ({
   options: initialOptions,
   style,
   onSelect,
-  className,
   placeholder,
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -66,7 +61,7 @@ const Select = ({
   };
 
   return (
-    <View style={style} className={`${className}`}>
+    <View style={style}>
       <Button
         iconRight={
           <AntDesign
@@ -79,6 +74,7 @@ const Select = ({
         style={{ borderColor: theme.input }}
         textStyle={{ fontWeight: 'normal', fontSize: 14 }}
         onPress={() => setModalVisible(true)}
+        containerTextAndIconsStyle={{ justifyContent: 'space-between' }}
       >
         <Text style={styles.selectButtonText}>
           {selectedValue ? selectedValue.label : placeholder || 'Select'}

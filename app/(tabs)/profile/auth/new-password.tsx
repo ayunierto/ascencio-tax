@@ -11,12 +11,11 @@ import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 
 export const newPasswordSchema = z.object({
-  password: z
-    .string()
-    .regex(
-      /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
-      'The password must have a Uppercase, lowercase letter and a number'
-    ),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+  // .regex(
+  //   /(?:(?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+  //   'The password must have a Uppercase, lowercase letter and a number'
+  // ),
 });
 
 const NewPassword = () => {
@@ -69,6 +68,7 @@ const NewPassword = () => {
           gap: 20,
           marginTop: 20,
           padding: 20,
+          width: '100%',
           maxWidth: 320,
           marginHorizontal: 'auto',
         }}

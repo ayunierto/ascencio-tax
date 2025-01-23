@@ -19,11 +19,22 @@ import Header from '../../../../presentation/theme/components/auth/Header';
 import Toast from 'react-native-toast-message';
 import { signinSchema } from '@/core/auth/schemas/signinSchema';
 import Logo from '@/presentation/theme/components/Logo';
+import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
+import { resendCode } from '@/core/auth/actions/resend-code';
 
 const Signin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [userInactive, setUserInactive] = useState(false);
   const { signin, setUser } = useAuthStore();
+
+  const {
+    canResend,
+    isLoadingResend,
+    setCanResend,
+    setIsLoadingResend,
+    setTimer,
+    timer,
+  } = useCanResendCode();
   // const [screenDimensions, setScreenDimensions] = useState(
   //   Dimensions.get('window')
   // );
@@ -58,57 +69,36 @@ const Signin = () => {
     if (response.error === 'Unauthorized') {
       if (response.cause === 'verify') {
         setUserInactive(true);
-        return;
       }
       Toast.show({
         type: 'error',
         text1: 'Error',
         text2: response.message,
       });
-    }
-    if (response.token) {
-      router.push('/(tabs)/(home)');
+
+      if (response.cause === 'inactive') {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: response.message,
+        });
+      }
+      return;
     }
 
-    if (response.error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: response.message[0],
-      });
-      return;
+    if (response.token) {
+      router.push('/(tabs)/(home)');
     }
   };
 
   const handleVerifyAccount = async () => {
-    setIsLoading(true);
-    try {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      const response = await fetch(`${API_URL}/auth/resend-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: getValues('username'),
-          verificationPlatform: 'email',
-        }),
-      }).then((data) => data.json());
+    setIsLoadingResend(true);
+    const response = await resendCode(getValues('username'), 'email');
+    setIsLoadingResend(false);
 
-      setUser({ email: getValues('username') });
+    setUser({ email: getValues('username') });
 
-      router.push('/(tabs)/profile/auth/verify');
-      return response;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-      Toast.show({
-        type: 'success',
-        text1: 'Code resent',
-        text2: 'Please check your email',
-      });
-    }
+    router.push('/(tabs)/profile/auth/verify');
   };
 
   return (
@@ -181,6 +171,22 @@ const Signin = () => {
               </Text>
             )}
 
+            {userInactive && (
+              <>
+                <Text className="-mt-4 text-yellow-400">
+                  Your account is inactive. Please contact support or verify
+                  your account.
+                </Text>
+                <Button
+                  variant="secondary"
+                  loading={isLoadingResend}
+                  disabled={isLoadingResend}
+                  onPress={() => handleVerifyAccount()}
+                >
+                  Verify account
+                </Button>
+              </>
+            )}
             <Text
               className="text-blue-300 text-center"
               onPress={() =>
@@ -190,17 +196,6 @@ const Signin = () => {
               Forgot password?
             </Text>
 
-            {userInactive && (
-              <>
-                <Text className="-mt-4 text-yellow-400">
-                  Your account is inactive. Please contact support or verify
-                  your account.
-                </Text>
-                <Button onPress={() => handleVerifyAccount()} focusable>
-                  Verify account
-                </Button>
-              </>
-            )}
             <Button
               loading={isLoading}
               disabled={isLoading}

@@ -6,16 +6,26 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import Button from '@/presentation/theme/components/ui/Button';
-import Alert from '@/presentation/theme/components/ui/Alert';
 import Header from '../../../../presentation/theme/components/auth/Header';
 import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
+import { resendCode } from '@/core/auth/actions/resend-code';
 
 const VerifyCodeResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingResend, setIsLoadingResend] = useState(false);
   const { user, verifyCode } = useAuthStore();
+
+  const {
+    timer,
+    canResend,
+    isLoadingResend,
+    setIsLoadingResend,
+    setTimer,
+    setCanResend,
+  } = useCanResendCode();
+
   const {
     control,
     handleSubmit,
@@ -54,30 +64,19 @@ const VerifyCodeResetPassword = () => {
   };
 
   const handleResendCode = async () => {
+    if (!canResend) return;
+
     setIsLoadingResend(true);
-    try {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-      const response = await fetch(`${API_URL}/auth/resend-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: user?.email,
-          verificationPlatform: 'email',
-        }),
-      }).then((data) => data.json());
-      Toast.show({
-        type: 'success',
-        text1: 'Code sent',
-        text2: 'Please check your email',
-      });
-      return response;
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoadingResend(false);
-    }
+    const response = await resendCode(user!.email, 'email');
+    console.log(response);
+    Toast.show({
+      type: 'success',
+      text1: 'Code sent',
+      text2: 'Please check your email',
+    });
+    setIsLoadingResend(false);
+    setTimer(30);
+    setCanResend(false);
   };
 
   return (
@@ -86,8 +85,8 @@ const VerifyCodeResetPassword = () => {
         style={{
           flex: 1,
           gap: 20,
-          marginTop: 20,
           padding: 20,
+          width: '100%',
           maxWidth: 320,
           marginHorizontal: 'auto',
         }}
@@ -117,19 +116,21 @@ const VerifyCodeResetPassword = () => {
             {errors.verificationCode?.message as string}
           </Text>
         )}
-        <Button
-          disabled={isLoadingResend}
-          loading={isLoadingResend}
-          onPress={handleResendCode}
-        >
-          Resend code
-        </Button>
+
         <Button
           disabled={isLoading}
           loading={isLoading}
           onPress={handleSubmit(handleVerify)}
         >
           Verify
+        </Button>
+        <Button
+          disabled={!canResend}
+          loading={isLoadingResend}
+          onPress={handleResendCode}
+          variant="outlined"
+        >
+          {canResend ? 'Resend code' : `Resend in ${timer}s`}
         </Button>
       </View>
     </ScrollView>

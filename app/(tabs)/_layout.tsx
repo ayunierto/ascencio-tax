@@ -56,7 +56,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="my-bookings"
         options={{
-          href: status === 'authenticated' ? '/(tabs)/my-bookings' : null,
+          href:
+            status === 'authenticated' ? '/(tabs)/my-bookings/bookings' : null,
           title: 'My Bookings',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
@@ -68,7 +69,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile/profile"
+        name="profile/settings"
         options={{
           title: 'My Profile',
           tabBarIcon: ({ color, focused }) => (
