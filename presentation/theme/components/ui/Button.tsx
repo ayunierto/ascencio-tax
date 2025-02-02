@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.destructive,
   },
   outlined: {
-    borderColor: theme.primary,
+    borderColor: theme.input,
     borderWidth: 1,
     backgroundColor: 'transparent',
   },

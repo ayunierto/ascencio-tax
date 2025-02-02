@@ -68,7 +68,6 @@ const VerifyCodeResetPassword = () => {
 
     setIsLoadingResend(true);
     const response = await resendCode(user!.email, 'email');
-    console.log(response);
     Toast.show({
       type: 'success',
       text1: 'Code sent',

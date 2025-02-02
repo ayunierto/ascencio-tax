@@ -17,8 +17,6 @@ const Services = () => {
   const { selectService } = useBookingStore();
   const { token } = useAuthStore();
 
-  // Access the client
-
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['services'],
     queryFn: getServices,
@@ -32,7 +30,7 @@ const Services = () => {
   const handleSelectService = (service: ServiceResponse) => {
     selectService(service);
     if (!token) {
-      router.push('/(tabs)/profile/profile');
+      router.push('/(tabs)/profile/settings/profile');
       Toast.show({
         type: 'info',
         text1: 'Info',
@@ -67,6 +65,7 @@ const Services = () => {
                   style={{ width: 60, height: 60, borderRadius: theme.radius }}
                   source={{ uri: service.images[0].url }}
                 />
+
                 <View
                   style={{
                     flexDirection: 'column',
@@ -85,6 +84,7 @@ const Services = () => {
                   >
                     {service.name}
                   </Text>
+
                   <View
                     style={{
                       flexDirection: 'row',
@@ -104,6 +104,7 @@ const Services = () => {
                     />
                   </View>
                 </View>
+
                 <View style={{ flex: 1 }}>
                   <Button
                     onPress={() => handleSelectService(service)}

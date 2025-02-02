@@ -69,6 +69,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="receipts"
+        options={{
+          href: status === 'authenticated' ? '/(tabs)/receipts/receipts' : null,
+          title: 'Receipts',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={28}
+              name={focused ? 'receipt' : 'receipt-outline'}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="profile/settings"
         options={{
           title: 'My Profile',

@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import Alert from '@/presentation/theme/components/ui/Alert';
 import Loader from '@/presentation/theme/components/Loader';
 import Header from '@/presentation/theme/components/auth/Header';
+import { theme } from '@/presentation/theme/components/ui/Theme';
 
 interface Option {
   label: string;
@@ -125,14 +126,19 @@ const BookingScreen = () => {
               <Select
                 options={staff}
                 onSelect={(item) => handleSelectStaff(item)}
-                placeholder="Select Staff Member..."
+                placeholder="Select staff member..."
               />
 
-              <View className="rounded-xl overflow-hidden">
+              <View
+                style={{
+                  overflow: 'hidden',
+                  borderRadius: theme.radius,
+                }}
+              >
                 <Calendar
                   minDate={getCurrentDate()}
                   theme={{
-                    selectedDayBackgroundColor: '#2596be',
+                    selectedDayBackgroundColor: theme.primary,
                   }}
                   onDayPress={(day: Day) => {
                     setSelectedDate(day.dateString);

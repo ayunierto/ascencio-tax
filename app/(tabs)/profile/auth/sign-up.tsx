@@ -103,6 +103,7 @@ const Signup = () => {
               width: '100%',
               maxWidth: 320,
               marginHorizontal: 'auto',
+              marginBottom: 20,
             }}
           >
             <Header
@@ -182,7 +183,7 @@ const Signup = () => {
                   options={countryCodes}
                   onSelect={(item) => setValue('countryCode', item?.value)}
                   placeholder="+1"
-                  className="flex-1"
+                  style={{ flex: 1 }}
                 />
                 <Controller
                   control={control}
@@ -196,7 +197,7 @@ const Signup = () => {
                       placeholder="Phone Number"
                       autoCapitalize="none"
                       autoComplete="tel"
-                      className="flex-1"
+                      style={{ flex: 2 }}
                     />
                   )}
                 />

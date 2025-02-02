@@ -13,6 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { updateProfile } from '@/core/user/actions';
 import Toast from 'react-native-toast-message';
+import Divider from '@/presentation/theme/components/ui/Divider';
 
 export const profileSchema = z
   .object({
@@ -72,7 +73,6 @@ const Profile = () => {
       password: values.password,
     });
     setLoading(false);
-    console.warn(response);
 
     // Unauthorized
 
@@ -88,17 +88,6 @@ const Profile = () => {
       });
       return;
     }
-
-    // if (response.statusCode === 409) {
-    //   if (response.message.includes('phoneNumber')) {
-    //     setError('phoneNumber', {
-    //       type: 'manual',
-    //       message:
-    //         'Your phone number is already being used by an existing AscencioTax account.',
-    //     });
-    //     return;
-    //   }
-    // }
   };
 
   return (
@@ -108,10 +97,10 @@ const Profile = () => {
           <View
             style={{
               flex: 1,
-              gap: 20,
+              gap: 10,
               padding: 20,
               width: '100%',
-              maxWidth: 320,
+              maxWidth: 500,
               marginHorizontal: 'auto',
             }}
           >
@@ -243,6 +232,7 @@ const Profile = () => {
             >
               Update
             </Button>
+            <Divider />
             <Button
               iconRight={
                 <Ionicons name="log-out-outline" size={24} color="white" />

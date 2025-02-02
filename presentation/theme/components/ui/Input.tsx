@@ -27,15 +27,15 @@ export function Input({
       style={[
         {
           borderWidth: 1,
+          borderRadius: theme.radius,
+          paddingHorizontal: 20,
+          height: 48,
+          color: readOnly ? theme.mutedForeground : theme.primaryForeground,
           borderColor: readOnly
             ? theme.mutedForeground
             : isFocused
             ? focusedBorderColor
             : theme.input, // Conditional border color
-          borderRadius: theme.radius,
-          paddingHorizontal: 20,
-          height: 48,
-          color: readOnly ? theme.mutedForeground : theme.primaryForeground,
         },
         style,
       ]}

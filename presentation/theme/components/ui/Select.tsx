@@ -4,13 +4,12 @@ import {
   Text,
   StyleSheet,
   Modal,
-  TouchableOpacity,
   StyleProp,
   ViewStyle,
   ScrollView,
 } from 'react-native';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Input } from './Input';
-import { AntDesign } from '@expo/vector-icons';
 import Button from './Button';
 import { theme } from './Theme';
 
@@ -19,6 +18,9 @@ interface SelectProps {
   onSelect: (item: Option | null) => void;
   placeholder?: string;
   style?: StyleProp<ViewStyle>;
+  enableFilter?: boolean;
+  defaultSelected?: Option;
+  readOnly?: boolean;
 }
 
 interface Option {
@@ -31,12 +33,21 @@ const Select = ({
   style,
   onSelect,
   placeholder,
+  enableFilter = true,
+  defaultSelected,
+  readOnly = false,
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
   const [searchText, setSearchText] = useState('');
   const [filteredOptions, setFilteredOptions] =
     useState<Option[]>(initialOptions);
+
+  useEffect(() => {
+    if (defaultSelected) {
+      setSelectedValue(defaultSelected);
+    }
+  }, [defaultSelected]);
 
   useEffect(() => {
     if (searchText === '') {
@@ -63,21 +74,27 @@ const Select = ({
   return (
     <View style={style}>
       <Button
+        disabled={readOnly}
         iconRight={
           <AntDesign
             name={modalVisible ? 'up' : 'down'}
-            size={16}
+            // size={12}
             color={'white'}
           />
         }
         variant="outlined"
-        style={{ borderColor: theme.input }}
         textStyle={{ fontWeight: 'normal', fontSize: 14 }}
         onPress={() => setModalVisible(true)}
         containerTextAndIconsStyle={{ justifyContent: 'space-between' }}
       >
         <Text style={styles.selectButtonText}>
-          {selectedValue ? selectedValue.label : placeholder || 'Select'}
+          {selectedValue ? (
+            selectedValue.label
+          ) : placeholder ? (
+            <Text style={{ color: theme.muted }}>{placeholder}</Text>
+          ) : (
+            'Select'
+          )}
         </Text>
       </Button>
 
@@ -87,36 +104,85 @@ const Select = ({
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="flex-1 justify-center items-center bg-['#0009']">
-          <View className="flex gap-4 bg-white p-5 rounded-2xl w-10/12 max-h-['80%'] ">
-            <Input
-              placeholder="Search"
-              onChange={(e) => handleSearchChange(e.nativeEvent.text)}
-              value={searchText}
-              placeholderTextColor={'#ccc'}
-              style={{ color: 'black', borderColor: '#ccc' }}
-            />
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#0009',
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: 'white',
+              borderRadius: 20,
+              padding: 20,
+              width: '90%',
+              maxWidth: 360,
+              maxHeight: '80%',
+            }}
+          >
+            {enableFilter && (
+              <Input
+                placeholder="Search"
+                onChange={(e) => handleSearchChange(e.nativeEvent.text)}
+                value={searchText}
+                placeholderTextColor={theme.mutedForeground}
+                style={{ color: 'black', borderColor: theme.mutedForeground }}
+              />
+            )}
             <ScrollView>
               {filteredOptions.map((item) => (
-                <TouchableOpacity
+                <Button
+                  iconLeft={
+                    selectedValue && selectedValue.label === item.label ? (
+                      <Ionicons
+                        name="checkbox-outline"
+                        size={20}
+                        color={theme.primary}
+                      />
+                    ) : (
+                      <Ionicons
+                        name="square-outline"
+                        size={20}
+                        color={theme.muted}
+                      />
+                    )
+                  }
                   key={item.label}
+                  variant="ghost"
                   onPress={() => handleSelect(item)}
-                  className="px-2 py-3"
+                  containerTextAndIconsStyle={{
+                    justifyContent: 'flex-start',
+                  }}
                 >
-                  <Text>{item.label}</Text>
-                </TouchableOpacity>
+                  <Text
+                    style={{
+                      color:
+                        selectedValue && selectedValue.label === item.label
+                          ? theme.primary
+                          : '#000',
+                      fontWeight:
+                        selectedValue && selectedValue.label === item.label
+                          ? 'bold'
+                          : 'normal',
+                    }}
+                  >
+                    {item.label}
+                  </Text>
+                </Button>
               ))}
             </ScrollView>
 
-            <TouchableOpacity
-              style={styles.closeButton}
+            <Button
+              variant="outlined"
               onPress={() => {
                 setModalVisible(false);
                 setSearchText('');
               }}
             >
-              <Text className="text-red-500">Close</Text>
-            </TouchableOpacity>
+              <Text style={{ color: theme.destructive }}>Close</Text>
+            </Button>
           </View>
         </View>
       </Modal>
@@ -127,11 +193,6 @@ const Select = ({
 const styles = StyleSheet.create({
   selectButtonText: {
     color: 'white',
-  },
-
-  closeButton: {
-    padding: 10,
-    alignItems: 'center',
   },
 });
 

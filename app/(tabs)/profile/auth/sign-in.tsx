@@ -63,7 +63,6 @@ const Signin = () => {
   const handleSignin = async (values: z.infer<typeof signinSchema>) => {
     setIsLoading(true);
     const response = await signin(values.username, values.password);
-    console.warn(response);
     setIsLoading(false);
 
     if (response.error === 'Unauthorized') {
@@ -113,6 +112,7 @@ const Signin = () => {
               width: '100%',
               maxWidth: 320,
               marginHorizontal: 'auto',
+              marginBottom: 20,
             }}
           >
             <Header
