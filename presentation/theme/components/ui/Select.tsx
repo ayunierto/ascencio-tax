@@ -12,29 +12,31 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { Input } from './Input';
 import Button from './Button';
 import { theme } from './Theme';
+import Divider from './Divider';
 
 interface SelectProps {
   options: Option[];
-  onSelect: (item: Option | null) => void;
   placeholder?: string;
   style?: StyleProp<ViewStyle>;
   enableFilter?: boolean;
-  defaultSelected?: Option;
+  selectedOptions?: Option;
   readOnly?: boolean;
+
+  onSelect: (option: Option) => void;
 }
 
-interface Option {
+export interface Option {
   label: string;
-  value: any;
+  value: string;
 }
 
 const Select = ({
   options: initialOptions,
-  style,
   onSelect,
+  style,
   placeholder,
   enableFilter = true,
-  defaultSelected,
+  selectedOptions: defaultSelected,
   readOnly = false,
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -60,9 +62,9 @@ const Select = ({
     }
   }, [searchText, initialOptions]); // It runs when search text or items changes
 
-  const handleSelect = (item: Option) => {
-    setSelectedValue(item);
-    onSelect(item);
+  const handleSelect = (option: Option) => {
+    setSelectedValue(option);
+    onSelect(option);
     setModalVisible(false);
     setSearchText(''); // Clean the search text when selecting an option
   };
@@ -76,11 +78,7 @@ const Select = ({
       <Button
         disabled={readOnly}
         iconRight={
-          <AntDesign
-            name={modalVisible ? 'up' : 'down'}
-            // size={12}
-            color={'white'}
-          />
+          <AntDesign name={modalVisible ? 'up' : 'down'} color={'white'} />
         }
         variant="outlined"
         textStyle={{ fontWeight: 'normal', fontSize: 14 }}
@@ -132,26 +130,26 @@ const Select = ({
               />
             )}
             <ScrollView>
-              {filteredOptions.map((item) => (
+              {filteredOptions.map((option) => (
                 <Button
+                  key={option.label}
                   iconLeft={
-                    selectedValue && selectedValue.label === item.label ? (
-                      <Ionicons
-                        name="checkbox-outline"
-                        size={20}
-                        color={theme.primary}
-                      />
-                    ) : (
-                      <Ionicons
-                        name="square-outline"
-                        size={20}
-                        color={theme.muted}
-                      />
-                    )
+                    <Ionicons
+                      name={
+                        selectedValue && selectedValue.label === option.label
+                          ? 'checkbox-outline'
+                          : 'square-outline'
+                      }
+                      size={20}
+                      color={
+                        selectedValue && selectedValue.label === option.label
+                          ? theme.primary
+                          : theme.muted
+                      }
+                    />
                   }
-                  key={item.label}
                   variant="ghost"
-                  onPress={() => handleSelect(item)}
+                  onPress={() => handleSelect(option)}
                   containerTextAndIconsStyle={{
                     justifyContent: 'flex-start',
                   }}
@@ -159,20 +157,22 @@ const Select = ({
                   <Text
                     style={{
                       color:
-                        selectedValue && selectedValue.label === item.label
+                        selectedValue && selectedValue.label === option.label
                           ? theme.primary
                           : '#000',
                       fontWeight:
-                        selectedValue && selectedValue.label === item.label
+                        selectedValue && selectedValue.label === option.label
                           ? 'bold'
                           : 'normal',
                     }}
                   >
-                    {item.label}
+                    {option.label}
                   </Text>
                 </Button>
               ))}
             </ScrollView>
+
+            <Divider style={{ backgroundColor: '#eee', marginVertical: 10 }} />
 
             <Button
               variant="outlined"

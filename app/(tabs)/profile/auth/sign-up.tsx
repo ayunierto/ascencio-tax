@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Input } from '@/presentation/theme/components/ui/Input';
 import { router } from 'expo-router';
 import Button from '@/presentation/theme/components/ui/Button';
@@ -19,6 +19,7 @@ import { countries } from '@/countryData';
 import Header from '../../../../presentation/theme/components/auth/Header';
 import { signupSchema } from '@/core/auth/schemas/signupSchema';
 import Logo from '@/presentation/theme/components/Logo';
+import useIPGeolocation from '@/core/hooks/useIPGeolocation';
 
 const countryCodes: { label: string; value: string }[] = [];
 
@@ -33,6 +34,8 @@ const transformCountries = () => {
 transformCountries();
 
 const Signup = () => {
+  const { location } = useIPGeolocation();
+  const [callingCode, setCallingCode] = useState<string | undefined>();
   const {
     control,
     handleSubmit,
@@ -51,6 +54,14 @@ const Signup = () => {
       phoneNumber: '',
     },
   });
+
+  useEffect(() => {
+    if (location) {
+      // setValue('countryCode', `+${location.location.calling_code}` || '');
+      setCallingCode(`+${location.location.calling_code}`);
+      setValue('countryCode', `+${location.location.calling_code}`);
+    }
+  }, [location]);
 
   const { signup } = useAuthStore();
   const [loading, setLoading] = useState(false);
@@ -139,6 +150,7 @@ const Signup = () => {
                   {errors.name?.message as string}
                 </Text>
               )}
+
               <Controller
                 control={control}
                 name="lastName"
@@ -158,6 +170,8 @@ const Signup = () => {
                   {errors.lastName?.message as string}
                 </Text>
               )}
+
+              {/* Email */}
               <Controller
                 control={control}
                 name="email"
@@ -178,13 +192,20 @@ const Signup = () => {
                   {errors.email?.message as string}
                 </Text>
               )}
+
+              {/* Country code and phone number */}
               <View className="flex flex-row gap-2">
                 <Select
                   options={countryCodes}
+                  // selectedOptions={[]}
+                  selectedOptions={countryCodes.find(
+                    (item) => item.value === callingCode
+                  )}
                   onSelect={(item) => setValue('countryCode', item?.value)}
                   placeholder="+1"
                   style={{ flex: 1 }}
                 />
+
                 <Controller
                   control={control}
                   name="phoneNumber"
@@ -202,11 +223,17 @@ const Signup = () => {
                   )}
                 />
               </View>
+              {errors.countryCode && (
+                <Text className="-mt-4 text-yellow-400">
+                  {errors.countryCode.message}
+                </Text>
+              )}
               {errors.phoneNumber && (
                 <Text className="-mt-4 text-yellow-400">
                   {errors.phoneNumber?.message as string}
                 </Text>
               )}
+
               <Controller
                 control={control}
                 name="password"

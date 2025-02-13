@@ -5,7 +5,7 @@ import { theme } from './ui/Theme';
 const Loader = () => {
   return (
     <View style={styles.container}>
-      <ActivityIndicator color={theme.foreground} />
+      <ActivityIndicator color={theme.foreground} size={30} />
     </View>
   );
 };

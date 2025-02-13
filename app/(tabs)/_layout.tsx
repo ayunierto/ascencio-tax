@@ -69,9 +69,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="receipts"
+        name="accounting"
         options={{
-          href: status === 'authenticated' ? '/(tabs)/receipts/receipts' : null,
+          href:
+            status === 'authenticated' ? '/(tabs)/accounting/receipts' : null,
           title: 'Receipts',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons

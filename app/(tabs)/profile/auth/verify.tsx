@@ -91,51 +91,59 @@ const VerifyCode = () => {
           <View
             style={{
               flex: 1,
-              gap: 20,
-              maxWidth: 320,
-              marginHorizontal: 'auto',
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            <Header
-              title={'Verify'}
-              subtitle={
-                'Please check your email for a message with your code. Your code is 6 numbers long.'
-              }
-            />
+            <View
+              style={{
+                flex: 1,
+                gap: 20,
+                maxWidth: 320,
+                marginHorizontal: 'auto',
+              }}
+            >
+              <Header
+                title={'Verify'}
+                subtitle={
+                  'Please check your email for a message with your code. Your code is 6 numbers long.'
+                }
+              />
 
-            <Controller
-              control={control}
-              name="verificationCode"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  placeholder="Verification code"
-                  keyboardType="numeric"
-                />
+              <Controller
+                control={control}
+                name="verificationCode"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    placeholder="Verification code"
+                    keyboardType="numeric"
+                  />
+                )}
+              />
+              {errors.verificationCode && (
+                <Text className="-mt-4 text-yellow-500 mb-5">
+                  {errors.verificationCode?.message as string}
+                </Text>
               )}
-            />
-            {errors.verificationCode && (
-              <Text className="-mt-4 text-yellow-500 mb-5">
-                {errors.verificationCode?.message as string}
-              </Text>
-            )}
-            <Button
-              disabled={isLoading}
-              loading={isLoading}
-              onPress={handleSubmit(handleVerify)}
-            >
-              Verify
-            </Button>
-            <Button
-              disabled={!canResend}
-              loading={isLoadingResend}
-              onPress={handleResendCode}
-              variant="outlined"
-            >
-              {canResend ? 'Resend code' : `Resend in ${timer}s`}
-            </Button>
+              <Button
+                disabled={isLoading}
+                loading={isLoading}
+                onPress={handleSubmit(handleVerify)}
+              >
+                Verify
+              </Button>
+              <Button
+                disabled={!canResend}
+                loading={isLoadingResend}
+                onPress={handleResendCode}
+                variant="outlined"
+              >
+                {canResend ? 'Resend code' : `Resend in ${timer}s`}
+              </Button>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>

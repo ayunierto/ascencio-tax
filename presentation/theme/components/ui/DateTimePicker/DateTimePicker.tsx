@@ -32,13 +32,9 @@ const DateTimeInput = ({
 
   const handleOnChange = (event: DateTimePickerEvent, date?: Date) => {
     if (onChange) {
-      onChange(
-        DateTime.fromJSDate(new Date(date!)).toLocaleString({
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-        })
-      );
+      if (date) {
+        onChange(date.toISOString());
+      }
     }
     setDate(date);
   };

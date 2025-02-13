@@ -5,7 +5,7 @@ import {
   type TextInputProps,
 } from 'react-native';
 import { theme } from './Theme';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 
 interface InputProps extends TextInputProps {
   style?: StyleProp<TextStyle>;
@@ -13,13 +13,14 @@ interface InputProps extends TextInputProps {
   focusedBorderColor?: string; // Add a prop for the focused border color
 }
 
-export function Input({
+export const Input = ({
   placeholderTextColor,
   focusedBorderColor = theme.primary,
   style,
   readOnly,
+  onEndEditing,
   ...props
-}: InputProps) {
+}: InputProps) => {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -40,10 +41,13 @@ export function Input({
         style,
       ]}
       onFocus={() => setIsFocused(true)}
-      onEndEditing={() => setIsFocused(false)}
+      onEndEditing={() => {
+        setIsFocused(false);
+        onEndEditing;
+      }}
       placeholderTextColor={placeholderTextColor || '#ccc'}
       readOnly={readOnly}
       {...props}
     />
   );
-}
+};

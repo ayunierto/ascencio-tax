@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { router } from 'expo-router';
+import * as Localization from 'expo-localization';
 
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
@@ -204,6 +205,9 @@ const Signin = () => {
             >
               Log In
             </Button>
+            <Text style={{ color: 'white' }}>
+              {/* La moneda del usuario es: {deviceLanguage} */}
+            </Text>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
