@@ -99,6 +99,7 @@ export const useExpense = (expenseId: number) => {
     }));
     setSubcategoryOptions(options);
     setSelectedSubcategory(options[0]);
+    setValue('subcategoryId', options[0].value);
   };
 
   const expenseMutation = useMutation({
