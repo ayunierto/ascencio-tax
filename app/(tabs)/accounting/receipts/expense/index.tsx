@@ -5,9 +5,9 @@ import FloatingButtonGroup from '@/presentation/theme/components/receipts/Floati
 import Loader from '@/presentation/theme/components/Loader';
 import { useExpenses } from '@/core/accounting/expenses/hooks/useExpenses';
 import ExpensesList from '@/presentation/theme/components/receipts/expenses/ExpensesList';
-import ExpenseEmptyList from '@/presentation/theme/components/receipts/expenses/ExpenseEmptyList';
+import EmptyList from '@/presentation/theme/components/EmptyList';
 
-const Receipts = () => {
+const ExpensesScreen = () => {
   const { expensesQuery, loadNextPage } = useExpenses();
 
   if (expensesQuery.isLoading) {
@@ -17,7 +17,7 @@ const Receipts = () => {
   if (expensesQuery.data?.pages[0].length === 0) {
     return (
       <>
-        <ExpenseEmptyList />
+        <EmptyList title="No expenses found." />
 
         <FloatingButtonGroup />
       </>
@@ -35,4 +35,4 @@ const Receipts = () => {
   );
 };
 
-export default Receipts;
+export default ExpensesScreen;

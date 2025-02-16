@@ -4,8 +4,7 @@ import { FlatList, RefreshControl } from 'react-native';
 import ExpenseCard from './ExpenseCard';
 import { useQueryClient } from '@tanstack/react-query';
 import { Expense } from '@/core/accounting/expenses/interfaces';
-import { ThemedText } from '../../ui/ThemedText';
-import ExpenseEmptyList from './ExpenseEmptyList';
+import EmptyList from '../../EmptyList';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -28,7 +27,7 @@ const ExpensesList = ({ expenses, loadNextPage }: ExpenseListProps) => {
 
   return (
     <FlatList
-      style={{ paddingHorizontal: 20, paddingTop: 20 }}
+      style={{ paddingHorizontal: 20 }}
       data={expenses}
       numColumns={1}
       keyExtractor={(item) => item.id.toString()}
@@ -39,7 +38,12 @@ const ExpensesList = ({ expenses, loadNextPage }: ExpenseListProps) => {
       refreshControl={
         <RefreshControl refreshing={isRefreshing} onRefresh={onPullToRefresh} />
       }
-      ListEmptyComponent={<ExpenseEmptyList />}
+      ListEmptyComponent={
+        <EmptyList
+          title="No expenses found."
+          subtitle="Add a new expense to get started"
+        />
+      }
     />
   );
 };

@@ -14,11 +14,10 @@ import { Controller } from 'react-hook-form';
 import { Account } from '@/core/accounting/accounts/interfaces';
 import ExpenseImage from '@/presentation/theme/components/receipts/expenses/ExpenseImage';
 import ErrorMessage from '@/presentation/theme/components/receipts/expenses/ErrorMessage';
-import { useCameraStore } from '@/core/camera/store';
+import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 
 const ExpenseScreen = () => {
   const { id } = useLocalSearchParams();
-  console.warn({ ExpenseScreenID: +id });
   const {
     expense,
     expenseQuery,
@@ -32,9 +31,12 @@ const ExpenseScreen = () => {
     setValue,
     errors,
     isLoading,
+    isFetching,
+    selectedImages,
+    onDeleteReceipts,
+    selectedSubcategory,
+    selectedCategory,
   } = useExpense(+id);
-
-  const { selectedImages } = useCameraStore();
 
   if (isLoading) return <Loader />;
 
@@ -46,7 +48,7 @@ const ExpenseScreen = () => {
     <KeyboardAvoidingView behavior="padding">
       <ScrollView>
         <View style={{ margin: 20, gap: 10 }}>
-          {/* <ThemedText>Receipt image:</ThemedText> */}
+          <ThemedText>Receipt image:</ThemedText>
           <ExpenseImage
             onChange={(image) => setValue('image', image)}
             image={
@@ -58,6 +60,7 @@ const ExpenseScreen = () => {
             }
           />
 
+          <ThemedText>Merchant:</ThemedText>
           <Controller
             control={control}
             name={'merchant'}
@@ -72,6 +75,7 @@ const ExpenseScreen = () => {
           />
           <ErrorMessage fieldErrors={errors.merchant} />
 
+          <ThemedText>Date:</ThemedText>
           <Controller
             control={control}
             name="date"
@@ -81,6 +85,7 @@ const ExpenseScreen = () => {
           />
           <ErrorMessage fieldErrors={errors.date} />
 
+          <ThemedText>Total:</ThemedText>
           <Controller
             control={control}
             name="total"
@@ -95,6 +100,7 @@ const ExpenseScreen = () => {
           />
           <ErrorMessage fieldErrors={errors.total} />
 
+          <ThemedText>Tax:</ThemedText>
           <Controller
             control={control}
             name="tax"
@@ -109,6 +115,7 @@ const ExpenseScreen = () => {
           />
           <ErrorMessage fieldErrors={errors.tax} />
 
+          <ThemedText>Account:</ThemedText>
           <Controller
             control={control}
             name="accountId"
@@ -123,11 +130,13 @@ const ExpenseScreen = () => {
                 }
                 placeholder="Account"
                 selectedOptions={
-                  expense &&
-                  expense.account && {
-                    label: expense.account.name,
-                    value: expense.account.id.toString(),
-                  }
+                  id === '0'
+                    ? undefined
+                    : expense &&
+                      expense.account && {
+                        label: expense.account.name,
+                        value: expense.account.id.toString(),
+                      }
                 }
                 onSelect={(selectedAccount) => {
                   setValue('accountId', +selectedAccount.value);
@@ -137,6 +146,7 @@ const ExpenseScreen = () => {
           />
           <ErrorMessage fieldErrors={errors.accountId} />
 
+          <ThemedText>Category:</ThemedText>
           <Controller
             control={control}
             name="categoryId"
@@ -145,15 +155,9 @@ const ExpenseScreen = () => {
                 enableFilter={false}
                 options={categoryOptions}
                 placeholder="Category"
-                selectedOptions={
-                  expense &&
-                  expense.category && {
-                    label: expense.category.name,
-                    value: expense.category.id.toString(),
-                  }
-                }
+                selectedOptions={selectedCategory}
                 onSelect={(option) => {
-                  onChangeCategory(option.label, option.value);
+                  onChangeCategory(option.value);
                   setValue('categoryId', +option.value);
                 }}
               />
@@ -163,6 +167,7 @@ const ExpenseScreen = () => {
 
           {subcategoryOptions.length > 0 && (
             <>
+              <ThemedText>Subcategory:</ThemedText>
               <Controller
                 control={control}
                 name="subcategoryId"
@@ -171,14 +176,7 @@ const ExpenseScreen = () => {
                     enableFilter={false}
                     options={subcategoryOptions}
                     placeholder="Subcategory"
-                    selectedOptions={
-                      expense && expense.subcategory
-                        ? {
-                            label: expense.subcategory?.name,
-                            value: expense.subcategory?.id.toString(),
-                          }
-                        : undefined
-                    }
+                    selectedOptions={selectedSubcategory}
                     onSelect={(option) =>
                       setValue('subcategoryId', +option.value)
                     }
@@ -189,6 +187,7 @@ const ExpenseScreen = () => {
             </>
           )}
 
+          <ThemedText>Notes:</ThemedText>
           <Controller
             control={control}
             name="notes"
@@ -208,8 +207,8 @@ const ExpenseScreen = () => {
 
           <Button
             onPress={handleSubmit(onSubmit)}
-            loading={expenseQuery.isFetching}
-            disabled={expenseQuery.isFetching}
+            loading={isFetching}
+            disabled={isFetching}
             iconRight={
               <Ionicons
                 name="save-outline"
@@ -220,6 +219,21 @@ const ExpenseScreen = () => {
           >
             Save
           </Button>
+          {id !== '0' && (
+            <Button
+              variant="destructive"
+              onPress={() => onDeleteReceipts()}
+              iconRight={
+                <Ionicons
+                  name="trash-outline"
+                  size={24}
+                  color={theme.foreground}
+                />
+              }
+            >
+              Delete
+            </Button>
+          )}
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

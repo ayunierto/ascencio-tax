@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { router, useNavigation } from 'expo-router';
+import { router, useFocusEffect, useNavigation } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
@@ -14,8 +14,10 @@ import { getAccounts } from '../../accounts/actions';
 import { getCategories } from '../../categories/actions';
 import { getSubcategories } from '../../subcategories/actions';
 import { Subcategory } from '../../subcategories/interfaces';
-import { createUpdateExpense } from '../actions';
+import { createUpdateExpense, removeExpense } from '../actions';
 import { Expense } from '../interfaces';
+import { useCameraStore } from '@/core/camera/store';
+import { Alert } from 'react-native';
 
 interface Option {
   label: string;
@@ -23,14 +25,17 @@ interface Option {
 }
 
 export const useExpense = (expenseId: number) => {
-  console.warn({ useExpenseID: expenseId });
   const navigation = useNavigation();
 
   const [expense, setExpense] = useState<Expense>();
   const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   const [subcategoryOptions, setSubcategoryOptions] = useState<Option[]>([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState<Option>();
+  const [selectedCategory, setSelectedCategory] = useState<Option>();
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
-  // const expensesIdRef = useRef(expenseId);
+  const { selectedImages, clearImages } = useCameraStore();
+
   const queryClient = useQueryClient();
 
   const expenseQuery = useQuery({
@@ -60,19 +65,7 @@ export const useExpense = (expenseId: number) => {
         title: expenseQuery.data.merchant ?? 'New',
       });
 
-      const expense = expenseQuery.data;
-      setValue('merchant', expense.merchant);
-      setValue('date', expense.date);
-      setValue('total', expense.total);
-      setValue('tax', expense.tax);
-      setValue('notes', expense.notes ?? '');
-      setValue('image', expense.image ? expense.image : undefined);
-      if (expense.account) setValue('accountId', expense.account.id);
-      if (expense.category) setValue('categoryId', expense.category.id);
-      if (expense.subcategory)
-        setValue('subcategoryId', expense.subcategory.id);
-
-      setExpense(expenseQuery.data);
+      setExpenseData(expenseQuery.data);
     }
   }, [expenseQuery.data]);
 
@@ -96,15 +89,16 @@ export const useExpense = (expenseId: number) => {
     }
   }, [subcategoryQuery.isSuccess, subcategoryQuery.data]);
 
-  const onChangeCategory = async (label: string, value: string) => {
+  const onChangeCategory = async (value: string) => {
     const subcategories = subcategoryQuery.data.filter(
-      (sub: Subcategory) => sub.category!.id === +value
+      (subcategory: Subcategory) => subcategory.category!.id === +value
     );
-    const options = subcategories.map((sub: Subcategory) => ({
-      label: sub.name,
-      value: sub.id,
+    const options = subcategories.map((subcategory: Subcategory) => ({
+      label: subcategory.name,
+      value: subcategory.id,
     }));
     setSubcategoryOptions(options);
+    setSelectedSubcategory(options[0]);
   };
 
   const expenseMutation = useMutation({
@@ -132,18 +126,38 @@ export const useExpense = (expenseId: number) => {
       queryClient.invalidateQueries({
         queryKey: ['expense', expenseId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['totalExpenses'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['logs'],
+      });
       Toast.show({
         type: 'success',
         text1: 'Receipt saved',
         text2: 'Receipt was saved correctly',
       });
+      clearImages();
       router.replace('/accounting/receipts/expense');
     },
   });
 
   const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
+    setIsFetching(true);
     await expenseMutation.mutateAsync();
+    setIsFetching(false);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      expenseQuery.refetch();
+      if (expenseQuery.data) setExpenseData(expenseQuery.data);
+
+      return () => {
+        useCameraStore.getState().clearImages();
+      };
+    }, [])
+  );
 
   const {
     control,
@@ -160,6 +174,83 @@ export const useExpense = (expenseId: number) => {
     },
   });
 
+  const onDeleteReceipts = () => {
+    Alert.alert(
+      'Delete Receipt',
+      'Are you sure you want to delete this receipt?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removeExpense(expenseId);
+              queryClient.invalidateQueries({
+                queryKey: ['expenses', 'infinite'],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ['expense', expenseId],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ['totalExpenses'],
+              });
+              queryClient.invalidateQueries({
+                queryKey: ['logs'],
+              });
+              Toast.show({
+                type: 'success',
+                text1: 'Receipt deleted',
+                text2: 'Receipt was deleted correctly',
+              });
+              router.replace('/accounting/receipts/expense');
+            } catch (error) {
+              console.error(error);
+              Toast.show({
+                type: 'error',
+                text1: 'Error deleting receipt',
+                text2: 'There was an error deleting the receipt',
+              });
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const setExpenseData = (expense: Expense) => {
+    setValue('merchant', expense.merchant);
+    setValue('date', expense.date);
+    setValue('total', expense.total);
+    setValue('tax', expense.tax);
+    setValue('notes', expense.notes ?? '');
+    setValue('image', expense.image ? expense.image : undefined);
+    expense.account && setValue('accountId', expense.account.id);
+    expense.category && setValue('categoryId', expense.category.id);
+    expense.subcategory && setValue('subcategoryId', expense.subcategory.id);
+
+    setSelectedSubcategory(
+      expense.subcategory
+        ? {
+            label: expense.subcategory?.name,
+            value: expense.subcategory?.id.toString(),
+          }
+        : undefined
+    );
+
+    setSelectedCategory(
+      expense.category && {
+        label: expense.category.name,
+        value: expense.category.id.toString(),
+      }
+    );
+
+    setExpense(expense);
+  };
+
   return {
     expense,
     expenseQuery,
@@ -173,5 +264,10 @@ export const useExpense = (expenseId: number) => {
     onChangeCategory,
     onSubmit,
     isLoading: expenseQuery.isLoading || accountQuery.isLoading,
+    selectedImages,
+    isFetching,
+    onDeleteReceipts,
+    selectedSubcategory,
+    selectedCategory,
   };
 };

@@ -14,7 +14,6 @@ const _layout = () => {
           backgroundColor: theme.background,
         },
         drawerType: 'slide',
-        drawerIcon: (props) => <Ionicons name="accessibility" />,
         headerTitleAlign: 'center',
       }}
     >
@@ -34,7 +33,7 @@ const _layout = () => {
       />
 
       <Drawer.Screen
-        name="receipts/expense/index"
+        name="receipts/expense"
         options={{
           drawerIcon: ({ color, focused, size }) => (
             <Ionicons
@@ -48,7 +47,7 @@ const _layout = () => {
         }}
       />
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="receipts/expense/scan-expense"
         options={{
           drawerIcon: ({ color, focused, size }) => (
@@ -62,9 +61,9 @@ const _layout = () => {
           title: 'Scan Expense',
         }}
         redirect={false}
-      />
+      /> */}
 
-      <Drawer.Screen
+      {/* <Drawer.Screen
         name="receipts/expense/[id]"
         options={{
           drawerIcon: ({ color, focused, size }) => (
@@ -77,7 +76,7 @@ const _layout = () => {
           drawerLabel: 'Expense',
           title: 'Expense',
         }}
-      />
+      /> */}
     </Drawer>
   );
 };

@@ -18,6 +18,12 @@ const ExpenseImage = ({ image, onChange }: ExpenseImageProps) => {
     onChange && onChange(selectedImages[0]);
   }, [selectedImages]);
 
+  const removeImage = () => {
+    clearImages();
+
+    onChange && onChange(undefined);
+  };
+
   return (
     <View style={styles.imageContainer}>
       <View
@@ -47,10 +53,7 @@ const ExpenseImage = ({ image, onChange }: ExpenseImageProps) => {
                 padding: 4,
                 right: 0,
               }}
-              onPress={() => {
-                clearImages();
-                onChange && onChange(undefined);
-              }}
+              onPress={() => removeImage()}
             >
               <Ionicons name="close-outline" />
             </TouchableOpacity>

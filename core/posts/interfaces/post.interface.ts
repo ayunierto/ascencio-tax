@@ -1,6 +1,6 @@
 import { User } from '@/core/auth/interfaces/user';
 
-export interface PostResponse {
+export interface Post {
   id: number;
   url: string;
   title: string;

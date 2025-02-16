@@ -5,7 +5,6 @@ import { uploadImage } from '@/core/files/actions/upload-image.action';
 export const createUpdateExpense = async (
   expense: CreateUpdateExpense
 ): Promise<Expense> => {
-  console.warn({ expenseIdTOUpdate: expense.id });
   if (expense.id !== 0) {
     return await updateExpense(expense);
   }
