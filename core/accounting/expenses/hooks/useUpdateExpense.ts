@@ -137,7 +137,7 @@ export const useUpdateExpense = (expenseId: string) => {
     }
   };
 
-  const expenseMutation = useMutation({
+  const updateExpenseMutation = useMutation({
     mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
       const image = getValues('image');
       const data = await updateExpense({
@@ -171,7 +171,7 @@ export const useUpdateExpense = (expenseId: string) => {
     },
   });
 
-  const expenseMutationDelete = useMutation({
+  const deleteExpenseMutation = useMutation({
     mutationFn: async (expenseId: string): Promise<Expense> => {
       const data = await removeExpense(expenseId);
       return data;
@@ -181,9 +181,9 @@ export const useUpdateExpense = (expenseId: string) => {
       await queryClient.invalidateQueries({
         queryKey: ['expenses', 'infinite'],
       });
-      await queryClient.invalidateQueries({
-        queryKey: ['expense', expenseId],
-      });
+      // await queryClient.invalidateQueries({
+      //   queryKey: ['expense', expenseId],
+      // });
       await queryClient.invalidateQueries({
         queryKey: ['totalExpenses'],
       });
@@ -196,13 +196,13 @@ export const useUpdateExpense = (expenseId: string) => {
         text2: 'Receipt was deleted correctly',
       });
       clearImages();
-      router.dismiss();
+      router.replace('/accounting/receipts/expense');
     },
   });
 
   const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
     setIsFetching(true);
-    await expenseMutation.mutateAsync({
+    await updateExpenseMutation.mutateAsync({
       ...values,
       total: +values.total,
       tax: +values.tax,
@@ -225,26 +225,7 @@ export const useUpdateExpense = (expenseId: string) => {
           style: 'destructive',
           onPress: async () => {
             try {
-              // await expenseMutationDelete.mutateAsync(expenseId);
-              await removeExpense(expenseId);
-              queryClient.invalidateQueries({
-                queryKey: ['expenses', 'infinite'],
-              });
-              await queryClient.invalidateQueries({
-                queryKey: ['expense', expenseId],
-              });
-              await queryClient.invalidateQueries({
-                queryKey: ['totalExpenses'],
-              });
-              await queryClient.invalidateQueries({
-                queryKey: ['logs'],
-              });
-              Toast.show({
-                type: 'success',
-                text1: 'Receipt deleted',
-                text2: 'Receipt was deleted correctly',
-              });
-              router.dismiss();
+              await deleteExpenseMutation.mutateAsync(expenseId);
             } catch (error) {
               console.error(error);
               Toast.show({
@@ -257,7 +238,6 @@ export const useUpdateExpense = (expenseId: string) => {
         },
       ]
     );
-
     setIsDeleting(false);
   };
 
