@@ -3,13 +3,13 @@ import { AccountType } from '../../accounts-types/interfaces';
 import { Currency } from '../../currencies/interfaces';
 
 export interface Account {
-  id: number;
-  name: string;
-  icon: string;
-  description: string;
-  createdAt: string;
-  updatedAt: string | null;
-  currency: Currency;
   accountType: AccountType;
+  createdAt: string;
+  currency: Currency;
+  description: string;
+  icon: string;
+  id: string;
+  name: string;
+  updatedAt: string | null;
   user: User;
 }

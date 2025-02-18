@@ -1,17 +1,22 @@
 import { create } from 'zustand';
 
 interface TemporalCameraStoreState {
-  selectedImages: string[];
+  selectedImages: SelectedImages[];
 
-  addSelectedImage: (image: string) => void;
+  addSelectedImage: (image: SelectedImages) => void;
   clearImages: () => void;
-  removeImage: (image: string) => void;
+  removeImage: (image: SelectedImages) => void;
+}
+
+interface SelectedImages {
+  uri: string;
+  base64: string | undefined;
 }
 
 export const useCameraStore = create<TemporalCameraStoreState>()((set) => ({
   selectedImages: [],
 
-  addSelectedImage: (image: string) => {
+  addSelectedImage: (image: SelectedImages) => {
     set((state) => ({
       selectedImages: [...state.selectedImages, image],
     }));
@@ -19,8 +24,10 @@ export const useCameraStore = create<TemporalCameraStoreState>()((set) => ({
 
   clearImages: () => set({ selectedImages: [] }),
 
-  removeImage: (image: string) =>
+  removeImage: (image: SelectedImages) =>
     set((state) => ({
-      selectedImages: state.selectedImages.filter((img) => img !== image),
+      selectedImages: state.selectedImages.filter(
+        (img) => img.uri !== image.uri
+      ),
     })),
 }));

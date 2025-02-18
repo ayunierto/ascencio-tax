@@ -1,4 +1,4 @@
-import { View, Text, Platform, Modal, Alert, StyleSheet } from 'react-native';
+import { View, Text, Platform, Modal, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import Button from '../Button';
 import RNDateTimePicker, {
@@ -6,7 +6,6 @@ import RNDateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
 import { theme } from '../Theme';
-import { DateTime } from 'luxon';
 
 interface DateTimePickerProps {
   mode?: 'date' | 'time';
@@ -120,26 +119,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
   },
 });
 

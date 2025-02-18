@@ -1,12 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Animated, Easing } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Button from '../ui/Button';
-import { theme } from '../ui/Theme';
+import Button from '../../../presentation/theme/components/ui/Button';
+import { theme } from '../../../presentation/theme/components/ui/Theme';
 import { router } from 'expo-router';
-import { ThemedText } from '../ui/ThemedText';
+import { ThemedText } from '../../../presentation/theme/components/ui/ThemedText';
 
-const FAB = () => {
+export const FAB = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -61,7 +61,8 @@ const FAB = () => {
             height: 52,
           }}
           onPress={() => {
-            router.replace('/(tabs)/accounting/receipts/expense/0');
+            router.push('/(tabs)/accounting/receipts/expense/create');
+            toggleButtons();
           }}
         >
           <ThemedText>
@@ -79,7 +80,13 @@ const FAB = () => {
             height: 52,
           }}
           onPress={() => {
-            router.push('/(tabs)/accounting/receipts/expense/scan-expense');
+            router.push({
+              pathname: '/scan-receipts',
+              params: {
+                generateBase64: 'yes',
+              },
+            });
+            toggleButtons();
           }}
         >
           <ThemedText>
@@ -109,5 +116,3 @@ const FAB = () => {
     </View>
   );
 };
-
-export default FAB;

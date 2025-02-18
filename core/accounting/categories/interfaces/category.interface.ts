@@ -1,8 +1,8 @@
 export interface Category {
-  id: number;
-  name: string;
-  description: string;
-  isSystem: boolean;
   createdAt: string;
+  description: string;
+  id: string;
+  isSystem: boolean;
+  name: string;
   updatedAt: string | null;
 }

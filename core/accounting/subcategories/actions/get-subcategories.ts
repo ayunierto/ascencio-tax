@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
+import { Subcategory } from '../interfaces';
 
-export const getSubcategories = async () => {
+export const getSubcategories = async (): Promise<Subcategory[]> => {
   try {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -15,9 +16,10 @@ export const getSubcategories = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data = await response.json();
+    const data: Subcategory[] = await response.json();
     return data;
   } catch (error) {
-    return error;
+    console.error(error);
+    throw new Error('Unable to load subcategories');
   }
 };

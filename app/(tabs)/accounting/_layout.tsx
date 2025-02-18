@@ -7,6 +7,7 @@ const _layout = () => {
   return (
     <Drawer
       screenOptions={{
+        headerShadowVisible: false,
         headerStyle: {
           backgroundColor: theme.background,
         },
@@ -44,39 +45,9 @@ const _layout = () => {
           ),
           drawerLabel: 'Expenses',
           title: 'Expenses',
+          // headerLeft: () => <Ionicons name="home" color={'white'} />,
         }}
       />
-
-      {/* <Drawer.Screen
-        name="receipts/expense/scan-expense"
-        options={{
-          drawerIcon: ({ color, focused, size }) => (
-            <Ionicons
-              color={color}
-              name={focused ? 'add' : 'add-outline'}
-              size={size}
-            />
-          ),
-          drawerLabel: 'Scan Expense',
-          title: 'Scan Expense',
-        }}
-        redirect={false}
-      /> */}
-
-      {/* <Drawer.Screen
-        name="receipts/expense/[id]"
-        options={{
-          drawerIcon: ({ color, focused, size }) => (
-            <Ionicons
-              color={color}
-              name={focused ? 'add' : 'add-outline'}
-              size={size}
-            />
-          ),
-          drawerLabel: 'Expense',
-          title: 'Expense',
-        }}
-      /> */}
     </Drawer>
   );
 };

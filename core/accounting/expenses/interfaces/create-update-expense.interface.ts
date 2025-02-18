@@ -1,12 +1,12 @@
 export interface CreateUpdateExpense {
-  accountId: number;
-  categoryId: number;
+  accountId: string;
+  categoryId: string;
   date: string;
-  id: number;
   image?: string;
   merchant: string;
   notes?: string;
-  subcategoryId?: number | null;
+  subcategoryId?: string;
   tax: number;
   total: number;
+  id?: string;
 }

@@ -19,6 +19,7 @@ export const getCategories = async (): Promise<Category[]> => {
     const data: Category[] = await response.json();
     return data;
   } catch (error) {
+    console.error(error);
     throw new Error('Unable to load categories');
   }
 };

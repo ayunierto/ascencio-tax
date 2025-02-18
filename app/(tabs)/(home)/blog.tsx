@@ -8,8 +8,8 @@ import Alert from '@/presentation/theme/components/ui/Alert';
 import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 
 import { getPosts } from '@/core/posts/actions/get-posts';
-import ExpenseEmptyList from '@/presentation/theme/components/EmptyList';
-import EmptyList from '@/presentation/theme/components/EmptyList';
+import ExpenseEmptyList from '@/core/components/EmptyList';
+import EmptyList from '@/core/components/EmptyList';
 import ExpenseCard from '@/presentation/theme/components/receipts/expenses/ExpenseCard';
 
 const BlogScreen = () => {

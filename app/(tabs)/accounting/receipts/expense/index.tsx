@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 
-import FloatingButtonGroup from '@/presentation/theme/components/receipts/FloatingButtonGroup';
+import { FAB } from '@/core/accounting/components';
 import Loader from '@/presentation/theme/components/Loader';
 import { useExpenses } from '@/core/accounting/expenses/hooks/useExpenses';
 import ExpensesList from '@/presentation/theme/components/receipts/expenses/ExpensesList';
-import EmptyList from '@/presentation/theme/components/EmptyList';
+import { EmptyList } from '@/core/components';
 
 const ExpensesScreen = () => {
   const { expensesQuery, loadNextPage } = useExpenses();
@@ -17,9 +17,12 @@ const ExpensesScreen = () => {
   if (expensesQuery.data?.pages[0].length === 0) {
     return (
       <>
-        <EmptyList title="No expenses found." />
+        <EmptyList
+          title="No expenses found."
+          subtitle="Add a new expense to get started"
+        />
 
-        <FloatingButtonGroup />
+        <FAB />
       </>
     );
   }
@@ -30,7 +33,7 @@ const ExpensesScreen = () => {
         expenses={expensesQuery.data?.pages.flatMap((page) => page) ?? []}
         loadNextPage={loadNextPage}
       />
-      <FloatingButtonGroup />
+      <FAB />
     </View>
   );
 };

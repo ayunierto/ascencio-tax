@@ -15,14 +15,21 @@ import { theme } from './Theme';
 import Divider from './Divider';
 
 interface SelectProps {
+  enableFilter?: boolean;
   options: Option[];
   placeholder?: string;
-  style?: StyleProp<ViewStyle>;
-  enableFilter?: boolean;
-  selectedOptions?: Option;
   readOnly?: boolean;
+  selectedOptions?: Option;
+  style?: StyleProp<ViewStyle>;
 
-  onSelect: (option: Option) => void;
+  /**
+   * On Select.
+   * @param {Option} option - Option to return.
+   * @returns {void}
+   * @deprecated This property is deprecated. Use the `onChange` property instead.
+   */
+  onSelect?: (option: Option) => void;
+  onChange?: (id: string) => void;
 }
 
 export interface Option {
@@ -31,13 +38,14 @@ export interface Option {
 }
 
 const Select = ({
-  options: initialOptions,
-  onSelect,
-  style,
-  placeholder,
   enableFilter = true,
-  selectedOptions: defaultSelected,
+  onChange,
+  onSelect,
+  options: initialOptions,
+  placeholder,
   readOnly = false,
+  selectedOptions: defaultSelected,
+  style,
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedValue, setSelectedValue] = useState<Option | null>(null);
@@ -64,7 +72,8 @@ const Select = ({
 
   const handleSelect = (option: Option) => {
     setSelectedValue(option);
-    onSelect(option);
+    if (onSelect) onSelect(option);
+    if (onChange) onChange(option.value);
     setModalVisible(false);
     setSearchText(''); // Clean the search text when selecting an option
   };

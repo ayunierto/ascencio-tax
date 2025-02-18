@@ -1,7 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { Expense } from '../interfaces';
 
-export const removeExpense = async (expenseId: number): Promise<Expense> => {
+export const removeExpense = async (expenseId: string): Promise<Expense> => {
   try {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
 

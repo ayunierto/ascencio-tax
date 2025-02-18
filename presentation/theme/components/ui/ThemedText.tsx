@@ -1,5 +1,4 @@
 import {
-  View,
   Text as NativeText,
   StyleProp,
   TextStyle,
@@ -8,11 +7,11 @@ import {
 import React from 'react';
 import { theme } from './Theme';
 
-interface CustomTextProps extends TextProps {
+interface ThemedTextProps extends TextProps {
   children: React.ReactNode;
   style?: StyleProp<TextStyle>;
 }
-const ThemedText = ({ children, style, ...props }: CustomTextProps) => {
+const ThemedText = ({ children, style, ...props }: ThemedTextProps) => {
   return (
     <NativeText style={[{ color: theme.foreground }, style]} {...props}>
       {children}

@@ -1,14 +1,14 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-import { theme } from './ui/Theme';
-import { ThemedText } from './ui/ThemedText';
+import { theme } from '../../presentation/theme/components/ui/Theme';
+import { ThemedText } from '../../presentation/theme/components/ui/ThemedText';
 
 interface EmptyListProps {
   title: string;
   subtitle?: string;
 }
 
-const EmptyList = ({ title, subtitle = '' }: EmptyListProps) => {
+export const EmptyList = ({ title, subtitle = '' }: EmptyListProps) => {
   return (
     <View
       style={{
@@ -23,5 +23,3 @@ const EmptyList = ({ title, subtitle = '' }: EmptyListProps) => {
     </View>
   );
 };
-
-export default EmptyList;

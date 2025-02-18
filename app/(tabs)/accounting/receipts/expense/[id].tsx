@@ -1,9 +1,15 @@
-import React from 'react';
-import { KeyboardAvoidingView, ScrollView, View } from 'react-native';
+import React, { useEffect } from 'react';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { Input } from '@/presentation/theme/components/ui/Input';
-import { useExpense } from '@/core/accounting/expenses/hooks/useExpense';
+import { useUpdateExpense } from '@/core/accounting/expenses/hooks/useUpdateExpense';
 import Loader from '@/presentation/theme/components/Loader';
 import { theme } from '@/presentation/theme/components/ui/Theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +25,7 @@ import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 const ExpenseScreen = () => {
   const { id } = useLocalSearchParams();
   const {
-    expense,
+    // expense,
     expenseQuery,
     accountQuery,
     categoryOptions,
@@ -33,10 +39,29 @@ const ExpenseScreen = () => {
     isLoading,
     isFetching,
     selectedImages,
-    onDeleteReceipts,
+    onDelete,
     selectedSubcategory,
     selectedCategory,
-  } = useExpense(+id);
+    navigation,
+    isDeleting,
+
+    watch,
+  } = useUpdateExpense(id as string);
+
+  useEffect(() => {
+    const merchant = watch('merchant') || '';
+    navigation.setOptions({
+      title: merchant.length === 0 ? 'New' : merchant,
+      headerRight: ({ tintColor }: { tintColor: string }) =>
+        isFetching ? (
+          <ActivityIndicator color={theme.foreground} />
+        ) : (
+          <TouchableOpacity onPress={handleSubmit(onSubmit)}>
+            <Ionicons name="save-outline" color={tintColor} size={24} />
+          </TouchableOpacity>
+        ),
+    });
+  }, [watch('merchant'), isFetching]);
 
   if (isLoading) return <Loader />;
 
@@ -53,10 +78,8 @@ const ExpenseScreen = () => {
             onChange={(image) => setValue('image', image)}
             image={
               selectedImages.length > 0
-                ? selectedImages[0]
-                : expense
-                ? expense.image
-                : null
+                ? selectedImages[0].uri
+                : expenseQuery.data.image ?? null
             }
           />
 
@@ -79,7 +102,7 @@ const ExpenseScreen = () => {
           <Controller
             control={control}
             name="date"
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({ field: { onChange, value } }) => (
               <DateTimePicker value={new Date(value)} onChange={onChange} />
             )}
           />
@@ -95,6 +118,7 @@ const ExpenseScreen = () => {
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
+                keyboardType="number-pad"
               />
             )}
           />
@@ -110,6 +134,7 @@ const ExpenseScreen = () => {
                 value={value}
                 onBlur={onBlur}
                 onChangeText={onChange}
+                keyboardType="number-pad"
               />
             )}
           />
@@ -119,27 +144,24 @@ const ExpenseScreen = () => {
           <Controller
             control={control}
             name="accountId"
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={() => (
               <Select
                 enableFilter={false}
                 options={
                   accountQuery.data?.map((account: Account) => ({
                     label: account.name,
-                    value: account.id.toString(),
+                    value: account.id,
                   })) ?? []
                 }
                 placeholder="Account"
                 selectedOptions={
-                  id === '0'
-                    ? undefined
-                    : expense &&
-                      expense.account && {
-                        label: expense.account.name,
-                        value: expense.account.id.toString(),
-                      }
+                  expenseQuery.data && {
+                    label: expenseQuery.data.account.name,
+                    value: expenseQuery.data.account.id,
+                  }
                 }
-                onSelect={(selectedAccount) => {
-                  setValue('accountId', +selectedAccount.value);
+                onChange={(id) => {
+                  setValue('accountId', id);
                 }}
               />
             )}
@@ -150,15 +172,15 @@ const ExpenseScreen = () => {
           <Controller
             control={control}
             name="categoryId"
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={() => (
               <Select
                 enableFilter={false}
                 options={categoryOptions}
                 placeholder="Category"
                 selectedOptions={selectedCategory}
-                onSelect={(option) => {
-                  onChangeCategory(option.value);
-                  setValue('categoryId', +option.value);
+                onChange={(id) => {
+                  onChangeCategory(id);
+                  setValue('categoryId', id);
                 }}
               />
             )}
@@ -171,15 +193,13 @@ const ExpenseScreen = () => {
               <Controller
                 control={control}
                 name="subcategoryId"
-                render={({ field: { onChange, onBlur, value } }) => (
+                render={() => (
                   <Select
                     enableFilter={false}
                     options={subcategoryOptions}
                     placeholder="Subcategory"
                     selectedOptions={selectedSubcategory}
-                    onSelect={(option) =>
-                      setValue('subcategoryId', +option.value)
-                    }
+                    onChange={(id) => setValue('subcategoryId', id)}
                   />
                 )}
               />
@@ -217,12 +237,14 @@ const ExpenseScreen = () => {
               />
             }
           >
-            Save
+            Update
           </Button>
           {id !== '0' && (
             <Button
+              loading={isDeleting}
+              disabled={isDeleting}
               variant="destructive"
-              onPress={() => onDeleteReceipts()}
+              onPress={() => onDelete()}
               iconRight={
                 <Ionicons
                   name="trash-outline"

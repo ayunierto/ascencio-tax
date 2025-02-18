@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { FlatList, RefreshControl } from 'react-native';
 
-import ExpenseCard from './ExpenseCard';
+import { FlatList, RefreshControl } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
+
 import { Expense } from '@/core/accounting/expenses/interfaces';
-import EmptyList from '../../EmptyList';
+import ExpenseCard from './ExpenseCard';
+import { EmptyList } from '@/core/components';
 
 interface ExpenseListProps {
   expenses: Expense[];
@@ -30,7 +31,7 @@ const ExpensesList = ({ expenses, loadNextPage }: ExpenseListProps) => {
       style={{ paddingHorizontal: 20 }}
       data={expenses}
       numColumns={1}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item) => item.id}
       renderItem={({ item }) => <ExpenseCard expense={item} />}
       onEndReached={loadNextPage}
       onEndReachedThreshold={0.8}

@@ -3,14 +3,12 @@ import { View, Image, Text, StyleSheet, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {
   AnalyzeExpenseCommand,
-  DetectDocumentTextCommand,
-  FeatureType,
   TextractClient,
 } from '@aws-sdk/client-textract';
 import 'react-native-get-random-values';
 
-import { Buffer } from 'buffer';
-globalThis.Buffer = Buffer;
+// import { Buffer } from 'buffer';
+// globalThis.Buffer = Buffer;
 
 import Button from '@/presentation/theme/components/ui/Button';
 import ImageViewer from '@/presentation/theme/components/ImageViewer';

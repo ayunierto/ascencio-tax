@@ -1,38 +1,38 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { router, useFocusEffect, useNavigation } from 'expo-router';
+import { Alert } from 'react-native';
+import { router, useNavigation } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { getExpenseById } from '../actions/get-expenses-by-id.action';
+import { CreateUpdateExpense, Expense } from '../interfaces';
+import { Subcategory } from '../../subcategories/interfaces';
 import { Category } from '../../categories/interfaces/category.interface';
-import { expenseSchema } from '../schemas/expenseSchema';
+import { getExpenseById } from '../actions/get-expenses-by-id.action';
 import { getAccounts } from '../../accounts/actions';
+import { removeExpense, updateExpense } from '../actions';
 import { getCategories } from '../../categories/actions';
 import { getSubcategories } from '../../subcategories/actions';
-import { Subcategory } from '../../subcategories/interfaces';
-import { createUpdateExpense, removeExpense } from '../actions';
-import { Expense } from '../interfaces';
+import { expenseSchema } from '../schemas/expenseSchema';
 import { useCameraStore } from '@/core/camera/store';
-import { Alert } from 'react-native';
 
 interface Option {
   label: string;
   value: string;
 }
 
-export const useExpense = (expenseId: number) => {
+export const useUpdateExpense = (expenseId: string) => {
   const navigation = useNavigation();
 
-  const [expense, setExpense] = useState<Expense>();
   const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   const [subcategoryOptions, setSubcategoryOptions] = useState<Option[]>([]);
   const [selectedSubcategory, setSelectedSubcategory] = useState<Option>();
   const [selectedCategory, setSelectedCategory] = useState<Option>();
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   const { selectedImages, clearImages } = useCameraStore();
 
@@ -61,11 +61,44 @@ export const useExpense = (expenseId: number) => {
 
   useEffect(() => {
     if (expenseQuery.data) {
-      navigation.setOptions({
-        title: expenseQuery.data.merchant ?? 'New',
-      });
-
-      setExpenseData(expenseQuery.data);
+      const {
+        account,
+        date,
+        merchant,
+        category,
+        image,
+        notes,
+        subcategory,
+        tax,
+        total,
+      } = expenseQuery.data;
+      setValue('merchant', merchant);
+      setValue('date', date);
+      setValue('total', total.toString());
+      setValue('tax', tax.toString());
+      setValue('image', image ? image : undefined);
+      setValue('accountId', account.id);
+      setValue('categoryId', category.id);
+      if (subcategory) {
+        setValue('subcategoryId', subcategory.id);
+      }
+      if (notes) {
+        setValue('notes', notes);
+      }
+      setSelectedCategory(
+        category && {
+          label: category.name,
+          value: category.id,
+        }
+      );
+      setSelectedSubcategory(
+        subcategory
+          ? {
+              label: subcategory.name,
+              value: subcategory.id,
+            }
+          : undefined
+      );
     }
   }, [expenseQuery.data]);
 
@@ -90,92 +123,95 @@ export const useExpense = (expenseId: number) => {
   }, [subcategoryQuery.isSuccess, subcategoryQuery.data]);
 
   const onChangeCategory = async (value: string) => {
-    const subcategories = subcategoryQuery.data.filter(
-      (subcategory: Subcategory) => subcategory.category!.id === +value
-    );
-    const options = subcategories.map((subcategory: Subcategory) => ({
-      label: subcategory.name,
-      value: subcategory.id,
-    }));
-    setSubcategoryOptions(options);
-    setSelectedSubcategory(options[0]);
-    setValue('subcategoryId', options[0].value);
+    if (subcategoryQuery.data) {
+      const subcategories = subcategoryQuery.data.filter(
+        (subcategory: Subcategory) => subcategory.category!.id === value
+      );
+      const options = subcategories.map((subcategory: Subcategory) => ({
+        label: subcategory.name,
+        value: subcategory.id,
+      }));
+      setSubcategoryOptions(options);
+      setSelectedSubcategory(options[0]);
+      setValue('subcategoryId', options[0].value);
+    }
   };
 
   const expenseMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
       const image = getValues('image');
-      const data = await createUpdateExpense({
-        accountId: getValues('accountId'),
-        categoryId: getValues('categoryId'),
-        date: getValues('date'),
+      const data = await updateExpense({
         id: expenseId,
-        merchant: getValues('merchant'),
-        notes: getValues('notes'),
-        subcategoryId: getValues('subcategoryId'),
-        tax: +getValues('tax'),
-        total: +getValues('total'),
         image: image && image.includes('file') ? image : undefined,
+        ...values,
       });
       return data;
     },
 
-    onSuccess: (data: Expense) => {
-      queryClient.invalidateQueries({
+    onSuccess: async (data: Expense) => {
+      await queryClient.invalidateQueries({
         queryKey: ['expenses', 'infinite'],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ['expense', expenseId],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ['totalExpenses'],
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ['logs'],
       });
       Toast.show({
         type: 'success',
-        text1: 'Receipt saved',
-        text2: 'Receipt was saved correctly',
+        text1: `Receipt ${data.merchant} updated`,
+        text2: 'Receipt was updated correctly',
       });
       clearImages();
       router.replace('/accounting/receipts/expense');
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
-    setIsFetching(true);
-    await expenseMutation.mutateAsync();
-    setIsFetching(false);
-  };
+  const expenseMutationDelete = useMutation({
+    mutationFn: async (expenseId: string): Promise<Expense> => {
+      const data = await removeExpense(expenseId);
+      return data;
+    },
 
-  useFocusEffect(
-    useCallback(() => {
-      expenseQuery.refetch();
-      if (expenseQuery.data) setExpenseData(expenseQuery.data);
-
-      return () => {
-        useCameraStore.getState().clearImages();
-      };
-    }, [])
-  );
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    getValues,
-  } = useForm<z.infer<typeof expenseSchema>>({
-    resolver: zodResolver(expenseSchema),
-    defaultValues: {
-      merchant: expenseQuery.data?.merchant,
-      tax: expenseQuery.data?.tax,
-      total: expenseQuery.data?.total,
+    onSuccess: async (data: Expense) => {
+      await queryClient.invalidateQueries({
+        queryKey: ['expenses', 'infinite'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['expense', expenseId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['totalExpenses'],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['logs'],
+      });
+      Toast.show({
+        type: 'success',
+        text1: `Receipt ${data.merchant} deleted`,
+        text2: 'Receipt was deleted correctly',
+      });
+      clearImages();
+      router.dismiss();
     },
   });
 
-  const onDeleteReceipts = () => {
+  const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
+    setIsFetching(true);
+    await expenseMutation.mutateAsync({
+      ...values,
+      total: +values.total,
+      tax: +values.tax,
+    });
+    setIsFetching(false);
+  };
+
+  const onDelete = async () => {
+    setIsDeleting(true);
     Alert.alert(
       'Delete Receipt',
       'Are you sure you want to delete this receipt?',
@@ -189,17 +225,18 @@ export const useExpense = (expenseId: number) => {
           style: 'destructive',
           onPress: async () => {
             try {
+              // await expenseMutationDelete.mutateAsync(expenseId);
               await removeExpense(expenseId);
               queryClient.invalidateQueries({
                 queryKey: ['expenses', 'infinite'],
               });
-              queryClient.invalidateQueries({
+              await queryClient.invalidateQueries({
                 queryKey: ['expense', expenseId],
               });
-              queryClient.invalidateQueries({
+              await queryClient.invalidateQueries({
                 queryKey: ['totalExpenses'],
               });
-              queryClient.invalidateQueries({
+              await queryClient.invalidateQueries({
                 queryKey: ['logs'],
               });
               Toast.show({
@@ -207,7 +244,7 @@ export const useExpense = (expenseId: number) => {
                 text1: 'Receipt deleted',
                 text2: 'Receipt was deleted correctly',
               });
-              router.replace('/accounting/receipts/expense');
+              router.dismiss();
             } catch (error) {
               console.error(error);
               Toast.show({
@@ -220,40 +257,38 @@ export const useExpense = (expenseId: number) => {
         },
       ]
     );
+
+    setIsDeleting(false);
   };
 
-  const setExpenseData = (expense: Expense) => {
-    setValue('merchant', expense.merchant);
-    setValue('date', expense.date);
-    setValue('total', expense.total);
-    setValue('tax', expense.tax);
-    setValue('notes', expense.notes ?? '');
-    setValue('image', expense.image ? expense.image : undefined);
-    expense.account && setValue('accountId', expense.account.id);
-    expense.category && setValue('categoryId', expense.category.id);
-    expense.subcategory && setValue('subcategoryId', expense.subcategory.id);
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     // expenseQuery.refetch();
+  //     // if (expenseQuery.data) setExpenseData(expenseQuery.data);
 
-    setSelectedSubcategory(
-      expense.subcategory
-        ? {
-            label: expense.subcategory?.name,
-            value: expense.subcategory?.id.toString(),
-          }
-        : undefined
-    );
+  //     return () => {
+  //       clearImages();
+  //     };
+  //   }, [])
+  // );
 
-    setSelectedCategory(
-      expense.category && {
-        label: expense.category.name,
-        value: expense.category.id.toString(),
-      }
-    );
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    getValues,
+    watch,
+  } = useForm<z.infer<typeof expenseSchema>>({
+    resolver: zodResolver(expenseSchema),
+    defaultValues: {},
+  });
 
-    setExpense(expense);
-  };
+  // const onDelete = () => {
+
+  // };
 
   return {
-    expense,
     expenseQuery,
     accountQuery,
     categoryOptions,
@@ -267,8 +302,11 @@ export const useExpense = (expenseId: number) => {
     isLoading: expenseQuery.isLoading || accountQuery.isLoading,
     selectedImages,
     isFetching,
-    onDeleteReceipts,
+    onDelete,
     selectedSubcategory,
     selectedCategory,
+    navigation,
+    watch,
+    isDeleting,
   };
 };

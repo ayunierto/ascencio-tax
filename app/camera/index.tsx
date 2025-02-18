@@ -1,30 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { router, useNavigation } from 'expo-router';
-import {
-  Alert,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Alert, Image, StyleSheet, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { Ionicons } from '@expo/vector-icons';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 
 import { useCameraStore } from '../../core/camera/store/useCameraStore';
 import Button from '@/presentation/theme/components/ui/Button';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
+import {
+  ConfirmImageButton,
+  FlipCameraButton,
+  GalleryButton,
+  RetakeImageButton,
+  ReturnCancelButton,
+  ShutterButton,
+} from '@/core/camera/components';
+import Loader from '@/presentation/theme/components/Loader';
 
-export default function App() {
+export default function CameraScreen() {
+  const { generateBase64 } = useLocalSearchParams();
+
+  console.warn({ generateBase64 });
+
   const { addSelectedImage, clearImages } = useCameraStore();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [mediaPermissionResponse, requestMediaPermission] =
-    MediaLibrary.usePermissions();
+  const [, requestMediaPermission] = MediaLibrary.usePermissions();
 
   const [selectedImage, setSelectedImage] = useState<string>();
   const cameraRef = useRef<CameraView>(null);
@@ -58,7 +62,7 @@ export default function App() {
 
   if (!cameraPermission) {
     // Camera permissions are still loading.
-    return <View />;
+    return <Loader />;
   }
 
   if (!cameraPermission.granted) {
@@ -78,6 +82,7 @@ export default function App() {
 
     const picture = await cameraRef.current.takePictureAsync({
       quality: 1,
+      base64: true,
     });
 
     if (!picture?.uri) return;
@@ -89,6 +94,7 @@ export default function App() {
 
   const onReturnCancel = () => {
     // TODO: Clean state
+    clearImages();
     router.dismiss();
   };
 
@@ -100,7 +106,7 @@ export default function App() {
     // TODO: Implement
     if (!selectedImage) return;
     await MediaLibrary.createAssetAsync(selectedImage);
-    addSelectedImage(selectedImage);
+    addSelectedImage({ uri: selectedImage, base64: undefined });
     router.dismiss();
   };
 
@@ -109,7 +115,7 @@ export default function App() {
   };
 
   const onPickImages = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
       quality: 1,
@@ -118,7 +124,12 @@ export default function App() {
     if (result.canceled) return;
 
     clearImages();
-    result.assets.map((img) => addSelectedImage(img.uri));
+    result.assets.map((img) =>
+      addSelectedImage({
+        uri: img.uri,
+        base64: undefined,
+      })
+    );
 
     router.dismiss();
   };
@@ -137,84 +148,16 @@ export default function App() {
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
-        <ShutterButton onPress={onShutterButtonPress} />
-        <GalleryButton onPress={onPickImages} />
-        <FlipCameraButton onPress={toggleCameraFacing} />
+        <View style={styles.buttonsBottomContainer}>
+          <GalleryButton onPress={onPickImages} />
+          <ShutterButton onPress={onShutterButtonPress} />
+          <FlipCameraButton onPress={toggleCameraFacing} />
+        </View>
         <ReturnCancelButton onPress={onReturnCancel} />
       </CameraView>
     </View>
   );
 }
-
-const ShutterButton = ({ onPress = () => {} }) => {
-  const dimensions = useWindowDimensions();
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.shutterButton,
-        {
-          position: 'absolute',
-          bottom: 30,
-          left: dimensions.width / 2 - 32,
-          borderColor: theme.primary,
-        },
-      ]}
-    ></TouchableOpacity>
-  );
-};
-
-const GalleryButton = ({ onPress = () => {} }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.galleryButton}>
-      <Ionicons name="image-outline" size={30} color={'white'} />
-    </TouchableOpacity>
-  );
-};
-
-const FlipCameraButton = ({ onPress = () => {} }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.flipCameraButton}>
-      <Ionicons name="camera-reverse-outline" size={30} color={'white'} />
-    </TouchableOpacity>
-  );
-};
-
-const ReturnCancelButton = ({ onPress = () => {} }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.returnCancelButton}>
-      <Ionicons name="arrow-back-outline" size={30} color={'white'} />
-    </TouchableOpacity>
-  );
-};
-
-const ConfirmImageButton = ({ onPress = () => {} }) => {
-  const dimensions = useWindowDimensions();
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={[
-        styles.shutterButton,
-        {
-          position: 'absolute',
-          bottom: 30,
-          left: dimensions.width / 2 - 32,
-          borderColor: theme.primary,
-        },
-      ]}
-    >
-      <Ionicons name="checkmark-outline" size={30} color={theme.primary} />
-    </TouchableOpacity>
-  );
-};
-
-const RetakeImageButton = ({ onPress = () => {} }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.flipCameraButton}>
-      <Ionicons name="close-outline" size={30} color={'white'} />
-    </TouchableOpacity>
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -228,66 +171,13 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  buttonContainer: {
+  buttonsBottomContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'transparent',
-    margin: 64,
-  },
-  button: {
-    flex: 1,
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-
-  shutterButton: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'white',
-    borderWidth: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  flipCameraButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 32,
-    backgroundColor: '#17202A',
     position: 'absolute',
-    bottom: 40,
-    right: 32,
-    justifyContent: 'center',
+    bottom: 30,
+    justifyContent: 'space-around',
     alignItems: 'center',
-  },
-
-  galleryButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 32,
-    backgroundColor: '#17202A',
-    position: 'absolute',
-    bottom: 40,
-    left: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  returnCancelButton: {
-    width: 50,
-    height: 50,
-    borderRadius: 32,
-    backgroundColor: '#17202A',
-    position: 'absolute',
-    top: 40,
-    left: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: '100%',
   },
 });

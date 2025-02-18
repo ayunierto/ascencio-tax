@@ -1,11 +1,11 @@
 import { Category } from '../../categories/interfaces';
 
 export interface Subcategory {
-  id: number;
-  name: string;
-  isSystem: boolean;
-  createdAt: string;
-  updateAt: null | string;
   category?: Category;
+  createdAt: string;
   description?: string;
+  id: string;
+  isSystem: boolean;
+  name: string;
+  updateAt: null | string;
 }
