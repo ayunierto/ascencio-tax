@@ -25,7 +25,6 @@ import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 const ExpenseScreen = () => {
   const { id } = useLocalSearchParams();
   const {
-    // expense,
     expenseQuery,
     accountQuery,
     categoryOptions,
@@ -75,7 +74,10 @@ const ExpenseScreen = () => {
         <View style={{ margin: 20, gap: 10 }}>
           <ThemedText>Receipt image:</ThemedText>
           <ExpenseImage
-            onChange={(image) => setValue('image', image)}
+            onChange={(image) => {
+              console.warn(image);
+              setValue('image', image);
+            }}
             image={
               selectedImages.length > 0
                 ? selectedImages[0].uri

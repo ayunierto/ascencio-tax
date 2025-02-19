@@ -140,6 +140,7 @@ export const useUpdateExpense = (expenseId: string) => {
   const updateExpenseMutation = useMutation({
     mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
       const image = getValues('image');
+      console.warn({ image });
       const data = await updateExpense({
         id: expenseId,
         image: image && image.includes('file') ? image : undefined,
@@ -201,6 +202,7 @@ export const useUpdateExpense = (expenseId: string) => {
   });
 
   const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
+    console.warn('onSubmit');
     setIsFetching(true);
     await updateExpenseMutation.mutateAsync({
       ...values,
@@ -241,17 +243,6 @@ export const useUpdateExpense = (expenseId: string) => {
     setIsDeleting(false);
   };
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     // expenseQuery.refetch();
-  //     // if (expenseQuery.data) setExpenseData(expenseQuery.data);
-
-  //     return () => {
-  //       clearImages();
-  //     };
-  //   }, [])
-  // );
-
   const {
     control,
     handleSubmit,
@@ -264,29 +255,25 @@ export const useUpdateExpense = (expenseId: string) => {
     defaultValues: {},
   });
 
-  // const onDelete = () => {
-
-  // };
-
   return {
-    expenseQuery,
     accountQuery,
     categoryOptions,
-    subcategoryOptions,
     control,
     errors,
-    setValue,
+    expenseQuery,
     handleSubmit,
-    onChangeCategory,
-    onSubmit,
-    isLoading: expenseQuery.isLoading || accountQuery.isLoading,
-    selectedImages,
-    isFetching,
-    onDelete,
-    selectedSubcategory,
-    selectedCategory,
-    navigation,
-    watch,
     isDeleting,
+    isFetching,
+    isLoading: expenseQuery.isLoading || accountQuery.isLoading,
+    navigation,
+    onChangeCategory,
+    onDelete,
+    onSubmit,
+    selectedCategory,
+    selectedImages,
+    selectedSubcategory,
+    setValue,
+    subcategoryOptions,
+    watch,
   };
 };

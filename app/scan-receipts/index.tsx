@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { router, useNavigation } from 'expo-router';
 import { Alert, Image, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
@@ -19,17 +18,12 @@ import {
 } from '@/core/camera/components';
 import Loader from '@/presentation/theme/components/Loader';
 
-export default function ScanReceiptsScreen() {
-  const { generateBase64 } = useLocalSearchParams();
-
-  console.warn({ generateBase64 });
-
+export default function ScanReceiptScreen() {
   const { addSelectedImage, clearImages } = useCameraStore();
 
   const [facing, setFacing] = useState<CameraType>('back');
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [mediaPermissionResponse, requestMediaPermission] =
-    MediaLibrary.usePermissions();
+  const [, requestMediaPermission] = MediaLibrary.usePermissions();
 
   const [selectedImage, setSelectedImage] = useState<string>();
   const cameraRef = useRef<CameraView>(null);
@@ -61,12 +55,12 @@ export default function ScanReceiptsScreen() {
     });
   }, [navigation]);
 
-  if (!cameraPermission || !mediaPermissionResponse) {
+  if (!cameraPermission) {
     // Camera permissions are still loading.
     return <Loader />;
   }
 
-  if (!cameraPermission.granted || !mediaPermissionResponse.granted) {
+  if (!cameraPermission.granted) {
     // Camera permissions are not granted yet.
     return (
       <View style={{ ...styles.container, padding: 20 }}>
@@ -149,12 +143,12 @@ export default function ScanReceiptsScreen() {
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
-        <View style={styles.buttonContainer}>
-          <ShutterButton onPress={onShutterButtonPress} />
+        <View style={styles.buttonsBottomContainer}>
           <GalleryButton onPress={onPickImages} />
+          <ShutterButton onPress={onShutterButtonPress} />
           <FlipCameraButton onPress={toggleCameraFacing} />
-          <ReturnCancelButton onPress={onReturnCancel} />
         </View>
+        <ReturnCancelButton onPress={onReturnCancel} />
       </CameraView>
     </View>
   );
@@ -172,10 +166,13 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1,
   },
-  buttonContainer: {
+  buttonsBottomContainer: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'transparent',
-    margin: 64,
+    position: 'absolute',
+    bottom: 30,
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    width: '100%',
   },
 });

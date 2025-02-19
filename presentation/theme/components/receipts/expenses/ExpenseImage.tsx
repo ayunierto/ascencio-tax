@@ -15,13 +15,17 @@ const ExpenseImage = ({ image, onChange }: ExpenseImageProps) => {
   const { selectedImages, clearImages } = useCameraStore();
 
   useEffect(() => {
-    onChange && onChange(selectedImages[0]);
+    if (onChange) {
+      onChange(selectedImages[0]?.uri);
+    }
   }, [selectedImages]);
 
   const removeImage = () => {
     clearImages();
 
-    onChange && onChange(undefined);
+    if (onChange) {
+      onChange(undefined);
+    }
   };
 
   return (

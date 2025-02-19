@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { router, useNavigation } from 'expo-router';
 import { Alert, Image, StyleSheet, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,10 +19,6 @@ import {
 import Loader from '@/presentation/theme/components/Loader';
 
 export default function CameraScreen() {
-  const { generateBase64 } = useLocalSearchParams();
-
-  console.warn({ generateBase64 });
-
   const { addSelectedImage, clearImages } = useCameraStore();
 
   const [facing, setFacing] = useState<CameraType>('back');
