@@ -45,7 +45,21 @@ const _layout = () => {
           ),
           drawerLabel: 'Expenses',
           title: 'Expenses',
-          // headerLeft: () => <Ionicons name="home" color={'white'} />,
+        }}
+      />
+
+      <Drawer.Screen
+        name="subscriptions"
+        options={{
+          drawerIcon: ({ color, focused, size }) => (
+            <Ionicons
+              color={color}
+              name={focused ? 'bag-add' : 'bag-add-outline'}
+              size={size}
+            />
+          ),
+          drawerLabel: 'Subscriptions',
+          title: 'Subscriptions',
         }}
       />
     </Drawer>

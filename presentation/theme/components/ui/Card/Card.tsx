@@ -25,5 +25,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.card,
     borderRadius: theme.radius,
     padding: 15,
+    overflow: 'hidden',
   },
 });
