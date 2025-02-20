@@ -1,0 +1,188 @@
+import { useRef, useState } from 'react';
+
+import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
+import * as ImagePicker from 'expo-image-picker';
+import { useCameraStore } from '@/core/camera/store';
+import { router } from 'expo-router';
+import {
+  AnalyzeExpenseCommand,
+  TextractClient,
+} from '@aws-sdk/client-textract';
+
+export const useScanReceipts = () => {
+  const { addSelectedImage, clearImages } = useCameraStore();
+  const [loading, setLoading] = useState(false);
+
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [, requestMediaPermission] = MediaLibrary.usePermissions();
+
+  const [selectedImage, setSelectedImage] = useState<string>();
+  const [selectedBase64Image, setSelectedBase64Image] = useState<string>();
+  const cameraRef = useRef<CameraView>(null);
+
+  const onShutterButtonPress = async () => {
+    if (!cameraRef.current) return;
+
+    const picture = await cameraRef.current.takePictureAsync({
+      quality: 1,
+      base64: true,
+    });
+
+    if (!picture?.uri) return;
+
+    setSelectedImage(picture.uri);
+    setSelectedBase64Image(picture.base64);
+  };
+
+  const onReturnCancel = () => {
+    clearImages();
+    router.dismiss();
+  };
+
+  const onPictureConfirm = async () => {
+    // TODO: Implement
+    setLoading(true);
+    if (!selectedImage) return;
+    await MediaLibrary.createAssetAsync(selectedImage);
+
+    addSelectedImage({ uri: selectedImage, base64: undefined });
+
+    const { date, merchant, tax, total } = await analyzeExpense(
+      selectedBase64Image as string
+    );
+    setLoading(false);
+
+    router.replace({
+      pathname: '/accounting/receipts/expense/create',
+      params: {
+        merchant,
+        date,
+        total,
+        tax,
+      },
+    });
+  };
+
+  const onRetakePicture = () => {
+    setSelectedImage(undefined);
+  };
+
+  const onPickImages = async () => {
+    setLoading(true);
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [9, 16],
+      quality: 1,
+      base64: true,
+    });
+
+    if (result.canceled) return;
+
+    clearImages();
+    result.assets.map((img) =>
+      addSelectedImage({
+        uri: img.uri,
+        base64: undefined,
+      })
+    );
+    const { date, merchant, tax, total } = await analyzeExpense(
+      result.assets[0].base64 as string
+    );
+
+    setLoading(false);
+
+    router.replace({
+      pathname: '/accounting/receipts/expense/create',
+      params: {
+        merchant,
+        date,
+        total,
+        tax,
+      },
+    });
+  };
+
+  const analyzeExpense = async (base64Image: string) => {
+    console.warn('Starting ORC');
+    try {
+      const config = {
+        region: 'us-east-2',
+        credentials: {
+          accessKeyId: 'AKIA6PXJJGUAOV5Z7B5U',
+          secretAccessKey: '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',
+        },
+      };
+      const client = new TextractClient(config);
+      const input = {
+        Document: {
+          Bytes: base64Image ? Buffer.from(base64Image, 'base64') : undefined,
+        },
+      };
+      const command = new AnalyzeExpenseCommand(input);
+
+      const detectedValues = {
+        merchant: '',
+        date: '',
+        total: new Date().toISOString(),
+        tax: '',
+      };
+      const response = await client.send(command);
+      if (response.ExpenseDocuments)
+        response.ExpenseDocuments[0].SummaryFields?.map((field) => {
+          if (field.Type && field.Type.Text === 'VENDOR_NAME') {
+            detectedValues.merchant = field.ValueDetection?.Text as string;
+          }
+          if (field.Type && field.Type.Text === 'TOTAL') {
+            detectedValues.total = cleanPrice(
+              field.ValueDetection?.Text as string
+            );
+          }
+          if (field.Type && field.Type.Text === 'INVOICE_RECEIPT_DATE') {
+            if (field.ValueDetection && field.ValueDetection.Text) {
+              detectedValues.date = field.ValueDetection.Text;
+            }
+          }
+          if (field.Type && field.Type.Text === 'TAX') {
+            detectedValues.tax = cleanPrice(
+              field.ValueDetection?.Text as string
+            );
+          }
+        });
+
+      console.warn({ detectedValues });
+      return detectedValues;
+    } catch (error) {
+      console.error(error);
+      throw new Error('The receipt could not be analyzed');
+    }
+  };
+
+  const cleanPrice = (price: string) => {
+    const pattern = /\b\d+(\.\d{2})\b/;
+    // Remove currency symbols (e.g., S/, $, €) and replace commas with periods
+    const cleanedString = price.replace(/[S/$€]/g, '').replace(',', '.');
+    const match = cleanedString.match(pattern);
+    if (match) {
+      return match[0];
+    } else {
+      return '00.00';
+    }
+  };
+
+  return {
+    loading,
+    requestCameraPermission,
+    requestMediaPermission,
+    cameraPermission,
+    cameraRef,
+    onShutterButtonPress,
+    selectedImage,
+    onPictureConfirm,
+    onRetakePicture,
+    onReturnCancel,
+    onPickImages,
+  };
+};

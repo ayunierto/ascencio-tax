@@ -94,8 +94,8 @@ const CreateExpenseScreen = () => {
           <Controller
             control={control}
             name="date"
-            render={({ field: { onChange } }) => (
-              <DateTimePicker value={new Date()} onChange={onChange} />
+            render={({ field: { onChange, value } }) => (
+              <DateTimePicker value={value} onChange={onChange} />
             )}
           />
           <ErrorMessage fieldErrors={errors.date} />

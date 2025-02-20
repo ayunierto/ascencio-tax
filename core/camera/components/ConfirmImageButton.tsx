@@ -4,18 +4,26 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   StyleSheet,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface ConfirmImageButtonProps {
   onPress: () => void;
+  loading?: boolean;
+  disabled?: boolean;
 }
 
-export const ConfirmImageButton = ({ onPress }: ConfirmImageButtonProps) => {
+export const ConfirmImageButton = ({
+  onPress,
+  disabled,
+  loading,
+}: ConfirmImageButtonProps) => {
   const dimensions = useWindowDimensions();
   return (
     <TouchableOpacity
-      onPress={onPress}
+      disabled={disabled}
+      onPress={disabled || loading ? () => {} : onPress}
       style={[
         styles.shutterButton,
         {
@@ -26,7 +34,11 @@ export const ConfirmImageButton = ({ onPress }: ConfirmImageButtonProps) => {
         },
       ]}
     >
-      <Ionicons name="checkmark-outline" size={30} color={theme.primary} />
+      {loading ? (
+        <ActivityIndicator color={theme.primary} />
+      ) : (
+        <Ionicons name="checkmark-outline" size={30} color={theme.primary} />
+      )}
     </TouchableOpacity>
   );
 };

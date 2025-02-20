@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { router, useFocusEffect, useNavigation } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { useLocalSearchParams } from 'expo-router';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +25,7 @@ interface Option {
 }
 
 export const useCreateExpense = () => {
+  const params = useLocalSearchParams();
   const navigation = useNavigation();
   const [categoryOptions, setCategoryOptions] = useState<Option[]>([]);
   const [subcategoryOptions, setSubcategoryOptions] = useState<Option[]>([]);
@@ -33,6 +35,50 @@ export const useCreateExpense = () => {
   const { selectedImages, clearImages } = useCameraStore();
 
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setValue('merchant', params.merchant as string);
+    setValue('total', params.total as string);
+    setValue('tax', params.tax as string);
+    setValue('date', params.date as string);
+
+    // let dateObtained: Date = new Date();
+
+    // if (params.date) {
+    //   try {
+    //     dateObtained = new Date(params.date as string);
+    //     if (isNaN(dateObtained.getTime())) {
+    //       console.warn('Invalid date format in params.date');
+    //       dateObtained = new Date();
+    //     }
+    //   } catch (error) {
+    //     console.error('Error parsing date:', error);
+    //     dateObtained = new Date();
+    //   }
+    // } else {
+    //   console.warn('params.date is undefined or null');
+    // }
+
+    // setValue('date', dateObtained.toISOString());
+
+    // const currentDate = new Date();
+    // currentDate.setFullYear(currentDate.getFullYear() - 2);
+    // const ISODate = currentDate;
+    // console.warn(params.date);
+    // const dateObtained = new Date(params.date);
+    // console.warn({ ISODate });
+    // console.warn({ dateObtained });
+
+    // setValue(
+    //   'date',
+    //   dateObtained <= ISODate
+    //     ? ISODate.toISOString()
+    //     : dateObtained.toISOString()
+    // );
+    return () => {
+      clearImages();
+    };
+  }, []);
 
   const {
     control,
@@ -47,15 +93,6 @@ export const useCreateExpense = () => {
       date: new Date().toISOString(),
     },
   });
-
-  useFocusEffect(
-    useCallback(() => {
-      // Implementation when Focus is made
-      return () => {
-        clearImages();
-      };
-    }, [])
-  );
 
   const accountQuery = useQuery({
     queryKey: ['accounts'],
@@ -83,16 +120,6 @@ export const useCreateExpense = () => {
     }
   }, [categoryQuery.isSuccess, categoryQuery.data]);
 
-  // useEffect(() => {
-  //   if (subcategoryQuery.isSuccess) {
-  //     const options = subcategoryQuery.data.map((subcategory: Subcategory) => ({
-  //       label: subcategory.name,
-  //       value: subcategory.id,
-  //     }));
-  //     setSubcategoryOptions(options);
-  //   }
-  // }, [subcategoryQuery.isSuccess, subcategoryQuery.data]);
-
   const onChangeCategory = async (categoryId: string) => {
     setValue('categoryId', categoryId);
 
@@ -112,11 +139,13 @@ export const useCreateExpense = () => {
 
   const expenseMutation = useMutation({
     mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
+      console.warn({ values });
       const image = getValues('image');
       const data = await createExpense({
         image: image && image.includes('file') ? image : undefined,
         ...values,
       });
+      console.warn({ data });
       return data;
     },
 

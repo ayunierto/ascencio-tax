@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { router, useNavigation } from 'expo-router';
+import React, { useRef, useState } from 'react';
+import { router } from 'expo-router';
 import { Alert, Image, StyleSheet, View } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
@@ -47,13 +47,6 @@ export default function CameraScreen() {
       Alert.alert('Error', 'Permits could not be obtained');
     }
   };
-
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
 
   if (!cameraPermission) {
     // Camera permissions are still loading.

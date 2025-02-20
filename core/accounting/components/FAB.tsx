@@ -80,12 +80,7 @@ export const FAB = () => {
             height: 52,
           }}
           onPress={() => {
-            router.push({
-              pathname: '/scan-receipts',
-              params: {
-                generateBase64: 'yes',
-              },
-            });
+            router.push('/scan-receipts');
             toggleButtons();
           }}
         >

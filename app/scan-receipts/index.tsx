@@ -1,16 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { router, useNavigation } from 'expo-router';
+import React from 'react';
 import { Alert, Image, StyleSheet, View } from 'react-native';
-import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import * as MediaLibrary from 'expo-media-library';
-import * as ImagePicker from 'expo-image-picker';
+import { CameraView } from 'expo-camera';
 
-import { useCameraStore } from '../../core/camera/store/useCameraStore';
 import Button from '@/presentation/theme/components/ui/Button';
 import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 import {
   ConfirmImageButton,
-  FlipCameraButton,
   GalleryButton,
   RetakeImageButton,
   ReturnCancelButton,
@@ -18,15 +13,24 @@ import {
 } from '@/core/camera/components';
 import Loader from '@/presentation/theme/components/Loader';
 
+import { Buffer } from 'buffer';
+import { useScanReceipts } from '@/core/accounting/scan-receipts/hooks/useScanReceipts';
+globalThis.Buffer = Buffer;
+
 export default function ScanReceiptScreen() {
-  const { addSelectedImage, clearImages } = useCameraStore();
-
-  const [facing, setFacing] = useState<CameraType>('back');
-  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
-  const [, requestMediaPermission] = MediaLibrary.usePermissions();
-
-  const [selectedImage, setSelectedImage] = useState<string>();
-  const cameraRef = useRef<CameraView>(null);
+  const {
+    requestCameraPermission,
+    loading,
+    requestMediaPermission,
+    cameraPermission,
+    cameraRef,
+    selectedImage,
+    onPictureConfirm,
+    onRetakePicture,
+    onReturnCancel,
+    onPickImages,
+    onShutterButtonPress,
+  } = useScanReceipts();
 
   const onRequestPermissions = async () => {
     try {
@@ -48,20 +52,11 @@ export default function ScanReceiptScreen() {
     }
   };
 
-  const navigation = useNavigation();
-  useEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
-
   if (!cameraPermission) {
-    // Camera permissions are still loading.
     return <Loader />;
   }
 
   if (!cameraPermission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={{ ...styles.container, padding: 20 }}>
         <ThemedText style={styles.message}>
@@ -72,68 +67,21 @@ export default function ScanReceiptScreen() {
     );
   }
 
-  const onShutterButtonPress = async () => {
-    if (!cameraRef.current) return;
-
-    const picture = await cameraRef.current.takePictureAsync({
-      quality: 1,
-      base64: true,
-    });
-
-    if (!picture?.uri) return;
-
-    setSelectedImage(picture.uri);
-
-    // TODO: Save Image
-  };
-
-  const onReturnCancel = () => {
-    // TODO: Clean state
-    clearImages();
-    router.dismiss();
-  };
-
-  function toggleCameraFacing() {
-    setFacing((current) => (current === 'back' ? 'front' : 'back'));
-  }
-
-  const onPictureConfirm = async () => {
-    // TODO: Implement
-    if (!selectedImage) return;
-    await MediaLibrary.createAssetAsync(selectedImage);
-    addSelectedImage({ uri: selectedImage, base64: undefined });
-    router.dismiss();
-  };
-
-  const onRetakePicture = () => {
-    setSelectedImage(undefined);
-  };
-
-  const onPickImages = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (result.canceled) return;
-
-    clearImages();
-    result.assets.map((img) =>
-      addSelectedImage({
-        uri: img.uri,
-        base64: undefined,
-      })
+  if (loading) {
+    return (
+      <Loader message="Automated data acquisition from document using OCR technology." />
     );
-
-    router.dismiss();
-  };
+  }
 
   if (selectedImage) {
     return (
       <View style={styles.container}>
         <Image source={{ uri: selectedImage }} style={styles.camera} />
-        <ConfirmImageButton onPress={onPictureConfirm} />
+        <ConfirmImageButton
+          loading={loading}
+          disabled={loading}
+          onPress={onPictureConfirm}
+        />
         <RetakeImageButton onPress={onRetakePicture} />
         <ReturnCancelButton onPress={onReturnCancel} />
       </View>
@@ -142,11 +90,13 @@ export default function ScanReceiptScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView ref={cameraRef} style={styles.camera} facing={facing}>
+      <CameraView ref={cameraRef} style={styles.camera} facing={'back'}>
+        <GalleryButton
+          onPress={onPickImages}
+          style={{ position: 'absolute', left: 30, bottom: 45 }}
+        />
         <View style={styles.buttonsBottomContainer}>
-          <GalleryButton onPress={onPickImages} />
           <ShutterButton onPress={onShutterButtonPress} />
-          <FlipCameraButton onPress={toggleCameraFacing} />
         </View>
         <ReturnCancelButton onPress={onReturnCancel} />
       </CameraView>

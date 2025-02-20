@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Pressable,
   type PressableProps,
@@ -14,10 +14,10 @@ import { theme } from './Theme';
 
 interface ButtonProps extends PressableProps {
   children?: React.ReactNode;
+  loading?: boolean;
   disabled?: boolean;
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
-  loading?: boolean;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
 
@@ -121,7 +121,7 @@ export const Button = ({
               styles.buttonText,
               variantTextStyles[variant],
               disabled && styles.disabledText,
-              ,
+
               textStyle,
             ]}
           >

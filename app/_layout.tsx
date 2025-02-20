@@ -1,14 +1,14 @@
-import { CustomTheme } from '@/presentation/theme/CustomTheme';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from '@react-navigation/native';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
+import { CustomTheme } from '@/presentation/theme/CustomTheme';
 
 import '../global.css';
 
@@ -20,6 +20,7 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [loaded] = useFonts({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
 
@@ -39,6 +40,14 @@ export default function RootLayout() {
         <ThemeProvider value={CustomTheme}>
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="camera/index"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="scan-receipts/index"
+              options={{ headerShown: false }}
+            />
           </Stack>
 
           <StatusBar style="light" />

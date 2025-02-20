@@ -11,7 +11,7 @@ interface DateTimePickerProps {
   mode?: 'date' | 'time';
   is24Hour?: boolean;
   onChange?: (date: string) => void;
-  value?: Date;
+  value?: string;
 }
 const DateTimeInput = ({
   mode = 'date',
@@ -22,7 +22,9 @@ const DateTimeInput = ({
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
-    setDate(value);
+    if (value) {
+      setDate(new Date(value));
+    }
   }, [value]);
 
   // const [modeState, setModeState] = useState<'date' | 'time'>(mode);
