@@ -7,50 +7,21 @@ import { theme } from '@/presentation/theme/components/ui/Theme';
 import Divider from '@/presentation/theme/components/ui/Divider';
 import Button from '@/presentation/theme/components/ui/Button';
 import { router } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
+import { GetPlans } from '@/core/accounting/plans/actions/get-plans.action';
+import Loader from '@/presentation/theme/components/Loader';
 
 const SubscriptionsScreen = () => {
-  const plans = React.useMemo(
-    () => [
-      {
-        name: 'Basic',
-        description: 'Ideal for freelancers and small businesses starting out.',
-        price: 10,
-        save: 'Save 10%',
-        features: [
-          'Up to 50 receipts per month',
-          'Basic reporting',
-          'Manual data entry',
-        ],
-      },
-      {
-        name: 'Pro',
-        description:
-          'Perfect for growing businesses needing advanced features.',
-        price: 20,
-        save: 'Save 20%',
-        features: [
-          'Up to 200 receipts per month',
-          'Advanced reporting and analytics',
-          'Automatic data extraction',
-          'Multi-user access',
-        ],
-      },
-      {
-        name: 'Enterprise',
-        description:
-          'For large organizations requiring unlimited usage and support.',
-        price: 30,
-        save: 'Save 30%',
-        features: [
-          'Up to 500 receipts per month',
-          'Customizable reports',
-          'Dedicated support',
-          'API access',
-        ],
-      },
-    ],
-    []
-  );
+  const plansQuery = useQuery({
+    queryKey: ['plans'],
+    queryFn: async () => GetPlans(),
+  });
+
+  if (plansQuery.isLoading) return <Loader />;
+
+  if (!plansQuery.data) return <ThemedText>Something went wrong</ThemedText>;
+  const { data: plans } = plansQuery;
+
   return (
     <View style={{ flex: 1, marginVertical: 20, gap: 20 }}>
       <View style={{ marginHorizontal: 20 }}>

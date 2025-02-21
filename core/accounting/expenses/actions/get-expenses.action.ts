@@ -25,6 +25,7 @@ export const getExpenses = async (
     const data: Expense[] = await response.json();
     return data;
   } catch (error) {
+    console.error('Error fetching expenses:', error);
     throw new Error('Unable to load expenses');
   }
 };
