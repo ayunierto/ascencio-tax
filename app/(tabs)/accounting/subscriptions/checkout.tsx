@@ -1,174 +1,261 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as Linking from 'expo-linking';
 
 import { Card } from '@/presentation/theme/components/ui';
+
 import Button from '@/presentation/theme/components/ui/Button';
 import Divider from '@/presentation/theme/components/ui/Divider';
-import { Input } from '@/presentation/theme/components/ui/Input';
 import { theme } from '@/presentation/theme/components/ui/Theme';
+import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
+import { usePlanStore } from '@/core/accounting/plans/store/usePlanStore';
+import Toast from 'react-native-toast-message';
 
 const CheckoutScreen = () => {
+  const [publishableKey, setPublishableKey] = useState('');
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [loading, setLoading] = useState(false);
+
+  const { selectedPlan, subtotal, months } = usePlanStore();
+
+  const fetchPaymentSheetParams = async () => {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+    const amount = parseFloat(subtotal.toFixed(2)) * 100;
+
+    const response = await fetch(`${API_URL}/payments/payment-sheet`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount,
+        currency: 'cad',
+      }),
+    });
+
+    const { paymentIntent, ephemeralKey, customer, publishableKey } =
+      await response.json();
+
+    setPublishableKey(publishableKey);
+
+    return {
+      paymentIntent,
+      ephemeralKey,
+      customer,
+    };
+  };
+
+  const initializePaymentSheet = async () => {
+    const { paymentIntent, ephemeralKey, customer } =
+      await fetchPaymentSheetParams();
+
+    const { error } = await initPaymentSheet({
+      merchantDisplayName: 'Ascencio Tax Inc.',
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+      // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+      //methods that complete payment after a delay, like SEPA Debit and Sofort.
+      allowsDelayedPaymentMethods: true,
+      defaultBillingDetails: {
+        // name: 'Jane Doe',
+        // email: 'jana-doe@example.com',
+        // phone: '+51 999 999 999',
+      },
+      // returnURL: Linking.createURL('/payment-complete'),
+      returnURL: Linking.createURL('/'),
+
+      applePay: {
+        merchantCountryCode: 'CA',
+      },
+    });
+
+    if (!error) {
+      setLoading(true);
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+
+    if (error) {
+      // Alert.alert(`Error code: ${error.code}`, error.message);
+      Toast.show({
+        type: 'error',
+        text1: 'Your order is not confirmed!',
+        text2: 'Please try again or contact support.',
+      });
+    } else {
+      // Alert.alert('Success', 'Your order is confirmed!');
+      Toast.show({
+        type: 'success',
+        text1: 'Your order is confirmed!',
+        text2: 'Thank you for your purchase.',
+      });
+    }
+  };
+
+  useEffect(() => {
+    initializePaymentSheet();
+  }, []);
+
   return (
-    <ScrollView>
-      <View style={{ padding: 20, gap: 10 }}>
-        <Card style={{ gap: 10 }}>
-          <View style={styles.cardHeader}>
-            <ThemedText style={styles.cardTitle}>Order Summary</ThemedText>
-          </View>
-          <ThemedText style={styles.cardSubtitle}>Basic Plan</ThemedText>
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <ThemedText>1 month plan</ThemedText>
-            <ThemedText>$9.99</ThemedText>
-          </View>
-          <Divider style={{ marginVertical: 10 }} />
+    <StripeProvider
+      publishableKey={publishableKey}
+      merchantIdentifier="merchant.com.ascenciotax" // required for Apple Pay
+      urlScheme={Linking.createURL('/')?.split(':')[0]} // required for 3D Secure and bank redirects
+    >
+      <ScrollView>
+        <View style={{ padding: 20, gap: 10 }}>
+          <Card style={{ gap: 10 }}>
+            <View style={styles.cardHeader}>
+              <ThemedText style={styles.cardTitle}>Order Summary</ThemedText>
+            </View>
+            <ThemedText style={styles.cardSubtitle}>
+              {selectedPlan?.name} Plan
+            </ThemedText>
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <ThemedText>{months} month(s) plan</ThemedText>
+              <ThemedText>${subtotal.toFixed(2)}</ThemedText>
+            </View>
+            <Divider style={{ marginVertical: 10 }} />
 
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <ThemedText style={styles.cardSubtitle}>Subtotal</ThemedText>
-            <ThemedText>$9.99</ThemedText>
-          </View>
-          <Divider style={{ marginVertical: 10 }} />
+            {/* <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <ThemedText style={styles.cardSubtitle}>Subtotal</ThemedText>
+              <ThemedText>${subtotal.toFixed(2)}</ThemedText>
+            </View> */}
+            {/* <Divider style={{ marginVertical: 10 }} /> */}
 
-          <View
-            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-          >
-            <ThemedText style={styles.cardSubtitle}>Total</ThemedText>
-            <ThemedText style={styles.cardSubtitle}>$14.99</ThemedText>
-          </View>
-        </Card>
-
-        <Card style={{ gap: 20 }}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardNumber}>
-              <ThemedText
-                style={{
-                  color: theme.primary,
-                }}
-              >
-                1
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <ThemedText style={styles.cardSubtitle}>Total</ThemedText>
+              <ThemedText style={styles.cardSubtitle}>
+                ${subtotal.toFixed(2)}
               </ThemedText>
             </View>
-            <ThemedText style={styles.cardTitle}>Billing address</ThemedText>
-          </View>
-
-          <View style={styles.inputsContainer}>
-            <View style={styles.inputContainer}>
-              <ThemedText>Name</ThemedText>
-              <Input placeholder="Name" />
+          </Card>
+          {/* 
+          <Card style={{ gap: 20 }}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardNumber}>
+                <ThemedText
+                  style={{
+                    color: theme.primary,
+                  }}
+                >
+                  1
+                </ThemedText>
+              </View>
+              <ThemedText style={styles.cardTitle}>Billing address</ThemedText>
             </View>
 
-            <View style={styles.inputContainer}>
-              <ThemedText>Last name</ThemedText>
-              <Input placeholder="Last name" />
+            <View style={styles.inputsContainer}>
+              <View style={styles.inputContainer}>
+                <ThemedText>Name</ThemedText>
+                <Input placeholder="Name" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Last name</ThemedText>
+                <Input placeholder="Last name" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Phone number</ThemedText>
+                <Input placeholder="Phone number" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Country of residence *</ThemedText>
+                <Input placeholder="Country of residence" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Address</ThemedText>
+                <Input placeholder="Address" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>City</ThemedText>
+                <Input placeholder="City" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Region/province</ThemedText>
+                <Input placeholder="Region/province" />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <ThemedText>Postal code</ThemedText>
+                <Input placeholder="Postal code" />
+              </View>
+            </View>
+          </Card> */}
+
+          <Card style={{ gap: 20 }}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardNumber}>
+                <ThemedText
+                  style={{
+                    color: theme.primary,
+                  }}
+                >
+                  1
+                </ThemedText>
+              </View>
+              <ThemedText style={styles.cardTitle}>Pay</ThemedText>
             </View>
 
-            <View style={styles.inputContainer}>
-              <ThemedText>Phone number</ThemedText>
-              <Input placeholder="Phone number" />
+            <Button loading={!loading} onPress={openPaymentSheet}>
+              Send payment
+            </Button>
+            <View
+              style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}
+            >
+              <Ionicons
+                name="lock-closed-outline"
+                size={18}
+                color={theme.primary}
+              />
+              <ThemedText> Encrypted and secure payments</ThemedText>
             </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Country of residence *</ThemedText>
-              <Input placeholder="Country of residence" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Address</ThemedText>
-              <Input placeholder="Address" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>City</ThemedText>
-              <Input placeholder="City" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Region/province</ThemedText>
-              <Input placeholder="Region/province" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Postal code</ThemedText>
-              <Input placeholder="Postal code" />
-            </View>
-          </View>
-        </Card>
-
-        <Card style={{ gap: 20 }}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardNumber}>
-              <ThemedText
+            <ThemedText>
+              By completing the purchase, you agree to our{' '}
+              <Link
                 style={{
                   color: theme.primary,
+                  textDecorationLine: 'underline',
+                }}
+                href={'/'}
+              >
+                Terms of Service
+              </Link>{' '}
+              and you confirm that you have read our{' '}
+              <Link
+                href={'/'}
+                style={{
+                  color: theme.primary,
+                  textDecorationLine: 'underline',
                 }}
               >
-                2
-              </ThemedText>
-            </View>
-            <ThemedText style={styles.cardTitle}>Pay</ThemedText>
-          </View>
-
-          <View style={styles.inputsContainer}>
-            <View style={styles.inputContainer}>
-              <ThemedText>Name on the card</ThemedText>
-              <Input placeholder="Name on the card" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Card number</ThemedText>
-              <Input placeholder="0000 0000 0000 0000" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>Expiration date</ThemedText>
-              <Input placeholder="MM/AA" />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <ThemedText>CVC/CVV *</ThemedText>
-              <Input placeholder="123" />
-            </View>
-          </View>
-
-          <Button>Send payment</Button>
-          <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
-            <Ionicons
-              name="lock-closed-outline"
-              size={18}
-              color={theme.primary}
-            />
-            <ThemedText> Encrypted and secure payments</ThemedText>
-          </View>
-          <ThemedText>
-            By completing the purchase, you agree to our{' '}
-            <Link
-              style={{
-                color: theme.primary,
-                textDecorationLine: 'underline',
-              }}
-              href={'/'}
-            >
-              Terms of Service
-            </Link>{' '}
-            and you confirm that you have read our{' '}
-            <Link
-              href={'/'}
-              style={{ color: theme.primary, textDecorationLine: 'underline' }}
-            >
-              Privacy Policy
-            </Link>
-            . You can cancel recurring payments at any time.
-          </ThemedText>
-        </Card>
-      </View>
-    </ScrollView>
+                Privacy Policy
+              </Link>
+              . You can cancel recurring payments at any time.
+            </ThemedText>
+          </Card>
+        </View>
+      </ScrollView>
+    </StripeProvider>
   );
 };
 

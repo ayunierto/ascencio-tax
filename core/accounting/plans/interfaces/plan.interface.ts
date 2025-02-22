@@ -1,13 +1,15 @@
 import { User } from '@/core/auth/interfaces/user';
+import { DiscountOnPlan } from '../../discounts-on-plans/interfaces/discount-on-plan.interface';
 
 export interface Plan {
   id: string;
+  planIdStore: null;
   name: string;
   description: string;
   price: string;
-  save: string;
   features: string[];
   createdAt: string;
-  updatedAt: null | string;
-  user: User | null;
+  updatedAt: string | null;
+  discounts: DiscountOnPlan[];
+  user: User;
 }

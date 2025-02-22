@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
-import { View, ScrollView, Linking, FlatList } from 'react-native';
+import React from 'react';
+import { FlatList } from 'react-native';
 import { DateTime } from 'luxon';
 import { useQuery } from '@tanstack/react-query';
 
 import Loader from '@/presentation/theme/components/Loader';
-import Alert from '@/presentation/theme/components/ui/Alert';
 import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 
 import { getPosts } from '@/core/posts/actions/get-posts';
-import ExpenseEmptyList from '@/core/components/EmptyList';
-import EmptyList from '@/core/components/EmptyList';
-import ExpenseCard from '@/presentation/theme/components/receipts/expenses/ExpenseCard';
+import { EmptyList } from '@/core/components';
 
 const BlogScreen = () => {
   const { data, isLoading } = useQuery({

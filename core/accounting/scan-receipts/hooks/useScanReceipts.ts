@@ -106,7 +106,6 @@ export const useScanReceipts = () => {
   };
 
   const analyzeExpense = async (base64Image: string) => {
-    console.warn('Starting ORC');
     try {
       const config = {
         region: 'us-east-2',
@@ -152,7 +151,6 @@ export const useScanReceipts = () => {
           }
         });
 
-      console.warn({ detectedValues });
       return detectedValues;
     } catch (error) {
       console.error(error);

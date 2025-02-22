@@ -140,7 +140,6 @@ export const useUpdateExpense = (expenseId: string) => {
   const updateExpenseMutation = useMutation({
     mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
       const image = getValues('image');
-      console.warn({ image });
       const data = await updateExpense({
         id: expenseId,
         image: image && image.includes('file') ? image : undefined,
@@ -202,7 +201,6 @@ export const useUpdateExpense = (expenseId: string) => {
   });
 
   const onSubmit = async (values: z.infer<typeof expenseSchema>) => {
-    console.warn('onSubmit');
     setIsFetching(true);
     await updateExpenseMutation.mutateAsync({
       ...values,

@@ -48,7 +48,6 @@ export const useCreateExpense = () => {
     //   try {
     //     dateObtained = new Date(params.date as string);
     //     if (isNaN(dateObtained.getTime())) {
-    //       console.warn('Invalid date format in params.date');
     //       dateObtained = new Date();
     //     }
     //   } catch (error) {
@@ -56,7 +55,6 @@ export const useCreateExpense = () => {
     //     dateObtained = new Date();
     //   }
     // } else {
-    //   console.warn('params.date is undefined or null');
     // }
 
     // setValue('date', dateObtained.toISOString());
@@ -64,10 +62,7 @@ export const useCreateExpense = () => {
     // const currentDate = new Date();
     // currentDate.setFullYear(currentDate.getFullYear() - 2);
     // const ISODate = currentDate;
-    // console.warn(params.date);
     // const dateObtained = new Date(params.date);
-    // console.warn({ ISODate });
-    // console.warn({ dateObtained });
 
     // setValue(
     //   'date',
@@ -139,13 +134,11 @@ export const useCreateExpense = () => {
 
   const expenseMutation = useMutation({
     mutationFn: async (values: CreateUpdateExpense): Promise<Expense> => {
-      console.warn({ values });
       const image = getValues('image');
       const data = await createExpense({
         image: image && image.includes('file') ? image : undefined,
         ...values,
       });
-      console.warn({ data });
       return data;
     },
 

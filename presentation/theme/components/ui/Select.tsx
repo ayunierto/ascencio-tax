@@ -22,14 +22,8 @@ interface SelectProps {
   selectedOptions?: Option;
   style?: StyleProp<ViewStyle>;
 
-  /**
-   * On Select.
-   * @param {Option} option - Option to return.
-   * @returns {void}
-   * @deprecated This property is deprecated. Use the `onChange` property instead.
-   */
   onSelect?: (option: Option) => void;
-  onChange?: (id: string) => void;
+  onChange?: (value: string) => void;
 }
 
 export interface Option {
@@ -44,7 +38,7 @@ const Select = ({
   options: initialOptions,
   placeholder,
   readOnly = false,
-  selectedOptions: defaultSelected,
+  selectedOptions,
   style,
 }: SelectProps) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -54,10 +48,10 @@ const Select = ({
     useState<Option[]>(initialOptions);
 
   useEffect(() => {
-    if (defaultSelected) {
-      setSelectedValue(defaultSelected);
+    if (selectedOptions) {
+      setSelectedValue(selectedOptions);
     }
-  }, [defaultSelected]);
+  }, [selectedOptions]);
 
   useEffect(() => {
     if (searchText === '') {

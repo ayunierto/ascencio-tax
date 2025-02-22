@@ -75,7 +75,6 @@ const ExpenseScreen = () => {
           <ThemedText>Receipt image:</ThemedText>
           <ExpenseImage
             onChange={(image) => {
-              console.warn(image);
               setValue('image', image);
             }}
             image={
@@ -105,7 +104,10 @@ const ExpenseScreen = () => {
             control={control}
             name="date"
             render={({ field: { onChange, value } }) => (
-              <DateTimePicker value={new Date(value)} onChange={onChange} />
+              <DateTimePicker
+                value={new Date(value).toString()}
+                onChange={onChange}
+              />
             )}
           />
           <ErrorMessage fieldErrors={errors.date} />
