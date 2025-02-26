@@ -13,6 +13,8 @@ import { ThemedText } from '@/components/ui/ThemedText';
 import Divider from '@/components/ui/Divider';
 import { theme } from '@/components/ui/theme';
 import Button from '@/components/ui/Button';
+import { createSubscription } from '@/core/accounting/subscriptions/actions/create-subscription.action';
+import { router } from 'expo-router';
 
 const CheckoutScreen = () => {
   const [publishableKey, setPublishableKey] = useState('');
@@ -80,8 +82,7 @@ const CheckoutScreen = () => {
   };
 
   const openPaymentSheet = async () => {
-    const { error, paymentOption } = await presentPaymentSheet();
-    console.warn({ paymentOption });
+    const { error } = await presentPaymentSheet();
 
     if (error) {
       // Alert.alert(`Error code: ${error.code}`, error.message);
@@ -93,11 +94,19 @@ const CheckoutScreen = () => {
     } else {
       // Alert.alert('Success', 'Your order is confirmed!');
 
-      Toast.show({
-        type: 'success',
-        text1: 'Your order is confirmed!',
-        text2: 'Thank you for your purchase.',
-      });
+      if (selectedPlan) {
+        await createSubscription({
+          durationInMonths: months,
+          planId: selectedPlan.id,
+        }).then(() => {
+          Toast.show({
+            type: 'success',
+            text1: 'Your order is confirmed!',
+            text2: 'Thank you for your purchase.',
+          });
+          router.replace('/accounting/subscriptions');
+        });
+      }
     }
   };
 

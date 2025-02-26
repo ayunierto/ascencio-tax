@@ -1,34 +1,35 @@
-// import * as SecureStore from 'expo-secure-store';
-// import { uploadImage } from '@/core/files/actions/upload-image.action';
+import * as SecureStore from 'expo-secure-store';
+import { Exception } from '@/core/interfaces/Exception.interface';
+import { Subscription } from '../interfaces/subscription.interface';
 
-// export const createSubscription = async (
-//   expense: CreateUpdateExpense
-// ): Promise<Expense> => {
-//   try {
-//     const API_URL = process.env.EXPO_PUBLIC_API_URL;
+interface CreateSubscription {
+  planId: string;
+  durationInMonths: number;
+}
 
-//     const token = await SecureStore.getItemAsync('token');
-//     if (!token) {
-//       throw new Error('Token not found');
-//     }
+export const createSubscription = async (
+  subscription: CreateSubscription
+): Promise<Subscription | Exception> => {
+  try {
+    const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-//     if (expense.image) {
-//       const uploadedImage = await uploadImage(expense.image);
-//       expense.image = uploadedImage.image;
-//     }
+    const token = await SecureStore.getItemAsync('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
 
-//     const response = await fetch(`${API_URL}/expense`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify(expense),
-//     });
-//     const data: Expense = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error('The receipt could not be created');
-//   }
-// };
+    const response = await fetch(`${API_URL}/subscriptions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(subscription),
+    });
+    const data: Subscription | Exception = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error('The subscription could not be created');
+  }
+};

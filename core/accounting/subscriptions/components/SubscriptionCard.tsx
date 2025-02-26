@@ -18,7 +18,8 @@ interface SubscriptionCardProps {
 const SubscriptionCard = ({ plan }: SubscriptionCardProps) => {
   const [highestDiscount, setHighestDiscount] = useState<number>(0);
 
-  const { setSelectedPlan } = usePlanStore();
+  const { setSelectedPlan, setHighestDiscount: setMaxDiscount } =
+    usePlanStore();
 
   useEffect(() => {
     let maxDiscount = 0;
@@ -34,6 +35,7 @@ const SubscriptionCard = ({ plan }: SubscriptionCardProps) => {
 
   const onChoosePlan = () => {
     setSelectedPlan(plan);
+    setMaxDiscount(highestDiscount);
     router.push('/accounting/subscriptions/cart');
   };
   return (

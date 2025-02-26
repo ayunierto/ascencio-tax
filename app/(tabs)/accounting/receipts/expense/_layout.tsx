@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Stack } from 'expo-router/stack';
 import { Ionicons } from '@expo/vector-icons';
-import { Redirect, router } from 'expo-router';
+import { Redirect, router, useFocusEffect } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
 import { theme } from '@/components/ui/theme';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +12,14 @@ const ExpenseLayout = () => {
   const queryCheckSubscription = useQuery({
     queryKey: ['hasSubscription'],
     queryFn: () => checkSubscription(),
+    staleTime: 1000,
   });
+
+  useFocusEffect(
+    useCallback(() => {
+      queryCheckSubscription.refetch();
+    }, [])
+  );
 
   if (queryCheckSubscription.isLoading) {
     return <Loader />;
