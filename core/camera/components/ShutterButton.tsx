@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  StyleSheet,
-  // useWindowDimensions,
-} from 'react-native';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { theme } from '@/components/ui/theme';
 
 interface ShutterButtonProps {
   onPress: () => void;

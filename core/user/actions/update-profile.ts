@@ -1,12 +1,14 @@
+import { User } from '@/core/auth/interfaces/user.interface';
 import { UpdateProfile } from '../interfaces/update-profile.interface';
 import * as SecureStore from 'expo-secure-store';
+import { Exception } from '@/core/interfaces/Exception.interface';
 
 export const updateProfile = async ({
   lastName,
   name,
   password,
   phoneNumber,
-}: UpdateProfile) => {
+}: UpdateProfile): Promise<User | Exception> => {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const token = (await SecureStore.getItemAsync('token')) || '';
 
@@ -29,11 +31,11 @@ export const updateProfile = async ({
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(userUpdate),
-    }).then((data) => data.json());
-
-    return response;
+    });
+    const data: User | Exception = await response.json();
+    return data;
   } catch (error) {
     console.error(error);
-    return error;
+    throw new Error('Error updating profile');
   }
 };

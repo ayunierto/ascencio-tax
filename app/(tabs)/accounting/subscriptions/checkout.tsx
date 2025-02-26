@@ -4,16 +4,15 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { Link } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Linking from 'expo-linking';
-
-import { Card } from '@/presentation/theme/components/ui';
-
-import Button from '@/presentation/theme/components/ui/Button';
-import Divider from '@/presentation/theme/components/ui/Divider';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
-import { usePlanStore } from '@/core/accounting/plans/store/usePlanStore';
 import Toast from 'react-native-toast-message';
+import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
+
+import { usePlanStore } from '@/core/accounting/plans/store/usePlanStore';
+import { Card } from '@/components/ui/Card/Card';
+import { ThemedText } from '@/components/ui/ThemedText';
+import Divider from '@/components/ui/Divider';
+import { theme } from '@/components/ui/theme';
+import Button from '@/components/ui/Button';
 
 const CheckoutScreen = () => {
   const [publishableKey, setPublishableKey] = useState('');
@@ -81,7 +80,8 @@ const CheckoutScreen = () => {
   };
 
   const openPaymentSheet = async () => {
-    const { error } = await presentPaymentSheet();
+    const { error, paymentOption } = await presentPaymentSheet();
+    console.warn({ paymentOption });
 
     if (error) {
       // Alert.alert(`Error code: ${error.code}`, error.message);
@@ -92,6 +92,7 @@ const CheckoutScreen = () => {
       });
     } else {
       // Alert.alert('Success', 'Your order is confirmed!');
+
       Toast.show({
         type: 'success',
         text1: 'Your order is confirmed!',

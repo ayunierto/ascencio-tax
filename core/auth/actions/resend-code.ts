@@ -1,7 +1,9 @@
+import { Exception } from '@/core/interfaces/Exception.interface';
+
 export const resendCode = async (
   username: string,
-  verificationPlatform: 'email' | 'phone'
-) => {
+  verificationPlatform: 'email' | 'phone' = 'email'
+): Promise<Exception> => {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
   try {
@@ -14,11 +16,12 @@ export const resendCode = async (
         username: username.toLocaleLowerCase().trim(),
         verificationPlatform: verificationPlatform,
       }),
-    }).then((data) => data.json());
+    });
 
-    return response;
+    const data: Exception = await response.json();
+    return data;
   } catch (error) {
     console.error(error);
-    return error;
+    throw new Error('Error sending verification code');
   }
 };

@@ -1,15 +1,17 @@
-import { View, SafeAreaView, ScrollView } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import Button from '@/presentation/theme/components/ui/Button';
-import Chip from '@/presentation/theme/components/ui/Chip';
-import { useBookingStore } from '@/presentation/services/store/useBookingStore';
-import Select from '@/presentation/theme/components/ui/Select';
-import { Calendar } from 'react-native-calendars';
+
+import { View, SafeAreaView, ScrollView } from 'react-native';
 import { router } from 'expo-router';
-import Alert from '@/presentation/theme/components/ui/Alert';
-import Loader from '@/presentation/theme/components/Loader';
-import Header from '@/presentation/theme/components/auth/Header';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { Calendar } from 'react-native-calendars';
+
+import Header from '@/core/auth/components/Header';
+import { useBookingStore } from '@/core/services/store/useBookingStore';
+import Select from '@/components/ui/Select';
+import { theme } from '@/components/ui/theme';
+import Loader from '@/components/Loader';
+import Alert from '@/components/ui/Alert';
+import Chip from '@/components/ui/Chip';
+import Button from '@/components/ui/Button';
 
 interface Option {
   label: string;
@@ -24,8 +26,8 @@ interface Day {
   year: number;
 }
 
-const BookingScreen = () => {
-  const getCurrentDate = () => {
+const BookingScreen = (): JSX.Element => {
+  const getCurrentDate = (): string => {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // month begins from 0 (January is 0)
@@ -59,7 +61,7 @@ const BookingScreen = () => {
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   useEffect(() => {
     if (selectedStaff) {
-      const fetchAvailability = async () => {
+      const fetchAvailability = async (): Promise<void> => {
         setAvailableSlots([]);
 
         setLoading(true);
@@ -89,7 +91,7 @@ const BookingScreen = () => {
   }, [selectedDate, selectedStaff]);
 
   const { saveDetails } = useBookingStore();
-  function handleBookNow() {
+  function onBookNow(): void {
     if (selectedSlot && selectedStaff) {
       saveDetails(
         selectedStaff.value,
@@ -191,7 +193,7 @@ const BookingScreen = () => {
               </View>
               <View>
                 {selectedSlot && (
-                  <Button onPress={() => handleBookNow()}>
+                  <Button onPress={() => onBookNow()}>
                     Schedule an appointment at{' '}
                     {new Date(selectedSlot.start).toLocaleTimeString([], {
                       hour: '2-digit',

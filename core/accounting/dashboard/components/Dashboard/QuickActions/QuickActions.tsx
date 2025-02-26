@@ -2,14 +2,11 @@ import React from 'react';
 
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-import {
-  Card,
-  SimpleCardHeader,
-  SimpleCardHeaderTitle,
-} from '@/presentation/theme/components/ui';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import Button from '@/presentation/theme/components/ui/Button';
+import { Card } from '@/components/ui/Card/Card';
+import { SimpleCardHeader } from '@/components/ui/Card/SimpleCardHeader';
+import { SimpleCardHeaderTitle } from '@/components/ui/Card/SimpleCardHeaderTitle';
+import { theme } from '@/components/ui/theme';
+import Button from '@/components/ui/Button';
 
 interface QuickActionsProps {
   actions: {

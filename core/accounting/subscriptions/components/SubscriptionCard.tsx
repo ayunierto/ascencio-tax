@@ -1,40 +1,39 @@
-import { View } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { Card } from '@/presentation/theme/components/ui';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
-import { Plan } from '../../plans/interfaces/plan.interface';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import Button from '@/presentation/theme/components/ui/Button';
+import { View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import Divider from '@/presentation/theme/components/ui/Divider';
+
+import { Plan } from '../../plans/interfaces/plan.interface';
 import { usePlanStore } from '../../plans/store/usePlanStore';
+import { Card } from '@/components/ui/Card/Card';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
+import Button from '@/components/ui/Button';
+import Divider from '@/components/ui/Divider';
 
 interface SubscriptionCardProps {
   plan: Plan;
 }
 
 const SubscriptionCard = ({ plan }: SubscriptionCardProps) => {
-  const [highestDiscountState, setHighestDiscountState] = useState<number>(0);
+  const [highestDiscount, setHighestDiscount] = useState<number>(0);
 
-  const { setSelectedPlan, setHighestDiscount } = usePlanStore();
+  const { setSelectedPlan } = usePlanStore();
 
   useEffect(() => {
     let maxDiscount = 0;
     plan.discounts.forEach((discount) => {
       if (discount.discount > maxDiscount) {
-        maxDiscount = discount.discount;
+        maxDiscount = Math.max(maxDiscount, discount.discount);
       }
     });
-    setHighestDiscountState(maxDiscount);
+    setHighestDiscount(maxDiscount);
   }, [plan]);
 
-  const discountedPrice = +plan.price * (1 - highestDiscountState / 100);
+  const discountedPrice = +plan.price * (1 - highestDiscount / 100);
 
   const onChoosePlan = () => {
     setSelectedPlan(plan);
-    setHighestDiscount(highestDiscountState);
-
     router.push('/accounting/subscriptions/cart');
   };
   return (
@@ -88,7 +87,7 @@ const SubscriptionCard = ({ plan }: SubscriptionCardProps) => {
               fontWeight: 'bold',
             }}
           >
-            SAVE {highestDiscountState}%
+            SAVE {highestDiscount}%
           </ThemedText>
         </View>
 

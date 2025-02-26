@@ -1,4 +1,4 @@
-import { User } from '@/core/auth/interfaces/user';
+import { User } from '@/core/auth/interfaces/user.interface';
 
 export interface Post {
   id: number;

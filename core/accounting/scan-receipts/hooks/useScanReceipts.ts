@@ -46,7 +46,7 @@ export const useScanReceipts = () => {
     if (!selectedImage) return;
     await MediaLibrary.createAssetAsync(selectedImage);
 
-    addSelectedImage({ uri: selectedImage, base64: undefined });
+    addSelectedImage({ uri: selectedImage });
 
     const { date, merchant, tax, total } = await analyzeExpense(
       selectedBase64Image as string
@@ -69,27 +69,24 @@ export const useScanReceipts = () => {
   };
 
   const onPickImages = async () => {
-    setLoading(true);
+    // setLoading(true);
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true,
-      aspect: [9, 16],
       quality: 1,
       base64: true,
     });
+    console.warn({ selectedImage: result });
 
     if (result.canceled) return;
 
     clearImages();
-    result.assets.map((img) =>
-      addSelectedImage({
-        uri: img.uri,
-        base64: undefined,
-      })
-    );
+    addSelectedImage({
+      uri: result.assets[0].uri,
+    });
     const { date, merchant, tax, total } = await analyzeExpense(
-      result.assets[0].base64 as string
+      result.assets[0].base64!
     );
 
     setLoading(false);
@@ -106,29 +103,36 @@ export const useScanReceipts = () => {
   };
 
   const analyzeExpense = async (base64Image: string) => {
-    try {
-      const config = {
-        region: 'us-east-2',
-        credentials: {
-          accessKeyId: 'AKIA6PXJJGUAOV5Z7B5U',
-          secretAccessKey: '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',
-        },
-      };
-      const client = new TextractClient(config);
-      const input = {
-        Document: {
-          Bytes: base64Image ? Buffer.from(base64Image, 'base64') : undefined,
-        },
-      };
-      const command = new AnalyzeExpenseCommand(input);
+    const config = {
+      region: 'us-east-2',
+      credentials: {
+        accessKeyId: 'AKIA6PXJJGUAOV5Z7B5U',
+        secretAccessKey: '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',
+      },
+    };
+    const client = new TextractClient(config);
 
-      const detectedValues = {
-        merchant: '',
-        date: '',
-        total: new Date().toISOString(),
-        tax: '',
-      };
+    if (!base64Image) {
+      throw new Error('An image to analyze was not provided.');
+    }
+
+    const input = {
+      Document: {
+        Bytes: base64Image ? Buffer.from(base64Image, 'base64') : undefined,
+      },
+    };
+    const command = new AnalyzeExpenseCommand(input);
+
+    const detectedValues = {
+      merchant: '',
+      date: '',
+      total: new Date().toISOString(),
+      tax: '',
+    };
+
+    try {
       const response = await client.send(command);
+      console.warn(response);
       if (response.ExpenseDocuments)
         response.ExpenseDocuments[0].SummaryFields?.map((field) => {
           if (field.Type && field.Type.Text === 'VENDOR_NAME') {
@@ -154,7 +158,7 @@ export const useScanReceipts = () => {
       return detectedValues;
     } catch (error) {
       console.error(error);
-      throw new Error('The receipt could not be analyzed');
+      throw new Error('The receipt could not be analyzed.');
     }
   };
 

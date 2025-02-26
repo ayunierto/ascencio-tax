@@ -1,19 +1,26 @@
-import { View, ScrollView, Text, KeyboardAvoidingView } from 'react-native';
 import React, { useState } from 'react';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-import Signin from '../auth/sign-in';
-import Button from '@/presentation/theme/components/ui/Button';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Header from '@/presentation/theme/components/auth/Header';
-import { Input } from '@/presentation/theme/components/ui/Input';
+
+import {
+  View,
+  ScrollView,
+  KeyboardAvoidingView,
+  SafeAreaView,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { z } from 'zod';
-import { Ionicons } from '@expo/vector-icons';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { updateProfile } from '@/core/user/actions';
 import Toast from 'react-native-toast-message';
-import Divider from '@/presentation/theme/components/ui/Divider';
+
+import Signin from '../auth/sign-in';
+import { updateProfile } from '@/core/user/actions';
+import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import Divider from '@/components/ui/Divider';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import { ThemedText } from '@/components/ui/ThemedText';
+import ErrorMessage from '@/core/components/ErrorMessage';
 
 export const profileSchema = z
   .object({
@@ -39,7 +46,7 @@ export const profileSchema = z
     path: ['confirmPassword'],
   });
 
-const Profile = () => {
+const Profile = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
   const { token, logout, user } = useAuthStore();
 
@@ -64,19 +71,23 @@ const Profile = () => {
     return <Signin />; // Use replace to avoid stacking profile on top of sign-in
   }
 
-  const handleUpdateProfile = async (values: z.infer<typeof profileSchema>) => {
+  const handleUpdateProfile = async ({
+    name,
+    lastName,
+    phoneNumber,
+    password,
+  }: z.infer<typeof profileSchema>): Promise<void> => {
     setLoading(true);
     const response = await updateProfile({
-      name: values.name,
-      lastName: values.lastName,
-      phoneNumber: values.phoneNumber,
-      password: values.password,
+      name,
+      lastName,
+      phoneNumber,
+      password,
     });
     setLoading(false);
 
     // Unauthorized
-
-    if (response.statusCode === 400) {
+    if ('statusCode' in response && response.statusCode === 400) {
       setError('root', {
         type: 'manual',
         message: response.message[0],
@@ -104,6 +115,11 @@ const Profile = () => {
               marginHorizontal: 'auto',
             }}
           >
+            <ThemedText style={{ textAlign: 'center', fontSize: 30 }}>
+              Profile
+            </ThemedText>
+
+            <ThemedText>Name:</ThemedText>
             <Controller
               control={control}
               name="name"
@@ -118,11 +134,9 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.name && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.name?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.name} />
+
+            <ThemedText>Last Name:</ThemedText>
             <Controller
               control={control}
               name="lastName"
@@ -137,11 +151,9 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.lastName && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.lastName?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.lastName} />
+
+            <ThemedText>Email:</ThemedText>
             <Controller
               control={control}
               name="email"
@@ -158,12 +170,9 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.email && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.email?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.email} />
 
+            <ThemedText>Phone Number:</ThemedText>
             <Controller
               control={control}
               name="phoneNumber"
@@ -180,11 +189,9 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.phoneNumber && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.phoneNumber?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.phoneNumber} />
+
+            <ThemedText>Password:</ThemedText>
             <Controller
               control={control}
               name="password"
@@ -200,11 +207,9 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.password && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.password?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.password} />
+
+            <ThemedText>Confirm Password:</ThemedText>
             <Controller
               control={control}
               name="confirmPassword"
@@ -220,11 +225,8 @@ const Profile = () => {
                 />
               )}
             />
-            {errors.confirmPassword && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.confirmPassword?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.confirmPassword} />
+
             <Button
               loading={loading}
               disabled={loading}
@@ -232,7 +234,9 @@ const Profile = () => {
             >
               Update
             </Button>
+
             <Divider />
+
             <Button
               iconRight={
                 <Ionicons name="log-out-outline" size={24} color="white" />

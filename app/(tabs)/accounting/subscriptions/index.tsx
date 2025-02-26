@@ -1,11 +1,12 @@
 import React from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { useQuery } from '@tanstack/react-query';
+
 import { GetPlans } from '@/core/accounting/plans/actions/get-plans.action';
-import Loader from '@/presentation/theme/components/Loader';
 import SubscriptionCard from '@/core/accounting/subscriptions/components/SubscriptionCard';
+import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
 
 const SubscriptionsScreen = () => {
   const plansQuery = useQuery({

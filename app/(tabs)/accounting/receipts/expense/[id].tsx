@@ -6,21 +6,21 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
 import { Redirect, useLocalSearchParams } from 'expo-router';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import { useUpdateExpense } from '@/core/accounting/expenses/hooks/useUpdateExpense';
-import Loader from '@/presentation/theme/components/Loader';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { Ionicons } from '@expo/vector-icons';
-import Button from '@/presentation/theme/components/ui/Button';
-import Select from '@/presentation/theme/components/ui/Select';
-import DateTimePicker from '@/presentation/theme/components/ui/DateTimePicker/DateTimePicker';
 import { Controller } from 'react-hook-form';
+
+import { useUpdateExpense } from '@/core/accounting/expenses/hooks/useUpdateExpense';
 import { Account } from '@/core/accounting/accounts/interfaces';
-import ExpenseImage from '@/presentation/theme/components/receipts/expenses/ExpenseImage';
-import ErrorMessage from '@/presentation/theme/components/receipts/expenses/ErrorMessage';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
+import ExpenseImage from '@/core/accounting/expenses/components/ExpenseImage';
+import ErrorMessage from '@/core/components/ErrorMessage';
+import { theme } from '@/components/ui/theme';
+import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { Input } from '@/components/ui/Input';
+import DateTimePicker from '@/components/ui/DateTimePicker/DateTimePicker';
+import Select from '@/components/ui/Select';
+import Button from '@/components/ui/Button';
 
 const ExpenseScreen = () => {
   const { id } = useLocalSearchParams();

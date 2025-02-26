@@ -1,6 +1,6 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { theme } from '@/components/ui/theme';
 
 const MyProfileLayout = () => {
   return (
@@ -11,7 +11,7 @@ const MyProfileLayout = () => {
         },
         headerTitleAlign: 'center',
         headerTintColor: theme.foreground,
-        title: 'Profile',
+        title: '',
         headerShadowVisible: false,
       }}
     />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer } from 'expo-router/drawer';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { theme } from '@/components/ui/theme';
 
 const _layout = () => {
   return (

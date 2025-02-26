@@ -8,7 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
-import { CustomTheme } from '@/presentation/theme/CustomTheme';
+import { CustomTheme } from '@/theme/CustomTheme';
 
 import '../global.css';
 

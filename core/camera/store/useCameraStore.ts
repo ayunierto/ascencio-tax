@@ -10,7 +10,7 @@ interface TemporalCameraStoreState {
 
 interface SelectedImages {
   uri: string;
-  base64: string | undefined;
+  base64?: string;
 }
 
 export const useCameraStore = create<TemporalCameraStoreState>()((set) => ({

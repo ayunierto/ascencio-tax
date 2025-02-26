@@ -1,8 +1,8 @@
 import React from 'react';
-import { Stack, Tabs } from 'expo-router';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { Stack } from 'expo-router';
+import { theme } from '@/components/ui/theme';
 
-const MyBookingsLayout = () => {
+const MyBookingsLayout = (): JSX.Element => {
   return (
     <Stack
       screenOptions={{

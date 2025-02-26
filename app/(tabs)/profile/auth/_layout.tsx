@@ -1,5 +1,6 @@
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import React from 'react';
 import { Stack } from 'expo-router';
+import { theme } from '@/components/ui/theme';
 
 export default function AuthLayout() {
   return (

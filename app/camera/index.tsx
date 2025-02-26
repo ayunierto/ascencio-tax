@@ -6,8 +6,6 @@ import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 
 import { useCameraStore } from '../../core/camera/store/useCameraStore';
-import Button from '@/presentation/theme/components/ui/Button';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 import {
   ConfirmImageButton,
   FlipCameraButton,
@@ -16,7 +14,9 @@ import {
   ReturnCancelButton,
   ShutterButton,
 } from '@/core/camera/components';
-import Loader from '@/presentation/theme/components/Loader';
+import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
+import Button from '@/components/ui/Button';
 
 export default function CameraScreen() {
   const { addSelectedImage, clearImages } = useCameraStore();

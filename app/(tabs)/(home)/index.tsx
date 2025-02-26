@@ -1,19 +1,20 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getServices } from '@/core/services/actions';
-import Loader from '@/presentation/theme/components/Loader';
-import { ServiceResponse } from '@/core/services/interfaces/services.response';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import Button from '@/presentation/theme/components/ui/Button';
-import { useBookingStore } from '@/presentation/services/store/useBookingStore';
-import { ScrollView } from 'react-native-gesture-handler';
-import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-import Toast from 'react-native-toast-message';
 
-const Services = () => {
+import { View, Text, Image, ScrollView } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
+import { useQuery } from '@tanstack/react-query';
+
+import { getServices } from '@/core/services/actions';
+import { ServiceResponse } from '@/core/services/interfaces/services.response';
+import { useBookingStore } from '@/core/services/store/useBookingStore';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import Loader from '@/components/Loader';
+import { theme } from '@/components/ui/theme';
+import Button from '@/components/ui/Button';
+
+const Services = (): JSX.Element => {
   const { selectService } = useBookingStore();
   const { token } = useAuthStore();
 
@@ -27,7 +28,7 @@ const Services = () => {
     return <Loader />;
   }
 
-  const handleSelectService = (service: ServiceResponse) => {
+  const handleSelectService = (service: ServiceResponse): void => {
     selectService(service);
     if (!token) {
       router.push('/(tabs)/profile/settings/profile');

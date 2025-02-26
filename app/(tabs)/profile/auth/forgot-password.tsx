@@ -6,11 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 
-import Header from '../../../../presentation/theme/components/auth/Header';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
+import Header from '../../../../core/auth/components/Header';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { z } from 'zod';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 // export const forgotPasswordSchema = z.object({
 //   username: z.string(),
@@ -48,7 +48,6 @@ const ForgotPassword = () => {
     Toast.show({
       type: 'error',
       text1: 'Error',
-      text2: response.message,
     });
   };
 

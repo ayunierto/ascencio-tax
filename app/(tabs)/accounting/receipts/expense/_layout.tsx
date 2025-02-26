@@ -1,11 +1,26 @@
 import React from 'react';
 import { Stack } from 'expo-router/stack';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { TouchableOpacity } from 'react-native';
+import { theme } from '@/components/ui/theme';
+import { useQuery } from '@tanstack/react-query';
+import { checkSubscription } from '@/core/accounting/subscriptions/actions';
+import Loader from '@/components/Loader';
 
 const ExpenseLayout = () => {
+  const queryCheckSubscription = useQuery({
+    queryKey: ['hasSubscription'],
+    queryFn: () => checkSubscription(),
+  });
+
+  if (queryCheckSubscription.isLoading) {
+    return <Loader />;
+  }
+
+  if (!queryCheckSubscription.data)
+    return <Redirect href={'/accounting/subscriptions'} />;
+
   return (
     <Stack
       screenOptions={{

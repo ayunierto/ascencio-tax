@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,52 +7,29 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { router } from 'expo-router';
-import * as Localization from 'expo-localization';
 
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
-import Header from '../../../../presentation/theme/components/auth/Header';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import Toast from 'react-native-toast-message';
+
 import { signinSchema } from '@/core/auth/schemas/signinSchema';
-import Logo from '@/presentation/theme/components/Logo';
-import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
-import { resendCode } from '@/core/auth/actions/resend-code';
+import Button from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import Header from '@/core/auth/components/Header';
+import Logo from '@/components/Logo';
+import ErrorMessage from '@/core/components/ErrorMessage';
 
 const Signin = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [userInactive, setUserInactive] = useState(false);
   const { signin, setUser } = useAuthStore();
-
-  const {
-    canResend,
-    isLoadingResend,
-    setCanResend,
-    setIsLoadingResend,
-    setTimer,
-    timer,
-  } = useCanResendCode();
-  // const [screenDimensions, setScreenDimensions] = useState(
-  //   Dimensions.get('window')
-  // );
-
-  // useEffect(() => {
-  //   const subscription = Dimensions.addEventListener('change', ({ window }) => {
-  //     setScreenDimensions(window);
-  //   });
-  //   console.log(screenDimensions);
-  //   return () => subscription?.remove();
-  // }, []);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
-    getValues,
+    setError,
   } = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
     defaultValues: {
@@ -61,44 +38,44 @@ const Signin = () => {
     },
   });
 
-  const handleSignin = async (values: z.infer<typeof signinSchema>) => {
+  const onSignin = async (values: z.infer<typeof signinSchema>) => {
     setIsLoading(true);
-    const response = await signin(values.username, values.password);
+    const response = await signin(values);
+    console.warn({ signinResponse: response });
     setIsLoading(false);
 
-    if (response.error === 'Unauthorized') {
-      if (response.cause === 'verify') {
-        setUserInactive(true);
-      }
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: response.message,
-      });
-
-      if (response.cause === 'inactive') {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: response.message,
-        });
-      }
+    if ('token' in response) {
+      router.push('/(tabs)/(home)');
       return;
     }
 
-    if (response.token) {
-      router.push('/(tabs)/(home)');
+    if (response.message === 'User is not verified') {
+      setUser({
+        email: values.username,
+        id: '',
+        name: '',
+        lastName: '',
+        phoneNumber: '',
+        birthdate: null,
+        isActive: false,
+        lastLogin: null,
+        roles: [],
+        createdAt: '',
+        updatedAt: null,
+      });
+      router.push('/(tabs)/profile/auth/verify');
+      return;
     }
-  };
 
-  const handleVerifyAccount = async () => {
-    setIsLoadingResend(true);
-    const response = await resendCode(getValues('username'), 'email');
-    setIsLoadingResend(false);
+    setError('root', {
+      type: 'manual',
+      message: 'Invalid credentials',
+    });
 
-    setUser({ email: getValues('username') });
-
-    router.push('/(tabs)/profile/auth/verify');
+    Toast.show({
+      type: 'error',
+      text1: 'Invalid credentials',
+    });
   };
 
   return (
@@ -109,9 +86,9 @@ const Signin = () => {
           <View
             style={{
               flex: 1,
-              gap: 20,
+              gap: 10,
               width: '100%',
-              maxWidth: 320,
+              maxWidth: 300,
               marginHorizontal: 'auto',
               marginBottom: 20,
             }}
@@ -123,11 +100,8 @@ const Signin = () => {
               linkText="Sign Up"
             />
 
-            {errors.root && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.root?.message as string}
-              </Text>
-            )}
+            <ErrorMessage message={errors.root?.message} />
+
             <Controller
               control={control}
               name="username"
@@ -143,12 +117,7 @@ const Signin = () => {
                 />
               )}
             />
-
-            {errors.username && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.username?.message as string}
-              </Text>
-            )}
+            <ErrorMessage fieldErrors={errors.username} />
 
             <Controller
               control={control}
@@ -165,29 +134,8 @@ const Signin = () => {
                 />
               )}
             />
+            <ErrorMessage fieldErrors={errors.password} />
 
-            {errors.password && (
-              <Text className="-mt-4 text-yellow-400">
-                {errors.password?.message as string}
-              </Text>
-            )}
-
-            {userInactive && (
-              <>
-                <Text className="-mt-4 text-yellow-400">
-                  Your account is inactive. Please contact support or verify
-                  your account.
-                </Text>
-                <Button
-                  variant="secondary"
-                  loading={isLoadingResend}
-                  disabled={isLoadingResend}
-                  onPress={() => handleVerifyAccount()}
-                >
-                  Verify account
-                </Button>
-              </>
-            )}
             <Text
               className="text-blue-300 text-center"
               onPress={() =>
@@ -200,14 +148,11 @@ const Signin = () => {
             <Button
               loading={isLoading}
               disabled={isLoading}
-              onPress={handleSubmit(handleSignin)}
+              onPress={handleSubmit(onSignin)}
               focusable
             >
               Log In
             </Button>
-            <Text style={{ color: 'white' }}>
-              {/* La moneda del usuario es: {deviceLanguage} */}
-            </Text>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>

@@ -1,6 +1,7 @@
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import React from 'react';
+
 import { Stack } from 'expo-router';
-import { TextStyle } from 'react-native';
+import { theme } from '@/components/ui/theme';
 
 export default function BookingLayout() {
   return (

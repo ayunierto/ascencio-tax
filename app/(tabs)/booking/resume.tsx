@@ -1,23 +1,21 @@
+import React from 'react';
 import { View, ScrollView } from 'react-native';
-import React, { useState } from 'react';
-import Button from '@/presentation/theme/components/ui/Button';
-import { useBookingStore } from '@/presentation/services/store/useBookingStore';
+import { useBookingStore } from '@/core/services/store/useBookingStore';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
-import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Card, SimpleCardHeader, SimpleCardHeaderTitle } from '@/components/ui';
+import { Ionicons } from '@expo/vector-icons';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
+import Button from '@/components/ui/Button';
 
 const ResumeScreen = () => {
   const { selectedService, staffName, startDateAndTime, bookNow } =
     useBookingStore();
 
   const queryClient = useQueryClient();
-  const {
-    mutateAsync: mutate,
-    data,
-    isPending,
-    isSuccess,
-  } = useMutation({
+  const { mutateAsync: mutate, isPending } = useMutation({
     mutationFn: async () => {
       const data = await bookNow();
       return data;
@@ -55,34 +53,62 @@ const ResumeScreen = () => {
   return (
     <ScrollView>
       <View style={{ padding: 20, gap: 20 }}>
-        <SimpleCard
-          title="Service"
-          subtitle={selectedService?.name}
-          icon="receipt-outline"
-        />
+        <Card>
+          <SimpleCardHeader>
+            <Ionicons
+              name={'receipt-outline'}
+              size={20}
+              color={theme.foreground}
+            />
+            <SimpleCardHeaderTitle>Service</SimpleCardHeaderTitle>
+          </SimpleCardHeader>
+          <View>
+            <ThemedText>{selectedService?.name}</ThemedText>
+          </View>
+        </Card>
 
-        <SimpleCard
-          title="Address"
-          subtitle={selectedService?.address}
-          icon="map-outline"
-        />
+        <Card>
+          <SimpleCardHeader>
+            <Ionicons name={'map-outline'} size={20} color={theme.foreground} />
+            <SimpleCardHeaderTitle>Address</SimpleCardHeaderTitle>
+          </SimpleCardHeader>
+          <View>
+            <ThemedText>{selectedService?.address}</ThemedText>
+          </View>
+        </Card>
 
-        <SimpleCard title="Staff" subtitle={staffName} icon="person-outline" />
+        <Card>
+          <SimpleCardHeader>
+            <Ionicons
+              name={'time-outline'}
+              size={20}
+              color={theme.foreground}
+            />
+            <SimpleCardHeaderTitle>Staff</SimpleCardHeaderTitle>
+          </SimpleCardHeader>
+          <View>
+            <ThemedText>{staffName}</ThemedText>
+          </View>
+        </Card>
 
-        <SimpleCard
-          title="Date"
-          subtitle={new Date(startDateAndTime!).toLocaleDateString()}
-          icon="calendar-outline"
-        />
-
-        <SimpleCard
-          title="Time"
-          subtitle={new Date(startDateAndTime!).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-          icon="time-outline"
-        />
+        <Card>
+          <SimpleCardHeader>
+            <Ionicons
+              name={'time-outline'}
+              size={20}
+              color={theme.foreground}
+            />
+            <SimpleCardHeaderTitle>Time</SimpleCardHeaderTitle>
+          </SimpleCardHeader>
+          <View>
+            <ThemedText>
+              {new Date(startDateAndTime!).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
+            </ThemedText>
+          </View>
+        </Card>
 
         <Button
           loading={isPending}

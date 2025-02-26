@@ -1,7 +1,7 @@
-import { View, Text } from 'react-native';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 import React from 'react';
-import { theme } from '../../presentation/theme/components/ui/Theme';
-import { ThemedText } from '../../presentation/theme/components/ui/ThemedText';
+import { View, Text } from 'react-native';
 
 interface EmptyListProps {
   title: string;

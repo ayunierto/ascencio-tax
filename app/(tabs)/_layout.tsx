@@ -1,24 +1,16 @@
 import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
-import { Ionicons, Octicons } from '@expo/vector-icons';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-import Toast from 'react-native-toast-message';
-import Loader from '@/presentation/theme/components/Loader';
+import { Ionicons } from '@expo/vector-icons';
+
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import Loader from '@/components/Loader';
+import { theme } from '@/components/ui/theme';
 
 export default function TabLayout() {
   const { status, checkStatus } = useAuthStore();
 
   useEffect(() => {
-    checkStatus().then((res) => {
-      if (res.code === 500) {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: res.message,
-        });
-      }
-    });
+    checkStatus();
   }, []);
 
   if (status === 'checking') {

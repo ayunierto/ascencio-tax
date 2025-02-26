@@ -2,10 +2,10 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { FAB } from '@/core/accounting/components';
-import Loader from '@/presentation/theme/components/Loader';
 import { useExpenses } from '@/core/accounting/expenses/hooks/useExpenses';
-import ExpensesList from '@/presentation/theme/components/receipts/expenses/ExpensesList';
+import ExpensesList from '@/core/accounting/expenses/components/ExpensesList';
 import { EmptyList } from '@/core/components';
+import Loader from '@/components/Loader';
 
 const ExpensesScreen = () => {
   const { expensesQuery, loadNextPage } = useExpenses();

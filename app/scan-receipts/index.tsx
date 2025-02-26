@@ -2,8 +2,7 @@ import React from 'react';
 import { Alert, Image, StyleSheet, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 
-import Button from '@/presentation/theme/components/ui/Button';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
+import 'react-native-get-random-values';
 import {
   ConfirmImageButton,
   GalleryButton,
@@ -11,13 +10,30 @@ import {
   ReturnCancelButton,
   ShutterButton,
 } from '@/core/camera/components';
-import Loader from '@/presentation/theme/components/Loader';
+import { useScanReceipts } from '@/core/accounting/scan-receipts/hooks/useScanReceipts';
 
 import { Buffer } from 'buffer';
-import { useScanReceipts } from '@/core/accounting/scan-receipts/hooks/useScanReceipts';
+import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
+import Button from '@/components/ui/Button';
+import { Redirect } from 'expo-router';
+import { checkSubscription } from '@/core/accounting/subscriptions/actions';
+import { useQuery } from '@tanstack/react-query';
 globalThis.Buffer = Buffer;
 
 export default function ScanReceiptScreen() {
+  const queryCheckSubscription = useQuery({
+    queryKey: ['hasSubscription'],
+    queryFn: () => checkSubscription(),
+  });
+
+  if (queryCheckSubscription.isLoading) {
+    return <Loader />;
+  }
+
+  if (!queryCheckSubscription.data)
+    return <Redirect href={'/accounting/subscriptions'} />;
+
   const {
     requestCameraPermission,
     loading,
@@ -68,11 +84,10 @@ export default function ScanReceiptScreen() {
   }
 
   if (loading) {
-    return (
-      <Loader message="Automated data acquisition from document using OCR technology." />
-    );
+    return <Loader />;
   }
 
+  // Confirm image view
   if (selectedImage) {
     return (
       <View style={styles.container}>
@@ -88,6 +103,7 @@ export default function ScanReceiptScreen() {
     );
   }
 
+  // Camera view
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={'back'}>

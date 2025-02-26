@@ -1,4 +1,6 @@
-export const resetPassword = async (username: string) => {
+import { User } from '../interfaces/user.interface';
+
+export const resetPassword = async (username: string): Promise<User> => {
   try {
     const API_URL = process.env.EXPO_PUBLIC_API_URL;
     const response = await fetch(`${API_URL}/auth/reset-password`, {
@@ -7,11 +9,13 @@ export const resetPassword = async (username: string) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username }),
-    }).then();
-    const data = await response.json();
+    });
+
+    const data: User = await response.json();
 
     return data;
   } catch (error) {
-    return error;
+    console.error(error);
+    throw new Error('Network request failed');
   }
 };

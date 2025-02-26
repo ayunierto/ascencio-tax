@@ -1,4 +1,4 @@
-import { User } from '@/core/auth/interfaces/user';
+import { User } from '@/core/auth/interfaces/user.interface';
 import { Account } from '../../accounts/interfaces';
 import { Category } from '../../categories/interfaces';
 import { Subcategory } from '../../subcategories/interfaces';

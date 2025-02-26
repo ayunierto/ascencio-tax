@@ -1,29 +1,29 @@
+import React, { useEffect, useState } from 'react';
 import {
   View,
-  Text,
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
-
+import { router } from 'expo-router';
 import { z } from 'zod';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
-import { useEffect, useState } from 'react';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import { router } from 'expo-router';
-import Button from '@/presentation/theme/components/ui/Button';
-import Select from '@/presentation/theme/components/ui/Select';
+
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { countries } from '@/countryData';
-import Header from '../../../../presentation/theme/components/auth/Header';
 import { signupSchema } from '@/core/auth/schemas/signupSchema';
-import Logo from '@/presentation/theme/components/Logo';
 import useIPGeolocation from '@/core/hooks/useIPGeolocation';
+import Logo from '@/components/Logo';
+import Header from '@/core/auth/components/Header';
+import { Input } from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
+import ErrorMessage from '@/core/components/ErrorMessage';
+import Button from '@/components/ui/Button';
 
 const countryCodes: { label: string; value: string }[] = [];
 
-const transformCountries = () => {
+const transformCountries = (): void => {
   countries.map((country) => {
     countryCodes.push({
       label: `${country.name} (${country.phone_code})`,
@@ -33,7 +33,7 @@ const transformCountries = () => {
 };
 transformCountries();
 
-const Signup = () => {
+const Signup = (): JSX.Element => {
   const { location } = useIPGeolocation();
   const [callingCode, setCallingCode] = useState<string | undefined>();
   const {
@@ -44,15 +44,7 @@ const Signup = () => {
     setValue,
   } = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
-    defaultValues: {
-      confirmPassword: '',
-      password: '',
-      email: '',
-      lastName: '',
-      name: '',
-      countryCode: '',
-      phoneNumber: '',
-    },
+    defaultValues: {},
   });
 
   useEffect(() => {
@@ -66,38 +58,43 @@ const Signup = () => {
   const { signup } = useAuthStore();
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async (values: z.infer<typeof signupSchema>) => {
+  const onSignup = async (
+    values: z.infer<typeof signupSchema>
+  ): Promise<void> => {
     setLoading(true);
-    const response = await signup(values);
+    delete values.confirmPassword;
+    const response = await signup({ ...values, verificationPlatform: 'email' });
     setLoading(false);
 
-    if (response.verificationCode) {
+    if ('email' in response) {
       router.push('/(tabs)/profile/auth/verify');
     }
 
-    if (response.statusCode === 400) {
-      setError('root', {
-        type: 'manual',
-        message: response.message[0],
-      });
-    }
-
-    if (response.statusCode === 409) {
-      if (response.message.toLowerCase().includes('email')) {
-        setError('email', {
+    if ('statusCode' in response) {
+      if (response.statusCode === 400) {
+        setError('root', {
           type: 'manual',
-          message:
-            'Your email is already being used by an existing AscencioTax account. You can go the AscencioTax login screen to login using this email.',
+          message: response.message,
         });
-        return;
       }
-      if (response.message.includes('phoneNumber')) {
-        setError('phoneNumber', {
-          type: 'manual',
-          message:
-            'Your phone number is already being used by an existing AscencioTax account. You can go the AscencioTax login screen to login using this phone number.',
-        });
-        return;
+
+      if (response.statusCode === 409) {
+        if (response.message.toLowerCase().includes('email')) {
+          setError('email', {
+            type: 'manual',
+            message:
+              'Your email is already being used by an existing AscencioTax account. You can go the AscencioTax login screen to login using this email.',
+          });
+          return;
+        }
+        if (response.message.includes('phoneNumber')) {
+          setError('phoneNumber', {
+            type: 'manual',
+            message:
+              'Your phone number is already being used by an existing AscencioTax account. You can go the AscencioTax login screen to login using this phone number.',
+          });
+          return;
+        }
       }
     }
   };
@@ -124,12 +121,8 @@ const Signup = () => {
               title="Sign Up"
             />
 
-            <View className="flex gap-5">
-              {errors.root && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.root?.message as string}
-                </Text>
-              )}
+            <View style={{ gap: 10 }}>
+              {/* <ErrorMessage fieldErrors={errors.root} /> */}
 
               <Controller
                 control={control}
@@ -145,11 +138,7 @@ const Signup = () => {
                   />
                 )}
               />
-              {errors.name && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.name?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.name} />
 
               <Controller
                 control={control}
@@ -165,13 +154,8 @@ const Signup = () => {
                   />
                 )}
               />
-              {errors.lastName && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.lastName?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.lastName} />
 
-              {/* Email */}
               <Controller
                 control={control}
                 name="email"
@@ -187,21 +171,17 @@ const Signup = () => {
                   />
                 )}
               />
-              {errors.email && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.email?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.email} />
 
               {/* Country code and phone number */}
               <View className="flex flex-row gap-2">
                 <Select
                   options={countryCodes}
-                  // selectedOptions={[]}
                   selectedOptions={countryCodes.find(
                     (item) => item.value === callingCode
                   )}
-                  onSelect={(item) => setValue('countryCode', item?.value)}
+                  // onSelect={(item) => setValue('countryCode', item?.value)}
+                  onChange={(value) => setValue('countryCode', value)}
                   placeholder="+1"
                   style={{ flex: 1 }}
                 />
@@ -223,16 +203,8 @@ const Signup = () => {
                   )}
                 />
               </View>
-              {errors.countryCode && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.countryCode.message}
-                </Text>
-              )}
-              {errors.phoneNumber && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.phoneNumber?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.countryCode} />
+              <ErrorMessage fieldErrors={errors.phoneNumber} />
 
               <Controller
                 control={control}
@@ -249,11 +221,8 @@ const Signup = () => {
                   />
                 )}
               />
-              {errors.password && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.password?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.password} />
+
               <Controller
                 control={control}
                 name="confirmPassword"
@@ -269,15 +238,12 @@ const Signup = () => {
                   />
                 )}
               />
-              {errors.confirmPassword && (
-                <Text className="-mt-4 text-yellow-400">
-                  {errors.confirmPassword?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.confirmPassword} />
+
               <Button
                 loading={loading}
                 disabled={loading}
-                onPress={handleSubmit(handleSignup)}
+                onPress={handleSubmit(onSignup)}
               >
                 Sign up
               </Button>

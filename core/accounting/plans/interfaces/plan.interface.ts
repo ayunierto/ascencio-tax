@@ -1,4 +1,4 @@
-import { User } from '@/core/auth/interfaces/user';
+import { User } from '@/core/auth/interfaces/user.interface';
 import { DiscountOnPlan } from '../../discounts-on-plans/interfaces/discount-on-plan.interface';
 
 export interface Plan {

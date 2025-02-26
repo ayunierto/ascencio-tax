@@ -1,14 +1,14 @@
 import { View, Text, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { z } from 'zod';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
-import Header from '../../../../presentation/theme/components/auth/Header';
+import Header from '../../../../core/auth/components/Header';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
+import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 export const newPasswordSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
@@ -33,7 +33,7 @@ const NewPassword = () => {
     },
   });
 
-  const handleChangePassword = async ({
+  const onChangePassword = async ({
     password,
   }: z.infer<typeof newPasswordSchema>) => {
     setIsLoading(true);
@@ -46,17 +46,14 @@ const NewPassword = () => {
         type: 'success',
         text1: 'Password changed successfully',
       });
-    }
-
-    if (response.statusCode === 401) {
-      setError('password', {
-        type: 'manual',
-        message:
-          response.message +
-          '. Please check your message or talk to an administrator',
-      });
       return;
     }
+
+    setError('password', {
+      type: 'manual',
+      message: '. Please check your message or talk to an administrator',
+    });
+
     return;
   };
 
@@ -101,7 +98,7 @@ const NewPassword = () => {
         <Button
           disabled={isLoading}
           loading={isLoading}
-          onPress={handleSubmit(handleChangePassword)}
+          onPress={handleSubmit(onChangePassword)}
         >
           Change Password
         </Button>

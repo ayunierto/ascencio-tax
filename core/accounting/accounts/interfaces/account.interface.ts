@@ -1,4 +1,4 @@
-import { User } from '@/core/auth/interfaces/user';
+import { User } from '@/core/auth/interfaces/user.interface';
 import { AccountType } from '../../accounts-types/interfaces';
 import { Currency } from '../../currencies/interfaces';
 

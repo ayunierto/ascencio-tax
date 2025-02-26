@@ -10,17 +10,17 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Controller } from 'react-hook-form';
 
-import { Input } from '@/presentation/theme/components/ui/Input';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import Button from '@/presentation/theme/components/ui/Button';
-import Select from '@/presentation/theme/components/ui/Select';
-import DateTimePicker from '@/presentation/theme/components/ui/DateTimePicker/DateTimePicker';
 import { Account } from '@/core/accounting/accounts/interfaces';
-import ExpenseImage from '@/presentation/theme/components/receipts/expenses/ExpenseImage';
-import ErrorMessage from '@/presentation/theme/components/receipts/expenses/ErrorMessage';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
+import ExpenseImage from '@/core/accounting/expenses/components/ExpenseImage';
+import ErrorMessage from '@/core/components/ErrorMessage';
 import { useCreateExpense } from '@/core/accounting/expenses/hooks';
-import Loader from '@/presentation/theme/components/Loader';
+import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { Input } from '@/components/ui/Input';
+import { theme } from '@/components/ui/theme';
+import DateTimePicker from '@/components/ui/DateTimePicker/DateTimePicker';
+import Select from '@/components/ui/Select';
+import Button from '@/components/ui/Button';
 
 const CreateExpenseScreen = () => {
   const {

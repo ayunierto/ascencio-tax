@@ -8,10 +8,10 @@ import { getExpenses } from '@/core/accounting/expenses/actions';
 import { getLogs } from '@/core/logs/actions';
 import { Expense } from '@/core/accounting/expenses/interfaces';
 import { Log } from '@/core/logs/interfaces';
-import Loader from '../../../../../presentation/theme/components/Loader';
 import { Metrics } from './Metrics';
 import { QuickActions } from './QuickActions';
 import { RecentActivity } from './RecentActivity';
+import Loader from '@/components/Loader';
 
 const ReceiptsDashboard = () => {
   const [totalExpenses, setTotalExpenses] = useState(0);

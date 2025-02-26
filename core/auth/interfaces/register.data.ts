@@ -5,4 +5,5 @@ export interface RegisterData {
   countryCode: string;
   phoneNumber: string;
   password: string;
+  verificationPlatform: 'email' | 'whatsapp' | 'sms';
 }

@@ -1,14 +1,12 @@
+import { Exception } from '@/core/interfaces/Exception.interface';
 import { RegisterData } from '../interfaces/register.data';
+import { User } from '../interfaces/user.interface';
 
-export const signup = async ({
-  email,
-  lastName,
-  name,
-  password,
-  phoneNumber,
-  countryCode,
-}: RegisterData) => {
-  email = email.toLocaleLowerCase().trim();
+export const signup = async (
+  newUser: RegisterData
+): Promise<User | Exception> => {
+  newUser.email = newUser.email.toLocaleLowerCase().trim();
+
   const API_URL = process.env.EXPO_PUBLIC_API_URL;
   try {
     const response = await fetch(`${API_URL}/auth/signup`, {
@@ -16,20 +14,13 @@ export const signup = async ({
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        email,
-        lastName,
-        name,
-        password,
-        countryCode,
-        phoneNumber,
-        verificationPlatform: 'email',
-      }),
-    }).then((data) => data.json());
+      body: JSON.stringify(newUser),
+    });
 
-    return response;
+    const data: User | Exception = await response.json();
+    return data;
   } catch (error) {
     console.error(error);
-    return error;
+    throw new Error('Network request failed');
   }
 };

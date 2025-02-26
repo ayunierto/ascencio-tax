@@ -1,5 +1,4 @@
 import React from 'react';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import {
   TouchableOpacity,
   useWindowDimensions,
@@ -7,6 +6,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+
+import { theme } from '@/components/ui/theme';
 
 interface ConfirmImageButtonProps {
   onPress: () => void;

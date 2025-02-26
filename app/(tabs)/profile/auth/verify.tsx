@@ -1,23 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  Text,
   KeyboardAvoidingView,
   SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { router } from 'expo-router';
 import { z } from 'zod';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
-import Header from '../../../../presentation/theme/components/auth/Header';
-import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
-import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
+
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
 import { resendCode } from '@/core/auth/actions/resend-code';
+import Header from '@/core/auth/components/Header';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import ErrorMessage from '@/core/components/ErrorMessage';
+import { ThemedText } from '@/components/ui/ThemedText';
 
 const VerifyCode = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,6 +40,7 @@ const VerifyCode = () => {
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
   } = useForm<z.infer<typeof verifyUserSchema>>({
     resolver: zodResolver(verifyUserSchema),
     defaultValues: {
@@ -45,24 +48,24 @@ const VerifyCode = () => {
     },
   });
 
-  const handleVerify = async ({
+  const onVerify = async ({
     verificationCode,
   }: z.infer<typeof verifyUserSchema>) => {
     if (user) {
       setIsLoading(true);
-      const response = await verifyCode(user!.email, verificationCode);
+      const response = await verifyCode(user.email, verificationCode);
+      console.warn({ verifyResponse: response });
       setIsLoading(false);
 
-      if (response.token) {
+      if ('token' in response) {
         router.replace('/(tabs)/(home)');
       }
 
-      if (response.statusCode === 401) {
+      if ('statusCode' in response && response.statusCode === 401) {
+        setValue('verificationCode', '');
         setError('verificationCode', {
           type: 'manual',
-          message:
-            response.message +
-            '. Please check your message or talk to an administrator',
+          message: `${response.message} . Please check your message or talk to an administrator`,
         });
         return;
       }
@@ -70,14 +73,15 @@ const VerifyCode = () => {
     return;
   };
 
-  const handleResendCode = async () => {
+  const onResendCode = async () => {
     if (!canResend) return;
     setIsLoadingResend(true);
-    const response = await resendCode(user!.email, 'email');
+    const verificationPlatform = 'email';
+    await resendCode(user!.email, verificationPlatform);
     Toast.show({
       type: 'success',
       text1: 'Code sent',
-      text2: 'Please check your email',
+      text2: `Please check your ${verificationPlatform}`,
     });
     setIsLoadingResend(false);
     setTimer(30);
@@ -110,6 +114,7 @@ const VerifyCode = () => {
                 }
               />
 
+              <ThemedText>Code:</ThemedText>
               <Controller
                 control={control}
                 name="verificationCode"
@@ -118,27 +123,24 @@ const VerifyCode = () => {
                     value={value}
                     onBlur={onBlur}
                     onChangeText={onChange}
-                    placeholder="Verification code"
+                    placeholder="123456"
                     keyboardType="numeric"
                   />
                 )}
               />
-              {errors.verificationCode && (
-                <Text className="-mt-4 text-yellow-500 mb-5">
-                  {errors.verificationCode?.message as string}
-                </Text>
-              )}
+              <ErrorMessage fieldErrors={errors.verificationCode} />
+
               <Button
                 disabled={isLoading}
                 loading={isLoading}
-                onPress={handleSubmit(handleVerify)}
+                onPress={handleSubmit(onVerify)}
               >
                 Verify
               </Button>
               <Button
                 disabled={!canResend}
                 loading={isLoadingResend}
-                onPress={handleResendCode}
+                onPress={onResendCode}
                 variant="outlined"
               >
                 {canResend ? 'Resend code' : `Resend in ${timer}s`}

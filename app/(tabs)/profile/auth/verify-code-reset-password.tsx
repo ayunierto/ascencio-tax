@@ -1,17 +1,18 @@
-import { View, Text, ScrollView } from 'react-native';
 import React, { useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
+import { router } from 'expo-router';
 import { z } from 'zod';
-import { useAuthStore } from '@/presentation/auth/store/useAuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
-import Header from '../../../../presentation/theme/components/auth/Header';
-import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
-import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
+
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import { verifyUserSchema } from '@/core/auth/schemas/verifyUserSchema';
 import { useCanResendCode } from '@/core/auth/hooks/useCanResendCode';
 import { resendCode } from '@/core/auth/actions/resend-code';
+import Header from '@/core/auth/components/Header';
+import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 const VerifyCodeResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,11 +47,11 @@ const VerifyCodeResetPassword = () => {
       const response = await verifyCode(user!.email, verificationCode);
       setIsLoading(false);
 
-      if (response.token) {
+      if ('token' in response) {
         router.push('/(tabs)/profile/auth/new-password');
       }
 
-      if (response.statusCode === 401) {
+      if ('statusCode' in response && response.statusCode === 401) {
         setError('verificationCode', {
           type: 'manual',
           message:
@@ -67,14 +68,17 @@ const VerifyCodeResetPassword = () => {
     if (!canResend) return;
 
     setIsLoadingResend(true);
-    const response = await resendCode(user!.email, 'email');
-    Toast.show({
-      type: 'success',
-      text1: 'Code sent',
-      text2: 'Please check your email',
-    });
-    setIsLoadingResend(false);
-    setTimer(30);
+    const verificationPlatform = 'email';
+    if (user) {
+      await resendCode(user.email, verificationPlatform);
+      Toast.show({
+        type: 'success',
+        text1: 'Code sent',
+        text2: `Please check your ${verificationPlatform}`,
+      });
+      setIsLoadingResend(false);
+      setTimer(30);
+    }
     setCanResend(false);
   };
 

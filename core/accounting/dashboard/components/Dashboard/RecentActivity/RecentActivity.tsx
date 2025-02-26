@@ -3,13 +3,11 @@ import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
 import { Log } from '@/core/logs/interfaces';
-import {
-  Card,
-  SimpleCardHeader,
-  SimpleCardHeaderTitle,
-} from '@/presentation/theme/components/ui';
+import { Card } from '@/components/ui/Card/Card';
+import { SimpleCardHeader } from '@/components/ui/Card/SimpleCardHeader';
+import { SimpleCardHeaderTitle } from '@/components/ui/Card/SimpleCardHeaderTitle';
 import { ActivityList } from './ActivityList';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { theme } from '@/components/ui/theme';
 
 interface RecentActivityProps {
   activities: Log[];

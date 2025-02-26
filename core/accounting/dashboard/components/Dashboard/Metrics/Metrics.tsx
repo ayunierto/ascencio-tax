@@ -2,15 +2,13 @@ import React from 'react';
 
 import { Ionicons } from '@expo/vector-icons';
 
-import {
-  Card,
-  SimpleCardHeader,
-  SimpleCardHeaderTitle,
-} from '@/presentation/theme/components/ui';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
 import { MetricsList } from './MetricsList';
 import { MetricsListValue } from './MetricsListValue';
+import { Card } from '@/components/ui/Card/Card';
+import { SimpleCardHeader } from '@/components/ui/Card/SimpleCardHeader';
+import { SimpleCardHeaderTitle } from '@/components/ui/Card/SimpleCardHeaderTitle';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
 
 interface MetricsProps {
   metrics: { label: string; value: string }[];

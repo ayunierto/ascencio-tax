@@ -1,7 +1,8 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { theme } from '@/presentation/theme/components/ui/Theme';
 import { MaterialIcons } from '@expo/vector-icons';
+
+import { theme } from '@/components/ui/theme';
 
 const MyBookingsLayout = () => {
   return (

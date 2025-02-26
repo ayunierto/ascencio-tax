@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Redirect, router } from 'expo-router';
 
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import Select, { Option } from '@/presentation/theme/components/ui/Select';
-import { Card } from '@/presentation/theme/components/ui';
-import Divider from '@/presentation/theme/components/ui/Divider';
-import { Input } from '@/presentation/theme/components/ui/Input';
-import Button from '@/presentation/theme/components/ui/Button';
 import { usePlanStore } from '@/core/accounting/plans/store/usePlanStore';
+import Select, { type Option } from '@/components/ui/Select';
+import { ThemedText } from '@/components/ui/ThemedText';
+import Divider from '@/components/ui/Divider';
+import { Card } from '@/components/ui/Card/Card';
+import { theme } from '@/components/ui/theme';
+import { Input } from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
 
 const CartScreen = () => {
   const [defaultSelectedPeriod, setDefaultSelectedPeriod] = useState<Option>();
@@ -92,7 +92,6 @@ const CartScreen = () => {
         </ThemedText>
         <Divider style={{ backgroundColor: '#8883', marginVertical: 20 }} />
 
-        {/* <ThemedText style={{ marginBottom: 5 }}>Period</ThemedText> */}
         <Select
           placeholder="Select period"
           enableFilter={false}

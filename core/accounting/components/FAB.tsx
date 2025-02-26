@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { View, Animated, Easing } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Button from '../../../presentation/theme/components/ui/Button';
-import { theme } from '../../../presentation/theme/components/ui/Theme';
 import { router } from 'expo-router';
-import { ThemedText } from '../../../presentation/theme/components/ui/ThemedText';
+import { Ionicons } from '@expo/vector-icons';
+import Button from '@/components/ui/Button';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
 
 export const FAB = () => {
   const [isExpanded, setIsExpanded] = useState(false);

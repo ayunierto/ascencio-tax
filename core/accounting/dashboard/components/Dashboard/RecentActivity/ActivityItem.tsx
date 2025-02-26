@@ -2,8 +2,8 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { Log } from '@/core/logs/interfaces';
-import { ThemedText } from '@/presentation/theme/components/ui/ThemedText';
-import { theme } from '@/presentation/theme/components/ui/Theme';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
 
 interface ActivityItemProps {
   activity: Log;

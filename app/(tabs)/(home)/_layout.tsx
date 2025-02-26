@@ -1,12 +1,11 @@
 import React from 'react';
-import Logo from '@/presentation/theme/components/Logo';
-import { theme } from '@/presentation/theme/components/ui/Theme';
-import { Tabs } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
-export default function TabLayout() {
+import { Tabs } from 'expo-router';
+import { SafeAreaView } from 'react-native';
+import Logo from '@/components/Logo';
+import { theme } from '@/components/ui/theme';
+
+export default function TabLayout(): JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Logo />
@@ -17,8 +16,8 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: theme.background,
-            paddingTop: 0,
-            height: 35,
+            paddingTop: 8,
+            height: 45,
             elevation: 0,
             shadowOpacity: 0,
           },

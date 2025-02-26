@@ -1,71 +1,63 @@
 import React from 'react';
-import { FlatList } from 'react-native';
+
+import { FlatList, Linking, TouchableOpacity, View } from 'react-native';
 import { DateTime } from 'luxon';
 import { useQuery } from '@tanstack/react-query';
 
-import Loader from '@/presentation/theme/components/Loader';
-import SimpleCard from '@/presentation/theme/components/ui/SimpleCard/SimpleCard';
-
 import { getPosts } from '@/core/posts/actions/get-posts';
 import { EmptyList } from '@/core/components';
+import Loader from '@/components/Loader';
+import { Card, SimpleCardHeader, SimpleCardHeaderTitle } from '@/components/ui';
+import { Ionicons } from '@expo/vector-icons';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 
-const BlogScreen = () => {
-  const { data, isLoading } = useQuery({
+const BlogScreen = (): JSX.Element => {
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['posts'],
     queryFn: () => getPosts(),
   });
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <Loader />;
   }
 
   return (
     <FlatList
-      style={{ paddingHorizontal: 20, paddingTop: 20 }}
+      style={{ padding: 20 }}
       data={data ?? []}
       numColumns={1}
       keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <SimpleCard
-          icon="link-outline"
-          title={item.title}
-          subtitle={`By: ${item.user.name} ${
-            item.user.lastName
-          } \n${DateTime.fromISO(item.createdAt).toRelative()}`}
-          titleLink={item.url}
-          style={{ marginBottom: 10 }}
-        />
+        <TouchableOpacity onPress={() => Linking.openURL(item.url)}>
+          <Card style={{ marginBottom: 10 }}>
+            <SimpleCardHeader>
+              <Ionicons
+                name={'link-outline'}
+                size={20}
+                color={theme.foreground}
+              />
+              <SimpleCardHeaderTitle
+                style={{ textDecorationLine: 'underline' }}
+              >
+                {item.title}
+              </SimpleCardHeaderTitle>
+            </SimpleCardHeader>
+            <View>
+              <ThemedText
+                style={{ color: theme.muted, textAlign: 'right', fontSize: 12 }}
+              >{`By: ${item.user.name} ${
+                item.user.lastName
+              } \n${DateTime.fromISO(
+                item.createdAt
+              ).toRelative()}`}</ThemedText>
+            </View>
+          </Card>
+        </TouchableOpacity>
       )}
-      // onEndReached={loadNextPage}
-      onEndReachedThreshold={0.8}
       showsVerticalScrollIndicator={false}
-      // refreshControl={
-      //   <RefreshControl
-      //     refreshing={isRefreshing}
-      //     onRefresh={onPullToRefresh}
-      //   />
-      // }
       ListEmptyComponent={<EmptyList title="No entries found." />}
     />
-    // <ScrollView>
-    //   <View style={{ padding: 20, gap: 20 }}>
-    //     {data &&
-    //       data?.map((post: PostResponse) => (
-    //         <SimpleCard
-    //           key={post.id}
-    //           icon="link-outline"
-    //           title={`${post.title} `}
-    //           subtitle={`By: ${post.user.name} ${
-    //             post.user.lastName
-    //           } \n${DateTime.fromISO(post.createdAt).toRelative()}`}
-    //           titleLink={post.url}
-    //         />
-    //       ))}
-    //     {!isSuccess && (
-    //       <Alert variant="error">The content could not be loaded</Alert>
-    //     )}
-    //   </View>
-    // </ScrollView>
   );
 };
 
