@@ -69,7 +69,7 @@ const CheckoutScreen = () => {
         // phone: '+51 999 999 999',
       },
       // returnURL: Linking.createURL('/payment-complete'),
-      returnURL: Linking.createURL('/'),
+      returnURL: Linking.createURL('stripe-redirect'),
 
       applePay: {
         merchantCountryCode: 'CA',
@@ -118,7 +118,8 @@ const CheckoutScreen = () => {
     <StripeProvider
       publishableKey={publishableKey}
       merchantIdentifier="merchant.com.ascenciotax" // required for Apple Pay
-      urlScheme={Linking.createURL('/')?.split(':')[0]} // required for 3D Secure and bank redirects
+      // urlScheme={Linking.createURL('/')?.split(':')[0]} // required for 3D Secure and bank redirects
+      urlScheme={'ascenciotax'} // required for 3D Secure and bank redirects
     >
       <ScrollView>
         <View style={{ padding: 20, gap: 10 }}>

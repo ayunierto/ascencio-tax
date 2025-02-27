@@ -5,12 +5,15 @@
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "ascencio-tax",
+    "scheme": "ascenciotax",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ascenciotax"
+      "bundleIdentifier": "com.ascenciotax",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +36,14 @@
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#002e5d"
+        }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.ascenciotax",
+          "publishableKey": "pk_test_51QtFL2DLCXdpMa3lPGeU9Dv850kixhTB4BswzNI5ebrwcMIdt2l5uT1txX5aLIHAh0lyiAovqlQn1Q1zYdrzNrKT00RzzUcnzj",
+          "enableGooglePay": true
         }
       ]
     ],
