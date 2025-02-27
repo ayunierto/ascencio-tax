@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,13 +11,14 @@ import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { z } from 'zod';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import ErrorMessage from '@/core/components/ErrorMessage';
 
 // export const forgotPasswordSchema = z.object({
 //   username: z.string(),
 //   // .nonempty('You must write your email or password.'),
 // });
 export const forgotPasswordSchema = z.object({
-  username: z.string(),
+  username: z.string().nonempty('You must write your email or phone number.'),
 });
 
 const ForgotPassword = () => {
@@ -28,6 +29,7 @@ const ForgotPassword = () => {
     control,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm<z.infer<typeof forgotPasswordSchema>>({
     resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
@@ -40,14 +42,20 @@ const ForgotPassword = () => {
   }: z.infer<typeof forgotPasswordSchema>) => {
     setIsLoading(true);
     const response = await resetPassword(username);
+    console.warn({ response });
     setIsLoading(false);
-    if (response.email) {
+    if ('email' in response) {
       router.push('/(tabs)/profile/auth/verify-code-reset-password');
       return;
     }
+
+    setError('username', {
+      message: response.message,
+    });
     Toast.show({
       type: 'error',
       text1: 'Error',
+      text2: response.message,
     });
   };
 
@@ -83,11 +91,7 @@ const ForgotPassword = () => {
           )}
         />
 
-        {errors.username && (
-          <Text className="-mt-4 text-yellow-400">
-            {errors.username?.message}
-          </Text>
-        )}
+        <ErrorMessage fieldErrors={errors.username} />
 
         <Button
           disabled={isLoading}

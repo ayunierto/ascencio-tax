@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { router } from 'expo-router';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,6 +13,7 @@ import { resendCode } from '@/core/auth/actions/resend-code';
 import Header from '@/core/auth/components/Header';
 import { Input } from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import ErrorMessage from '@/core/components/ErrorMessage';
 
 const VerifyCodeResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -114,11 +115,7 @@ const VerifyCodeResetPassword = () => {
             />
           )}
         />
-        {errors.verificationCode && (
-          <Text className="-mt-4 text-yellow-500 mb-5">
-            {errors.verificationCode?.message as string}
-          </Text>
-        )}
+        <ErrorMessage fieldErrors={errors.verificationCode} />
 
         <Button
           disabled={isLoading}

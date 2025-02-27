@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import { z } from 'zod';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
@@ -9,6 +9,7 @@ import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Input } from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
+import ErrorMessage from '@/core/components/ErrorMessage';
 
 export const newPasswordSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
@@ -40,7 +41,7 @@ const NewPassword = () => {
     const response = await changePassword(password);
     setIsLoading(false);
 
-    if (response.token) {
+    if ('token' in response) {
       router.replace('/(tabs)/(home)');
       Toast.show({
         type: 'success',
@@ -90,11 +91,8 @@ const NewPassword = () => {
             />
           )}
         />
-        {errors.password && (
-          <Text className="-mt-4 text-yellow-500 mb-5">
-            {errors.password?.message as string}
-          </Text>
-        )}
+        <ErrorMessage fieldErrors={errors.password} />
+
         <Button
           disabled={isLoading}
           loading={isLoading}

@@ -32,7 +32,7 @@ export interface AuthState {
   setAuthenticated: (token: string, user: User) => void;
   setUnauthenticated: () => void;
   setUser: (user: User) => void;
-  resetPassword: (username: string) => Promise<User>;
+  resetPassword: (username: string) => Promise<User | Exception>;
   changePassword: (password: string) => Promise<UserTokenResponse | Exception>;
 }
 
@@ -103,11 +103,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   resetPassword: async (username: string) => {
-    const user = await resetPassword(username);
-    if (user.email) {
-      set({ user: user });
+    const response = await resetPassword(username);
+    if ('id' in response) {
+      set({ user: response });
+      return response;
     }
-    return user;
+    return response;
   },
 
   changePassword: async (password: string) => {
