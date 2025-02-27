@@ -11,7 +11,6 @@ import {
 } from '@aws-sdk/client-textract';
 
 export const useScanReceipts = () => {
-  const { addSelectedImage, clearImages } = useCameraStore();
   const [loading, setLoading] = useState(false);
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -34,6 +33,7 @@ export const useScanReceipts = () => {
     setSelectedImage(picture.uri);
     setSelectedBase64Image(picture.base64);
   };
+  const { addSelectedImage, clearImages } = useCameraStore();
 
   const onReturnCancel = () => {
     clearImages();
@@ -69,7 +69,7 @@ export const useScanReceipts = () => {
   };
 
   const onPickImages = async () => {
-    // setLoading(true);
+    setLoading(true);
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
@@ -77,7 +77,6 @@ export const useScanReceipts = () => {
       quality: 1,
       base64: true,
     });
-    console.warn({ selectedImage: result });
 
     if (result.canceled) return;
 

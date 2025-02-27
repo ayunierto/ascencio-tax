@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 
@@ -7,8 +7,26 @@ import SubscriptionCard from '@/core/accounting/subscriptions/components/Subscri
 import Loader from '@/components/Loader';
 import { ThemedText } from '@/components/ui/ThemedText';
 import { theme } from '@/components/ui/theme';
+import { router, useFocusEffect } from 'expo-router';
+import { checkSubscription } from '@/core/accounting/subscriptions/actions';
 
 const SubscriptionsScreen = () => {
+  const queryCheckSubscription = useQuery({
+    queryKey: ['hasSubscription'],
+    queryFn: () => checkSubscription(),
+    staleTime: 1000,
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      queryCheckSubscription.refetch();
+      if (queryCheckSubscription.data) {
+        console.info('It has plan');
+        router.navigate('/accounting/subscriptions/my-subscription');
+      }
+    }, [queryCheckSubscription.data])
+  );
+
   const plansQuery = useQuery({
     queryKey: ['plans'],
     queryFn: async () => GetPlans(),
