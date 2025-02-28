@@ -26,7 +26,7 @@ const countryCodes: { label: string; value: string }[] = [];
 const transformCountries = (): void => {
   countries.map((country) => {
     countryCodes.push({
-      label: `${country.name} (${country.phone_code})`,
+      label: `${country.name} ${country.phone_code}`,
       value: country.phone_code,
     });
   });
@@ -117,7 +117,7 @@ const Signup = (): JSX.Element => {
             <Header
               link={'/(tabs)/profile/auth/sign-in'}
               linkText="Sign In"
-              subtitle="Already have an account? "
+              subtitle="Already have an account?"
               title="Sign Up"
             />
 
@@ -174,7 +174,7 @@ const Signup = (): JSX.Element => {
               <ErrorMessage fieldErrors={errors.email} />
 
               {/* Country code and phone number */}
-              <View className="flex flex-row gap-2">
+              <View style={{ flexDirection: 'row', gap: 10 }}>
                 <Select
                   options={countryCodes}
                   selectedOptions={countryCodes.find(
@@ -198,7 +198,7 @@ const Signup = (): JSX.Element => {
                       placeholder="Phone Number"
                       autoCapitalize="none"
                       autoComplete="tel"
-                      style={{ flex: 2 }}
+                      style={{ flex: 1 }}
                     />
                   )}
                 />
