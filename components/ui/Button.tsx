@@ -44,37 +44,37 @@ export const Button = ({
   const [pressed, setPressed] = useState(false);
 
   const variantStyles = {
-    primary: styles.primary,
-    secondary: styles.secondary,
-    destructive: styles.destructive,
-    outlined: styles.outlined,
-    ghost: styles.ghost,
+    primary: buttonStyles.primary,
+    secondary: buttonStyles.secondary,
+    destructive: buttonStyles.destructive,
+    outlined: buttonStyles.outlined,
+    ghost: buttonStyles.ghost,
   };
 
   const sizeStyles = {
-    small: styles.small,
-    medium: styles.medium,
-    large: styles.large,
+    small: buttonStyles.small,
+    medium: buttonStyles.medium,
+    large: buttonStyles.large,
   };
 
   const variantTextStyles = {
-    primary: styles.textPrimary,
-    secondary: styles.textSecondary,
-    destructive: styles.textDestructive,
-    outlined: styles.textOutlined,
-    ghost: styles.textGhost,
+    primary: buttonStyles.textPrimary,
+    secondary: buttonStyles.textSecondary,
+    destructive: buttonStyles.textDestructive,
+    outlined: buttonStyles.textOutlined,
+    ghost: buttonStyles.textGhost,
   };
 
   return (
     <Pressable
       onPress={disabled || loading ? () => {} : onPress}
       style={[
-        styles.button,
+        buttonStyles.button,
         variantStyles[variant],
         sizeStyles[size],
-        disabled && styles.disabled,
-        loading && styles.disabled,
-        pressed && styles.disabled,
+        disabled && buttonStyles.disabled,
+        loading && buttonStyles.disabled,
+        pressed && buttonStyles.disabled,
         style,
       ]}
       onPressIn={() => {
@@ -86,7 +86,7 @@ export const Button = ({
       {...props}
     >
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View style={buttonStyles.loadingContainer}>
           <ActivityIndicator
             size="small"
             color={
@@ -96,7 +96,11 @@ export const Button = ({
             }
           />
           <Text
-            style={[styles.buttonText, variantTextStyles[variant], textStyle]}
+            style={[
+              buttonStyles.buttonText,
+              variantTextStyles[variant],
+              textStyle,
+            ]}
           >
             Please wait ...
           </Text>
@@ -118,9 +122,9 @@ export const Button = ({
           {iconLeft && iconLeft}
           <Text
             style={[
-              styles.buttonText,
+              buttonStyles.buttonText,
               variantTextStyles[variant],
-              disabled && styles.disabledText,
+              disabled && buttonStyles.disabledText,
 
               textStyle,
             ]}
@@ -134,7 +138,7 @@ export const Button = ({
   );
 };
 
-const styles = StyleSheet.create({
+export const buttonStyles = StyleSheet.create({
   button: {
     borderRadius: theme.radius,
     paddingHorizontal: 16,

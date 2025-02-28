@@ -102,7 +102,7 @@ const VerifyCode = () => {
             <View
               style={{
                 flex: 1,
-                gap: 20,
+                gap: 10,
                 maxWidth: 320,
                 marginHorizontal: 'auto',
               }}

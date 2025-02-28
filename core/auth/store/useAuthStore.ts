@@ -9,6 +9,7 @@ import {
   verifyCode,
   changePassword,
   resetPassword,
+  deleteAccountAction,
 } from '@/core/auth/actions';
 import { UserTokenResponse } from '../interfaces/signin-response.interface';
 import { Exception } from '@/core/interfaces/Exception.interface';
@@ -23,6 +24,7 @@ export interface AuthState {
 
   signin: (credentials: Credentials) => Promise<UserTokenResponse | Exception>;
   signup: (values: RegisterData) => Promise<User | Exception>;
+  deleteAccount: () => Promise<User | Exception>;
   checkStatus: () => Promise<boolean>;
   logout: () => Promise<void>;
   verifyCode: (
@@ -66,6 +68,16 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     }
 
     get().setUnauthenticated();
+    return response;
+  },
+
+  deleteAccount: async () => {
+    const response = await deleteAccountAction();
+    if ('email' in response) {
+      get().setUnauthenticated();
+      return response;
+    }
+
     return response;
   },
 

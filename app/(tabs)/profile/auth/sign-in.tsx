@@ -86,7 +86,7 @@ const Signin = () => {
           <View
             style={{
               flex: 1,
-              gap: 10,
+              gap: 20,
               width: '100%',
               maxWidth: 300,
               marginHorizontal: 'auto',
@@ -100,41 +100,43 @@ const Signin = () => {
               linkText="Sign Up"
             />
 
-            <ErrorMessage message={errors.root?.message} />
+            <View style={{ gap: 10 }}>
+              <ErrorMessage message={errors.root?.message} />
 
-            <Controller
-              control={control}
-              name="username"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  keyboardType="email-address"
-                  placeholder="Email or phone number"
-                  autoCapitalize="none"
-                  autoComplete="email"
-                />
-              )}
-            />
-            <ErrorMessage fieldErrors={errors.username} />
+              <Controller
+                control={control}
+                name="username"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    placeholder="Email or phone number"
+                    autoCapitalize="none"
+                    autoComplete="email"
+                  />
+                )}
+              />
+              <ErrorMessage fieldErrors={errors.username} />
 
-            <Controller
-              control={control}
-              name="password"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  value={value}
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  secureTextEntry={true}
-                  placeholder="Enter password"
-                  autoComplete="password"
-                  autoCapitalize="none"
-                />
-              )}
-            />
-            <ErrorMessage fieldErrors={errors.password} />
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { onChange, onBlur, value } }) => (
+                  <Input
+                    value={value}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    secureTextEntry={true}
+                    placeholder="Enter password"
+                    autoComplete="password"
+                    autoCapitalize="none"
+                  />
+                )}
+              />
+              <ErrorMessage fieldErrors={errors.password} />
+            </View>
 
             <Text
               className="text-blue-300 text-center"

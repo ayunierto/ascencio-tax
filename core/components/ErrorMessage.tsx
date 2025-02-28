@@ -13,7 +13,7 @@ const ErrorMessage = ({ fieldErrors, message }: ErrorMessageProps) => {
   return (
     <>
       {fieldErrors && (
-        <ThemedText style={{ color: theme.destructive, marginTop: -10 }}>
+        <ThemedText style={{ color: theme.destructive, marginTop: -6 }}>
           {fieldErrors?.message}
         </ThemedText>
       )}

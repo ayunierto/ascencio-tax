@@ -21,6 +21,8 @@ import Divider from '@/components/ui/Divider';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { ThemedText } from '@/components/ui/ThemedText';
 import ErrorMessage from '@/core/components/ErrorMessage';
+import { Link } from 'expo-router';
+import { theme } from '@/components/ui/theme';
 
 export const profileSchema = z
   .object({
@@ -48,6 +50,7 @@ export const profileSchema = z
 
 const Profile = (): JSX.Element => {
   const [loading, setLoading] = useState(false);
+
   const { token, logout, user } = useAuthStore();
 
   const {
@@ -55,6 +58,7 @@ const Profile = (): JSX.Element => {
     handleSubmit,
     formState: { errors },
     setError,
+    reset,
   } = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
@@ -84,18 +88,28 @@ const Profile = (): JSX.Element => {
       phoneNumber,
       password,
     });
+    console.warn({ responseProfile: response });
     setLoading(false);
+
+    if ('id' in response) {
+      reset({ password: '' });
+      Toast.show({
+        type: 'success',
+        text1: 'Data updated successfully',
+      });
+    }
 
     // Unauthorized
     if ('statusCode' in response && response.statusCode === 400) {
       setError('root', {
         type: 'manual',
-        message: response.message[0],
+        message: response.message,
       });
+
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: response.message[0],
+        text2: response.message,
       });
       return;
     }
@@ -241,11 +255,32 @@ const Profile = (): JSX.Element => {
               iconRight={
                 <Ionicons name="log-out-outline" size={24} color="white" />
               }
-              variant="destructive"
+              variant="outlined"
               onPress={() => logout()}
             >
               Logout
             </Button>
+
+            <Divider />
+
+            <Link
+              href={'/profile/settings/delete-account-modal'}
+              style={{
+                textAlign: 'center',
+                color: theme.destructive,
+                padding: 10,
+                borderColor: theme.destructive,
+                borderWidth: 1,
+                borderRadius: theme.radius,
+                height: 48,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignContent: 'center',
+                textAlignVertical: 'center',
+              }}
+            >
+              Delete account
+            </Link>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>

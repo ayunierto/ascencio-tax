@@ -11,10 +11,25 @@ const MyProfileLayout = () => {
         },
         headerTitleAlign: 'center',
         headerTintColor: theme.foreground,
-        title: '',
         headerShadowVisible: false,
       }}
-    />
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: '',
+        }}
+      />
+      <Stack.Screen
+        name="delete-account-modal"
+        options={{
+          presentation: 'modal',
+          animation: 'fade',
+          // headerShown: false,
+          title: '',
+        }}
+      />
+    </Stack>
   );
 };
 
