@@ -1,8 +1,11 @@
 import React from 'react';
 import { Alert, Image, StyleSheet, View } from 'react-native';
+import { Redirect } from 'expo-router';
 import { CameraView } from 'expo-camera';
-
+import { useQuery } from '@tanstack/react-query';
 import 'react-native-get-random-values';
+import { Buffer } from 'buffer';
+
 import {
   ConfirmImageButton,
   GalleryButton,
@@ -11,14 +14,10 @@ import {
   ShutterButton,
 } from '@/core/camera/components';
 import { useScanReceipts } from '@/core/accounting/scan-receipts/hooks/useScanReceipts';
-
-import { Buffer } from 'buffer';
 import Loader from '@/components/Loader';
 import { ThemedText } from '@/components/ui/ThemedText';
 import Button from '@/components/ui/Button';
-import { Redirect } from 'expo-router';
 import { checkSubscription } from '@/core/accounting/subscriptions/actions';
-import { useQuery } from '@tanstack/react-query';
 globalThis.Buffer = Buffer;
 
 export default function ScanReceiptScreen() {
