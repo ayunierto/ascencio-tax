@@ -64,6 +64,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         token: undefined,
         user: response,
       });
+      console.log({ responseSignUp: response });
       return response;
     }
 
@@ -108,7 +109,6 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     const response = await verifyCode(username, verificationCode);
     if ('token' in response) {
       await SecureStore.setItemAsync('token', response.token);
-      get().setAuthenticated(response.token, response.user);
       return response;
     }
     return response;

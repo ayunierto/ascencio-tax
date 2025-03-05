@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react';
 import { Redirect, Stack } from 'expo-router';
-
-import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { theme } from '@/components/ui/theme';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import Loader from '@/components/Loader';
 
-const MyBookingsLayout = (): JSX.Element => {
+const MyProfileLayout = () => {
   const { status, checkStatus } = useAuthStore();
 
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`My bookings layout executed: ${status}`);
+    console.log(`Settings layout executed: ${status}`);
   }, [status]);
 
   if (status === 'checking') {
@@ -30,11 +29,33 @@ const MyBookingsLayout = (): JSX.Element => {
         },
         headerTitleAlign: 'center',
         headerTintColor: theme.foreground,
-        title: 'Bookings',
         headerShadowVisible: false,
       }}
-    />
+    >
+      <Stack.Screen
+        name="index"
+        options={{
+          title: '',
+        }}
+      />
+
+      <Stack.Screen
+        name="profile/index"
+        options={{
+          title: 'Profile',
+        }}
+      />
+
+      <Stack.Screen
+        name="profile/delete-account-modal"
+        options={{
+          presentation: 'modal',
+          animation: 'fade',
+          title: '',
+        }}
+      />
+    </Stack>
   );
 };
 
-export default MyBookingsLayout;
+export default MyProfileLayout;

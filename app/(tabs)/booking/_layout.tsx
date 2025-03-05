@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Redirect, Stack } from 'expo-router';
 
-import { Stack } from 'expo-router';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import Loader from '@/components/Loader';
 import { theme } from '@/components/ui/theme';
 
 export default function BookingLayout() {
+  const { status, checkStatus } = useAuthStore();
+
+  // Checking auth status
+  useEffect(() => {
+    checkStatus();
+    console.log(`Booking layout executed: ${status}`);
+  }, [status]);
+
+  if (status === 'checking') {
+    return <Loader />;
+  }
+
+  if (status === 'unauthenticated') {
+    return <Redirect href={'/auth/sign-in'} />;
+  }
+
   return (
     <Stack
       screenOptions={{
@@ -13,11 +31,12 @@ export default function BookingLayout() {
       }}
     >
       <Stack.Screen
-        name="booking"
+        name="index"
         options={{
           title: 'Booking',
         }}
       />
+
       <Stack.Screen
         name="resume"
         options={{

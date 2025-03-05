@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Href, router } from 'expo-router';
 import { theme } from '@/components/ui/theme';
 import { ThemedText } from '@/components/ui/ThemedText';
@@ -23,14 +23,20 @@ const Header = ({
         {title}
       </ThemedText>
       <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
-        {subtitle && <ThemedText>{subtitle}</ThemedText>}
+        {subtitle && (
+          <ThemedText style={{ fontSize: 16 }}>{subtitle}</ThemedText>
+        )}
         {link && (
-          <Text
-            onPress={() => router.replace(link)}
-            style={{ color: theme.primary, textDecorationLine: 'underline' }}
+          <ThemedText
+            onPress={() => router.push(link)}
+            style={{
+              color: theme.primary,
+              textDecorationLine: 'underline',
+              fontSize: 16,
+            }}
           >
             {linkText ? linkText : ''}
-          </Text>
+          </ThemedText>
         )}
       </View>
     </View>

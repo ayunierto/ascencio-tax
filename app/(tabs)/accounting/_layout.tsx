@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { Redirect } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import Loader from '@/components/Loader';
 import { theme } from '@/components/ui/theme';
 
-const _layout = () => {
+const AccountingLayout = () => {
+  const { status, checkStatus } = useAuthStore();
+
+  // Checking auth status
+  useEffect(() => {
+    checkStatus();
+    console.log(`Accounting layout executed: ${status}`);
+  }, [status]);
+
+  if (status === 'checking') {
+    return <Loader />;
+  }
+
+  if (status === 'unauthenticated') {
+    return <Redirect href={'/auth/sign-in'} />;
+  }
+
   return (
     <Drawer
       screenOptions={{
@@ -66,4 +86,4 @@ const _layout = () => {
   );
 };
 
-export default _layout;
+export default AccountingLayout;

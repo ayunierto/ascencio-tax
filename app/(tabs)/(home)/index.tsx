@@ -31,7 +31,7 @@ const Services = (): JSX.Element => {
   const handleSelectService = (service: ServiceResponse): void => {
     selectService(service);
     if (!token) {
-      router.push('/(tabs)/profile/settings/profile');
+      router.push('/auth/sign-in');
       Toast.show({
         type: 'info',
         text1: 'Info',
@@ -39,7 +39,7 @@ const Services = (): JSX.Element => {
       });
       return;
     }
-    router.push('/(tabs)/booking/booking');
+    router.push('/(tabs)/booking');
     return;
   };
 

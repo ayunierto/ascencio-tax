@@ -13,7 +13,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Toast from 'react-native-toast-message';
 
-import Signin from '../auth/sign-in';
+import Signin from '../../../auth/sign-in';
 import { updateProfile } from '@/core/user/actions';
 import { Input } from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
@@ -48,10 +48,10 @@ export const profileSchema = z
     path: ['confirmPassword'],
   });
 
-const Profile = (): JSX.Element => {
+const ProfileScreen = () => {
   const [loading, setLoading] = useState(false);
 
-  const { token, logout, user } = useAuthStore();
+  const { token, logout, user, setUser } = useAuthStore();
 
   const {
     control,
@@ -88,10 +88,11 @@ const Profile = (): JSX.Element => {
       phoneNumber,
       password,
     });
-    console.warn({ responseProfile: response });
+    console.log({ responseProfile: response });
     setLoading(false);
 
     if ('id' in response) {
+      setUser(response);
       reset({ password: '' });
       Toast.show({
         type: 'success',
@@ -129,10 +130,6 @@ const Profile = (): JSX.Element => {
               marginHorizontal: 'auto',
             }}
           >
-            <ThemedText style={{ textAlign: 'center', fontSize: 30 }}>
-              Profile
-            </ThemedText>
-
             <ThemedText>Name:</ThemedText>
             <Controller
               control={control}
@@ -264,7 +261,7 @@ const Profile = (): JSX.Element => {
             <Divider />
 
             <Link
-              href={'/profile/settings/delete-account-modal'}
+              href={'/settings/profile/delete-account-modal'}
               style={{
                 textAlign: 'center',
                 color: theme.destructive,
@@ -288,4 +285,4 @@ const Profile = (): JSX.Element => {
   );
 };
 
-export default Profile;
+export default ProfileScreen;

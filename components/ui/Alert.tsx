@@ -1,4 +1,11 @@
-import { View, Text, type ViewProps, ViewStyle, StyleProp } from 'react-native';
+import {
+  View,
+  Text,
+  type ViewProps,
+  ViewStyle,
+  StyleProp,
+  TextStyle,
+} from 'react-native';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from './theme';
@@ -7,12 +14,15 @@ import { StyleSheet } from 'react-native';
 interface AlertProps extends ViewProps {
   variant?: 'info' | 'warning' | 'error' | 'success';
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 export const Alert = ({
   variant = 'info',
+
   children,
   style,
+  textStyle,
   ...props
 }: AlertProps) => {
   const variantStyles = {
@@ -36,11 +46,8 @@ export const Alert = ({
         }
         size={24}
         color="white"
-        className="ml-5"
       />
-      <Text numberOfLines={3} className="text-white mr-5">
-        {children}
-      </Text>
+      <Text style={[styles.textAlert, textStyle]}>{children}</Text>
     </View>
   );
 };
@@ -48,11 +55,15 @@ export const Alert = ({
 const styles = StyleSheet.create({
   alert: {
     borderRadius: theme.radius,
-    padding: 16,
+    padding: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+  },
+  textAlert: {
+    flex: 1,
+    color: theme.foreground,
   },
   info: {
     backgroundColor: theme.primary,

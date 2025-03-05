@@ -38,16 +38,15 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <ThemeProvider value={CustomTheme}>
-          <Stack>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+            }}
+          >
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="camera/index"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="scan-receipts/index"
-              options={{ headerShown: false }}
-            />
+            <Stack.Screen name="camera/index" />
+            <Stack.Screen name="scan-receipts/index" />
+            <Stack.Screen name="auth" />
           </Stack>
 
           <StatusBar style="light" />

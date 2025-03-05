@@ -15,11 +15,12 @@ import { countries } from '@/countryData';
 import { signupSchema } from '@/core/auth/schemas/signupSchema';
 import useIPGeolocation from '@/core/hooks/useIPGeolocation';
 import Logo from '@/components/Logo';
-import Header from '@/core/auth/components/Header';
 import { Input } from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import ErrorMessage from '@/core/components/ErrorMessage';
 import Button from '@/components/ui/Button';
+import { ThemedText } from '@/components/ui/ThemedText';
+import { theme } from '@/components/ui/theme';
 
 const countryCodes: { label: string; value: string }[] = [];
 
@@ -67,7 +68,12 @@ const Signup = (): JSX.Element => {
     setLoading(false);
 
     if ('email' in response) {
-      router.push('/(tabs)/profile/auth/verify');
+      router.push({
+        pathname: '/auth/verify',
+        params: {
+          action: 'verify',
+        },
+      });
     }
 
     if ('statusCode' in response) {
@@ -114,16 +120,34 @@ const Signup = (): JSX.Element => {
               marginBottom: 20,
             }}
           >
-            <Header
-              link={'/(tabs)/profile/auth/sign-in'}
-              linkText="Sign In"
-              subtitle="Already have an account?"
-              title="Sign Up"
-            />
+            <View style={{ gap: 20 }}>
+              <ThemedText style={{ fontSize: 35, textAlign: 'center' }}>
+                Sign Up
+              </ThemedText>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 10,
+                  justifyContent: 'center',
+                }}
+              >
+                <ThemedText style={{ fontSize: 16 }}>
+                  Already have an account?
+                </ThemedText>
+                <ThemedText
+                  onPress={() => router.dismiss()}
+                  style={{
+                    color: theme.primary,
+                    textDecorationLine: 'underline',
+                    fontSize: 16,
+                  }}
+                >
+                  Sign In
+                </ThemedText>
+              </View>
+            </View>
 
             <View style={{ gap: 10 }}>
-              {/* <ErrorMessage fieldErrors={errors.root} /> */}
-
               <Controller
                 control={control}
                 name="name"

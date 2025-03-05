@@ -131,7 +131,7 @@ export const useScanReceipts = () => {
 
     try {
       const response = await client.send(command);
-      console.warn(response);
+      console.log(response);
       if (response.ExpenseDocuments)
         response.ExpenseDocuments[0].SummaryFields?.map((field) => {
           if (field.Type && field.Type.Text === 'VENDOR_NAME') {

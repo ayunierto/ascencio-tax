@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
-import Header from '../../../../core/auth/components/Header';
+import Header from '../../core/auth/components/Header';
 import { router } from 'expo-router';
 import Toast from 'react-native-toast-message';
 import { Input } from '@/components/ui/Input';
@@ -29,9 +29,6 @@ const NewPassword = () => {
     setError,
   } = useForm<z.infer<typeof newPasswordSchema>>({
     resolver: zodResolver(newPasswordSchema),
-    defaultValues: {
-      password: '',
-    },
   });
 
   const onChangePassword = async ({
@@ -39,20 +36,26 @@ const NewPassword = () => {
   }: z.infer<typeof newPasswordSchema>) => {
     setIsLoading(true);
     const response = await changePassword(password);
+    console.log(response);
     setIsLoading(false);
 
     if ('token' in response) {
-      router.replace('/(tabs)/(home)');
+      router.replace('/auth/sign-in');
       Toast.show({
         type: 'success',
         text1: 'Password changed successfully',
+        text2: 'Please sign in',
       });
       return;
     }
 
     setError('password', {
       type: 'manual',
-      message: '. Please check your message or talk to an administrator',
+      message: `${response.message}`,
+    });
+    Toast.show({
+      type: 'error',
+      text1: `${response.message}`,
     });
 
     return;

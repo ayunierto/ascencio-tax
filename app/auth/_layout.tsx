@@ -6,7 +6,7 @@ export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
-        animation: 'ios_from_right',
+        headerTintColor: theme.foreground,
         headerStyle: {
           backgroundColor: theme.background,
         },
@@ -20,30 +20,35 @@ export default function AuthLayout() {
           title: '',
         }}
       />
+
       <Stack.Screen
         name="new-password"
         options={{
           title: '',
         }}
       />
+
       <Stack.Screen
         name="sign-in"
         options={{
           title: '',
         }}
       />
+
       <Stack.Screen
         name="sign-up"
         options={{
           title: '',
         }}
       />
+
       <Stack.Screen
         name="verify-code-reset-password"
         options={{
           title: '',
         }}
       />
+
       <Stack.Screen
         name="verify"
         options={{

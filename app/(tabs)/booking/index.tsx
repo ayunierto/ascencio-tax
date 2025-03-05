@@ -161,7 +161,7 @@ const BookingScreen = (): JSX.Element => {
                 {loading ? (
                   <Loader />
                 ) : !selectedStaff ? (
-                  <Alert>
+                  <Alert style={{ width: '100%' }}>
                     Select a staff member to see the schedules available.
                   </Alert>
                 ) : availableSlots.length === 0 ? (

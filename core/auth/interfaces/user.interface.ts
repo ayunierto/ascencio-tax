@@ -4,10 +4,10 @@ export interface User {
   lastName: string;
   email: string;
   phoneNumber: string;
-  birthdate: string | null;
+  birthdate?: string;
   isActive: boolean;
-  lastLogin: string | null;
+  lastLogin?: string;
   roles: string[];
   createdAt: string;
-  updatedAt: string | null;
+  updatedAt?: string;
 }

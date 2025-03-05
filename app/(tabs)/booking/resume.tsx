@@ -34,7 +34,7 @@ const ResumeScreen = () => {
             text1: 'Appointment booked',
             text2: 'Your appointment has been booked successfully',
           });
-          router.replace('/(tabs)/my-bookings/bookings');
+          router.replace('/my-bookings/bookings');
         } else {
           Toast.show({
             type: 'error',

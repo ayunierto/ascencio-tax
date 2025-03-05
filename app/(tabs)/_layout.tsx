@@ -7,11 +7,17 @@ import Loader from '@/components/Loader';
 import { theme } from '@/components/ui/theme';
 
 export default function TabLayout() {
-  const { status, checkStatus } = useAuthStore();
+  const { status, checkStatus, user } = useAuthStore();
 
+  // Checking auth status
   useEffect(() => {
     checkStatus();
-  }, []);
+    console.log(`Main layout executed: ${status}`);
+  }, [status]);
+
+  useEffect(() => {
+    console.log({ userMain: user });
+  }, [user]);
 
   if (status === 'checking') {
     return <Loader />;
@@ -45,11 +51,11 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="my-bookings"
         options={{
-          href:
-            status === 'authenticated' ? '/(tabs)/my-bookings/bookings' : null,
+          href: status === 'authenticated' ? '/my-bookings/bookings' : null,
           title: 'My Bookings',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
@@ -60,11 +66,11 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
         name="accounting"
         options={{
-          href:
-            status === 'authenticated' ? '/(tabs)/accounting/receipts' : null,
+          href: status === 'authenticated' ? '/accounting/receipts' : null,
           title: 'Receipts',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
@@ -75,25 +81,21 @@ export default function TabLayout() {
           ),
         }}
       />
+
       <Tabs.Screen
-        name="profile/settings"
+        name="settings"
         options={{
-          title: 'My Profile',
+          title: 'Settings',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               size={28}
-              name={focused ? 'person-circle' : 'person-circle-outline'}
+              name={focused ? 'settings' : 'settings-outline'}
               color={color}
             />
           ),
         }}
       />
-      <Tabs.Screen
-        name="profile/auth"
-        options={{
-          href: null,
-        }}
-      />
+
       <Tabs.Screen
         name="booking"
         options={{

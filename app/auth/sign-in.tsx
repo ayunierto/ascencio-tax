@@ -17,9 +17,11 @@ import Toast from 'react-native-toast-message';
 import { signinSchema } from '@/core/auth/schemas/signinSchema';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import Header from '@/core/auth/components/Header';
 import Logo from '@/components/Logo';
 import ErrorMessage from '@/core/components/ErrorMessage';
+import Alert from '@/components/ui/Alert';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 
 const Signin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,20 +34,16 @@ const Signin = () => {
     setError,
   } = useForm<z.infer<typeof signinSchema>>({
     resolver: zodResolver(signinSchema),
-    defaultValues: {
-      username: '',
-      password: '',
-    },
   });
 
   const onSignin = async (values: z.infer<typeof signinSchema>) => {
     setIsLoading(true);
     const response = await signin(values);
-    console.warn({ signinResponse: response });
     setIsLoading(false);
 
     if ('token' in response) {
       router.push('/(tabs)/(home)');
+      Toast.show({ type: 'success', text1: `Welcome ${response.user.name}` });
       return;
     }
 
@@ -56,20 +54,21 @@ const Signin = () => {
         name: '',
         lastName: '',
         phoneNumber: '',
-        birthdate: null,
+        birthdate: undefined,
         isActive: false,
-        lastLogin: null,
+        lastLogin: undefined,
         roles: [],
         createdAt: '',
-        updatedAt: null,
+        updatedAt: undefined,
       });
-      router.push('/(tabs)/profile/auth/verify');
+      router.push('/auth/verify');
       return;
     }
 
     setError('root', {
       type: 'manual',
-      message: 'Invalid credentials',
+      message:
+        "We didn't recognize the username or password you entered. Please try again.",
     });
 
     Toast.show({
@@ -93,15 +92,37 @@ const Signin = () => {
               marginBottom: 20,
             }}
           >
-            <Header
-              subtitle=" Don’t have an account?"
-              title={'Sign In'}
-              link="/(tabs)/profile/auth/sign-up"
-              linkText="Sign Up"
-            />
+            <View style={{ gap: 20 }}>
+              <ThemedText style={{ fontSize: 35, textAlign: 'center' }}>
+                Sign In
+              </ThemedText>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  gap: 10,
+                  justifyContent: 'center',
+                }}
+              >
+                <ThemedText style={{ fontSize: 16 }}>
+                  Don’t have an account?
+                </ThemedText>
+                <ThemedText
+                  onPress={() => router.push('/auth/sign-up')}
+                  style={{
+                    color: theme.primary,
+                    textDecorationLine: 'underline',
+                    fontSize: 16,
+                  }}
+                >
+                  Sign Up
+                </ThemedText>
+              </View>
+            </View>
 
             <View style={{ gap: 10 }}>
-              <ErrorMessage message={errors.root?.message} />
+              {errors.root?.message && (
+                <Alert variant="error">{errors.root?.message}</Alert>
+              )}
 
               <Controller
                 control={control}
@@ -140,9 +161,7 @@ const Signin = () => {
 
             <Text
               className="text-blue-300 text-center"
-              onPress={() =>
-                router.push('/(tabs)/profile/auth/forgot-password')
-              }
+              onPress={() => router.push('/auth/forgot-password')}
             >
               Forgot password?
             </Text>
