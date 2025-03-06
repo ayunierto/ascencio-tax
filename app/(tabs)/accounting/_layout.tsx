@@ -82,6 +82,21 @@ const AccountingLayout = () => {
           title: 'Subscriptions',
         }}
       />
+
+      <Drawer.Screen
+        name="reports/index"
+        options={{
+          drawerIcon: ({ color, focused, size }) => (
+            <Ionicons
+              color={color}
+              name={focused ? 'file-tray-full' : 'file-tray-full-outline'}
+              size={size}
+            />
+          ),
+          drawerLabel: 'Reports',
+          title: 'Reports',
+        }}
+      />
     </Drawer>
   );
 };

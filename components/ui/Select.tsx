@@ -13,6 +13,7 @@ import { Input } from './Input';
 import Button from './Button';
 import { theme } from './theme';
 import Divider from './Divider';
+import { ThemedText } from './ThemedText';
 
 interface SelectProps {
   enableFilter?: boolean;
@@ -115,7 +116,7 @@ const Select = ({
         >
           <View
             style={{
-              backgroundColor: 'white',
+              backgroundColor: theme.background,
               borderRadius: 20,
               padding: 20,
               width: '90%',
@@ -129,7 +130,7 @@ const Select = ({
                 onChange={(e) => handleSearchChange(e.nativeEvent.text)}
                 value={searchText}
                 placeholderTextColor={theme.mutedForeground}
-                style={{ color: 'black', borderColor: theme.mutedForeground }}
+                style={{ borderColor: theme.mutedForeground, marginBottom: 10 }}
               />
             )}
             <ScrollView>
@@ -157,12 +158,12 @@ const Select = ({
                     justifyContent: 'flex-start',
                   }}
                 >
-                  <Text
+                  <ThemedText
                     style={{
                       color:
                         selectedValue && selectedValue.label === option.label
                           ? theme.primary
-                          : '#000',
+                          : '#fff',
                       fontWeight:
                         selectedValue && selectedValue.label === option.label
                           ? 'bold'
@@ -170,12 +171,12 @@ const Select = ({
                     }}
                   >
                     {option.label}
-                  </Text>
+                  </ThemedText>
                 </Button>
               ))}
             </ScrollView>
 
-            <Divider style={{ backgroundColor: '#eee', marginVertical: 10 }} />
+            <Divider style={{ marginVertical: 10 }} />
 
             <Button
               variant="outlined"
@@ -184,7 +185,7 @@ const Select = ({
                 setSearchText('');
               }}
             >
-              <Text style={{ color: theme.destructive }}>Close</Text>
+              Close
             </Button>
           </View>
         </View>

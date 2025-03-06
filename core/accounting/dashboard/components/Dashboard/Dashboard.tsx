@@ -61,6 +61,14 @@ const ReceiptsDashboard = () => {
     return;
   }
 
+  const getReport = () => {
+    if (expenseQuery.data.length === 0) {
+      alert('No expenses to generate report');
+      return;
+    }
+    router.push('/(tabs)/accounting/reports');
+  };
+
   const keyMetrics = [
     // { label: 'Total Income', value: '$12,000' },
     // { label: 'Today', value: `$${totalExpenses}` },
@@ -81,7 +89,7 @@ const ReceiptsDashboard = () => {
       onPress: () => router.push('/scan-receipts'),
     },
     // { label: 'Add Income', onPress: () => console.log('Add Income') },
-    // { label: 'View Reports', onPress: () => console.log('View Reports') },
+    { label: 'View Reports', onPress: () => getReport() },
   ];
 
   // const recentActivity = [
