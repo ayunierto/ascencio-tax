@@ -13,7 +13,6 @@ const AccountingLayout = () => {
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`Accounting layout executed: ${status}`);
   }, [status]);
 
   if (status === 'checking') {

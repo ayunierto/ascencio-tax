@@ -11,7 +11,6 @@ const MyBookingsLayout = (): JSX.Element => {
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`My bookings layout executed: ${status}`);
   }, [status]);
 
   if (status === 'checking') {

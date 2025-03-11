@@ -64,7 +64,6 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         token: undefined,
         user: response,
       });
-      console.log({ responseSignUp: response });
       return response;
     }
 

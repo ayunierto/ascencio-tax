@@ -88,7 +88,6 @@ const ProfileScreen = () => {
       phoneNumber,
       password,
     });
-    console.log({ responseProfile: response });
     setLoading(false);
 
     if ('id' in response) {

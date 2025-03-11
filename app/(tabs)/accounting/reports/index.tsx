@@ -41,8 +41,6 @@ const ReportsScreen = () => {
   }, [reportsQuery.data]);
 
   const downloadAndOpenPDFReport = async () => {
-    console.log({ startDate });
-    console.log({ endDate });
     if (!startDate || !endDate) {
       Alert.alert('Error', 'Please select a start and end date');
       return;
@@ -66,18 +64,17 @@ const ReportsScreen = () => {
   const openPDFReport = async (uri: string) => {
     try {
       const supported = await Linking.canOpenURL(uri);
-      console.log(supported);
       if (supported) {
         await Linking.openURL(uri);
       } else {
-        console.log("You can't open the uri:", uri);
+        console.error("You can't open the uri:", uri);
       }
     } catch (error) {
-      console.log('Error opening the PDF:', error);
+      console.error('Error opening the PDF:', error);
       try {
         await Sharing.shareAsync(uri, { mimeType: 'application/pdf' });
       } catch (error) {
-        console.log('Error opening the PDF:', error);
+        console.error('Error opening the PDF:', error);
       }
     }
   };

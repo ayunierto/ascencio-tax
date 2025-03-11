@@ -11,7 +11,6 @@ export default function BookingLayout() {
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`Booking layout executed: ${status}`);
   }, [status]);
 
   if (status === 'checking') {

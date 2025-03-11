@@ -10,7 +10,6 @@ const MyProfileLayout = () => {
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`Settings layout executed: ${status}`);
   }, [status]);
 
   if (status === 'checking') {

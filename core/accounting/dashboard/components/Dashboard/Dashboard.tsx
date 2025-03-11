@@ -88,7 +88,7 @@ const ReceiptsDashboard = () => {
       label: 'Scan Expense',
       onPress: () => router.push('/scan-receipts'),
     },
-    // { label: 'Add Income', onPress: () => console.log('Add Income') },
+    // { label: 'Add Income', onPress: () => addIncome('Add Income') },
     { label: 'View Reports', onPress: () => getReport() },
   ];
 

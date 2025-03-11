@@ -22,7 +22,6 @@ export const DownloadAndSaveReport = async (
         },
       }
     );
-    console.log('PDF saved in:', uri);
     return uri;
   } catch (error) {
     console.error('Error when downloading and saving pdf:', error);

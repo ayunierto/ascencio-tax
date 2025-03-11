@@ -26,7 +26,6 @@ const VerifyCode = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const { action } = useLocalSearchParams();
-  console.log(action);
 
   useEffect(() => {
     navigation.setOptions({
@@ -63,7 +62,6 @@ const VerifyCode = () => {
     if (user) {
       setIsLoading(true);
       const response = await verifyCode(user.email, verificationCode);
-      console.log({ verifyResponse: response });
       setIsLoading(false);
 
       if ('statusCode' in response && response.statusCode === 401) {

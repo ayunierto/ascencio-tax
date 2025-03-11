@@ -26,7 +26,6 @@ export const DownloadReport = async (startDate: string, endDate: string) => {
   try {
     const response = await fetch(`${API_URL}/reports/generate`, requestOptions);
     const result = await response.text();
-    console.log(result);
   } catch (error) {
     console.error(error);
     throw new Error('Unable to load reports');

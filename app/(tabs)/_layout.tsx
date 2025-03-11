@@ -12,12 +12,7 @@ export default function TabLayout() {
   // Checking auth status
   useEffect(() => {
     checkStatus();
-    console.log(`Main layout executed: ${status}`);
   }, [status]);
-
-  useEffect(() => {
-    console.log({ userMain: user });
-  }, [user]);
 
   if (status === 'checking') {
     return <Loader />;

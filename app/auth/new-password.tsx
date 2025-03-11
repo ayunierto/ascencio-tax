@@ -36,7 +36,6 @@ const NewPassword = () => {
   }: z.infer<typeof newPasswordSchema>) => {
     setIsLoading(true);
     const response = await changePassword(password);
-    console.log(response);
     setIsLoading(false);
 
     if ('token' in response) {
