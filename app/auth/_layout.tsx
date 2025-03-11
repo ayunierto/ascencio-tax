@@ -43,13 +43,6 @@ export default function AuthLayout() {
       />
 
       <Stack.Screen
-        name="verify-code-reset-password"
-        options={{
-          title: '',
-        }}
-      />
-
-      <Stack.Screen
         name="verify"
         options={{
           title: '',

@@ -18,10 +18,11 @@ const ResumeScreen = () => {
   const { mutateAsync: mutate, isPending } = useMutation({
     mutationFn: async () => {
       const data = await bookNow();
+      console.log({ resumeData: data });
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['pendingAppts'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['pendingAppts'] });
     },
   });
 

@@ -87,8 +87,11 @@ const VerifyCode = () => {
 
         if (action === 'reset-password') {
           router.push('/auth/new-password');
+          return;
         }
       }
+
+      router.replace('/auth/sign-in');
     }
     return;
   };

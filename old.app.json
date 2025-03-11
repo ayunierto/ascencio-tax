@@ -3,14 +3,17 @@
     "name": "ascencio-tax",
     "slug": "ascencio-tax",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "ascenciotax",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ascenciotax"
+      "bundleIdentifier": "com.ascenciotax",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -52,7 +55,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "2b52c295-fbac-4dcc-93cc-600b7faa74a0"
+        "projectId": "74eab444-cc35-4551-a27f-e93e0fb85ab2"
       }
     }
   }
