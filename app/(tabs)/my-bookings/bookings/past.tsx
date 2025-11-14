@@ -1,20 +1,17 @@
-import Loader from '@/components/Loader';
-import { Card, SimpleCardHeader, SimpleCardHeaderTitle } from '@/components/ui';
-import { CardContent } from '@/components/ui/Card/CardContent';
-import { SimpleCardHeaderSubTitle } from '@/components/ui/Card/SimpleCardHeaderSubTitle';
+import { router } from 'expo-router';
+import React from 'react';
+import { FlatList, RefreshControl, View } from 'react-native';
+
+import { AppointmentCard } from '@/components/bookings/AppointmentCard';
+import { AppointmentListSkeleton } from '@/components/bookings/AppointmentCardSkeleton';
+import { Button, ButtonIcon, ButtonText } from '@/components/ui/Button';
 import { theme } from '@/components/ui/theme';
-import { ThemedText } from '@/components/ui/ThemedText';
 import { getUserAppointments } from '@/core/appointments/actions/get-user-appointments.action';
 import { Appointment } from '@/core/appointments/interfaces/appointmentResponse';
 import { EmptyContent } from '@/core/components';
 import { ServerException } from '@/core/interfaces/server-exception.response';
-import { Ionicons } from '@expo/vector-icons';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { DateTime } from 'luxon';
-import React from 'react';
-import { Linking, Text, TouchableOpacity, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
 
 const PastBookings = () => {
   const {
@@ -22,6 +19,8 @@ const PastBookings = () => {
     isLoading,
     isError,
     error,
+    refetch,
+    isRefetching,
   } = useQuery<Appointment[], AxiosError<ServerException>>({
     queryKey: ['PastAppts'],
     queryFn: async () => {
@@ -31,6 +30,10 @@ const PastBookings = () => {
     staleTime: 1000 * 60, // 1 min
   });
 
+  const handleBookNew = () => {
+    router.push('/(tabs)/(home)');
+  };
+
   if (isError) {
     return (
       <EmptyContent
@@ -38,77 +41,60 @@ const PastBookings = () => {
         subtitle={
           error.response?.data.message || error.message || 'An error occurred'
         }
+        icon="alert-circle-outline"
+        onRetry={refetch}
       />
     );
   }
+
   if (isLoading) {
-    return <Loader message="Loading appointments..." />;
+    return <AppointmentListSkeleton />;
   }
 
   if (!historicalBookings || historicalBookings.length === 0) {
     return (
-      <EmptyContent
-        title="No past appointments found"
-        subtitle="You have no past appointments"
-      />
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: theme.background,
+          padding: 20,
+          justifyContent: 'center',
+        }}
+      >
+        <EmptyContent
+          title="No Past Appointments"
+          subtitle="You don't have any completed appointments yet. Book your first service!"
+          icon="time-outline"
+        />
+        <Button onPress={handleBookNew} style={{ marginTop: 20 }}>
+          <ButtonIcon name="add-circle-outline" />
+          <ButtonText>Book New Appointment</ButtonText>
+        </Button>
+      </View>
     );
   }
 
   return (
-    <ScrollView>
-      <View
-        style={{
-          padding: 20,
-          gap: 20,
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <FlatList
+        data={historicalBookings}
+        renderItem={({ item }) => (
+          <AppointmentCard appointment={item} isPast />
+        )}
+        contentContainerStyle={{
+          padding: 10,
         }}
-      >
-        {historicalBookings.map((appt: Appointment) => (
-          <TouchableOpacity key={appt.id}>
-            <Card>
-              <CardContent>
-                <SimpleCardHeader>
-                  <Ionicons
-                    name={'calendar-outline'}
-                    color={theme.foreground}
-                    size={24}
-                  />
-                  <View>
-                    <SimpleCardHeaderTitle>
-                      {appt.service.name}
-                    </SimpleCardHeaderTitle>
-                    <SimpleCardHeaderSubTitle>
-                      {DateTime.fromISO(appt.start).toLocaleString({
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: 'numeric',
-                        minute: '2-digit',
-                        hour12: true,
-                      })}
-                    </SimpleCardHeaderSubTitle>
-                  </View>
-                </SimpleCardHeader>
-                <View>
-                  <ThemedText>{`Staff: ${appt.staff.firstName} ${appt.staff.lastName}`}</ThemedText>
-                  <ThemedText>
-                    Meeting link:{' '}
-                    <Text
-                      style={{
-                        color: theme.primary,
-                        textDecorationLine: 'underline',
-                      }}
-                      onPress={() => Linking.openURL(appt.zoomMeetingLink)}
-                    >
-                      {appt.zoomMeetingLink}
-                    </Text>
-                  </ThemedText>
-                </View>
-              </CardContent>
-            </Card>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </ScrollView>
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={theme.primary}
+            colors={[theme.primary]}
+          />
+        }
+      />
+    </View>
   );
 };
 

@@ -50,6 +50,22 @@ const AvailabilityForm = ({
     },
   });
 
+  const handleFormSubmit = (values: AvailabilityRequest) => {
+    // Ensure all data is in the store before submitting
+    const selectedStaffMember = serviceStaff.find(s => s.id === values.staffId);
+    const selectedServiceData = services.find(s => s.id === values.serviceId);
+    
+    if (selectedStaffMember && selectedServiceData) {
+      updateState({
+        service: selectedServiceData,
+        staff: selectedStaffMember,
+        timeZone: values.timeZone,
+      });
+    }
+    
+    onSubmit(values);
+  };
+
   return (
     <View style={{ gap: 10 }}>
       <Controller
@@ -178,7 +194,7 @@ const AvailabilityForm = ({
         </Alert>
       )}
 
-      <Button onPress={form.handleSubmit(onSubmit)}>
+      <Button onPress={form.handleSubmit(handleFormSubmit)}>
         <ButtonIcon name="calendar-outline" />
         <ButtonText>Book Appointment</ButtonText>
       </Button>

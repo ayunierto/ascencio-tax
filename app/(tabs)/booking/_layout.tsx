@@ -10,6 +10,7 @@ export default function BookingLayout() {
         headerStyle: { backgroundColor: theme.background },
         headerTintColor: theme.foreground,
         headerTitleAlign: 'center',
+        // headerShown: false
       }}
     >
       <Stack.Screen
@@ -22,6 +23,12 @@ export default function BookingLayout() {
         name="resume"
         options={{
           title: 'Resume',
+        }}
+      />
+      <Stack.Screen
+        name="details"
+        options={{
+          title: 'Details',
         }}
       />
     </Stack>

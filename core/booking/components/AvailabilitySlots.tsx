@@ -1,12 +1,15 @@
 import Loader from '@/components/Loader';
-import Alert from '@/components/ui/Alert';
+import { Alert } from '@/components/ui/Alert';
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/Button';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 import { EmptyContent } from '@/core/components/EmptyContent';
 import { ServerException } from '@/core/interfaces/server-exception.response';
 import { convertUtcDateToLocalTime } from '@/utils/convertUtcToLocalTime';
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import React, { useEffect } from 'react';
+import { DateTime } from 'luxon';
+import React, { useEffect, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { View } from 'react-native';
 import { getAvailabilityAction } from '../actions/get-availability.action';
@@ -56,7 +59,33 @@ const AvailabilitySlots = ({
     form.resetField('time'); // Reset time when service or date changes
     // Refetch availability when serviceId, staffId, or date changes
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceId, staffId, date]);
+
+  // Group slots by time of day
+  const groupedSlots = useMemo(() => {
+    if (!data) return { morning: [], afternoon: [], evening: [] };
+
+    const groups = {
+      morning: [] as AvailableSlot[],
+      afternoon: [] as AvailableSlot[],
+      evening: [] as AvailableSlot[],
+    };
+
+    data.forEach((slot) => {
+      const hour = DateTime.fromISO(slot.startTimeUTC).setZone(userTimeZone).hour;
+      
+      if (hour < 12) {
+        groups.morning.push(slot);
+      } else if (hour < 18) {
+        groups.afternoon.push(slot);
+      } else {
+        groups.evening.push(slot);
+      }
+    });
+
+    return groups;
+  }, [data, userTimeZone]);
 
   if (isError) {
     return (
@@ -82,41 +111,60 @@ const AvailabilitySlots = ({
     );
   }
 
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        gap: 10,
-      }}
-    >
-      {data.map((slot) => (
-        <Button
-          size="sm"
-          key={slot.startTimeUTC}
-          variant={
-            selectedSlot?.startTimeUTC === slot.startTimeUTC
-              ? 'default'
-              : 'outline'
-          }
-          onPress={() => {
-            setSelectedSlot(slot);
-            onChange?.(slot);
+  const renderSlotGroup = (slots: AvailableSlot[], title: string, icon: string) => {
+    if (slots.length === 0) return null;
+
+    return (
+      <View style={{ marginBottom: 20, width: '100%' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+          <ButtonIcon name={icon as any} />
+          <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>{title}</ThemedText>
+          <ThemedText style={{ fontSize: 14, color: theme.mutedForeground }}>
+            ({slots.length} {slots.length === 1 ? 'slot' : 'slots'})
+          </ThemedText>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 10,
           }}
-          style={{ flex: 1, minWidth: 120, maxWidth: 150 }}
         >
-          <ButtonIcon name="time-outline" />
-          <ButtonText>
-            {convertUtcDateToLocalTime(
-              slot.startTimeUTC,
-              userTimeZone,
-              '12-hour'
-            )}
-          </ButtonText>
-        </Button>
-      ))}
+          {slots.map((slot) => (
+            <Button
+              size="sm"
+              key={slot.startTimeUTC}
+              variant={
+                selectedSlot?.startTimeUTC === slot.startTimeUTC
+                  ? 'default'
+                  : 'outline'
+              }
+              onPress={() => {
+                setSelectedSlot(slot);
+                onChange?.(slot);
+              }}
+              style={{ flex: 1, minWidth: 120, maxWidth: 150 }}
+            >
+              <ButtonIcon name="time-outline" />
+              <ButtonText>
+                {convertUtcDateToLocalTime(
+                  slot.startTimeUTC,
+                  userTimeZone,
+                  '12-hour'
+                )}
+              </ButtonText>
+            </Button>
+          ))}
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <View style={{ width: '100%' }}>
+      {renderSlotGroup(groupedSlots.morning, 'Morning', 'sunny-outline')}
+      {renderSlotGroup(groupedSlots.afternoon, 'Afternoon', 'partly-sunny-outline')}
+      {renderSlotGroup(groupedSlots.evening, 'Evening', 'moon-outline')}
     </View>
   );
 };

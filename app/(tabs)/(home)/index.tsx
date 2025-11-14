@@ -186,7 +186,7 @@ const ServicesScreen = () => {
           />
         }
         contentContainerStyle={{
-          padding: 20,
+          padding: 10,
           paddingBottom: 40,
         }}
         keyExtractor={(item) => item.id}

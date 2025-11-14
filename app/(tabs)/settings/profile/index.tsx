@@ -6,11 +6,11 @@ import { Controller, useForm } from 'react-hook-form';
 import {
   FlatList,
   KeyboardAvoidingView,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/Button';
 import { Divider } from '@/components/ui/Divider';
@@ -33,6 +33,7 @@ import { useUpdateProfileMutation } from '@/core/user/hooks/useUpdateProfileMuta
 import Signin from '../../auth/sign-in';
 
 const ProfileScreen = () => {
+  const insets = useSafeAreaInsets();
   const { user } = useAuthStore();
   const { countryCodes } = useCountryCodes();
   const [callingCode, setCallingCode] = useState<string | undefined>();
@@ -73,13 +74,13 @@ const ProfileScreen = () => {
   }
 
   return (
-    <SafeAreaView>
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.background }}>
       <ScrollView>
         <KeyboardAvoidingView behavior="padding">
           <View
             style={{
               flex: 1,
-              padding: 20,
+              padding: 10,
               width: '100%',
               maxWidth: 500,
               marginHorizontal: 'auto',
@@ -236,7 +237,7 @@ const ProfileScreen = () => {
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

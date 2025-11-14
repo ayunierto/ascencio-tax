@@ -54,6 +54,20 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="blog/index"
+        options={{
+          title: 'Blog',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              size={28}
+              name={focused ? 'newspaper' : 'newspaper-outline'}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
         name="my-bookings"
         options={{
           href: authStatus === 'authenticated' ? '/(tabs)/my-bookings/bookings' : null,

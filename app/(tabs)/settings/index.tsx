@@ -71,7 +71,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     justifyContent: 'space-between',
   },
   content: {
