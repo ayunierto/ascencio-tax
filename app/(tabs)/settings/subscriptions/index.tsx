@@ -1,385 +1,389 @@
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+  Alert,
+  Linking,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
+
+import { Button, ButtonIcon, ButtonText } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { CardContent } from '@/components/ui/Card/CardContent';
+import { theme } from '@/components/ui/theme';
 import { ThemedText } from '@/components/ui/ThemedText';
-// import { theme } from '@/components/ui/theme';
-import React from 'react';
-import { View } from 'react-native';
-// import { Alert, Linking, Platform, StyleSheet } from 'react-native';
-
-// // --- Consts Color for Dark Mode ---
-// const secondaryTextColor = '#A9CCE3';
-// const cardBackgroundColor = 'rgba(255, 255, 255, 0.08)';
-// const separatorColor = 'rgba(255, 255, 255, 0.15)';
-// const secondaryButtonBackground = 'rgba(255, 255, 255, 0.15)';
-// const secondaryButtonText = '#E0F2FE';
-
-// const openSubscriptionManagement = async () => {
-//   Alert.alert(
-//     'Manage Subscription',
-//     "You'll be redirected to your app store's subscription settings to manage your subscription.",
-//     [
-//       { text: 'Cancel', style: 'cancel' },
-//       {
-//         text: 'Continue',
-//         onPress: async () => {
-//           try {
-//             let url = '';
-//             if (Platform.OS === 'ios') {
-//               url = 'itms-apps://apps.apple.com/account/subscriptions';
-//             } else if (Platform.OS === 'android') {
-//               url = 'https://play.google.com/store/account/subscriptions';
-//               // Opcional: Añadir SKU y paquete si quieres enlazar a una específica
-//               // url = `https://play.google.com/store/account/subscriptions?sku=tu_sku&package=tu.paquete.app`;
-//             }
-
-//             if (url) {
-//               await Linking.openURL(url);
-//             } else {
-//               console.warn(
-//                 'SubscriptionManager: Plataforma no soportada para deep linking de suscripciones.'
-//               );
-//             }
-//           } catch (error) {
-//             console.error(
-//               'SubscriptionManager: Error al abrir la gestión de suscripciones:',
-//               error
-//             );
-//             Alert.alert(
-//               'Error',
-//               'No se pudo abrir la página de gestión de suscripciones. Por favor, hazlo manualmente desde la App Store o Google Play Store.'
-//             );
-//           }
-//           try {
-//             let url = '';
-//             if (Platform.OS === 'ios') {
-//               url = 'itms-apps://apps.apple.com/account/subscriptions';
-//             } else if (Platform.OS === 'android') {
-//               url = 'https://play.google.com/store/account/subscriptions';
-//             }
-
-//             if (url) {
-//               await Linking.openURL(url);
-//             } else {
-//               console.warn(
-//                 'SubscriptionManager: Plataforma no soportada para deep linking de suscripciones.'
-//               );
-//             }
-//           } catch (error) {
-//             console.error(
-//               'SubscriptionManager: Error al abrir la gestión de suscripciones:',
-//               error
-//             );
-//             Alert.alert(
-//               'Error',
-//               'The subscription management page could not be opened.'
-//             );
-//           }
-//         },
-//       },
-//     ],
-//     { userInterfaceStyle: 'dark' }
-//   );
-// };
 
 const SubscriptionManager = () => {
-  // const { customerInfo, isPro, isReady } = useRevenueCat();
-  // const [isPaywallLoading, setIsPaywallLoading] = useState(false);
+  // Mock data - Replace with your actual subscription state
+  const [isPro, setIsPro] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const handleGoPro = async () => {
-  //   if (isPaywallLoading) return;
-  //   setIsPaywallLoading(true);
-  //   try {
-  //     // const success = await goPro();
-  //     // if (success) {
-  //     //   console.log(
-  //     //     'SubscriptionManager: Paywall successful purchase or restoration.'
-  //     //   );
-  //     // } else {
-  //     //   console.log(
-  //     //     'SubscriptionManager: Paywall closed without purchase or restoration.'
-  //     //   );
-  //     // }
-  //   } catch (error) {
-  //     console.error('SubscriptionManager: Error to present paywall:', error);
+  // Mock subscription data
+  const subscriptionData = isPro
+    ? {
+        plan: 'Pro Annual',
+        status: 'Active',
+        nextBilling: 'December 14, 2025',
+        amount: '$99.99/year',
+        store: Platform.OS === 'ios' ? 'App Store' : 'Google Play',
+      }
+    : null;
 
-  //     Alert.alert('Error', 'The purchase screen could not be displayed.');
-  //   } finally {
-  //     setIsPaywallLoading(false);
-  //   }
-  // };
+  const openSubscriptionManagement = async () => {
+    Alert.alert(
+      'Manage Subscription',
+      "You'll be redirected to your app store's subscription settings.",
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Continue',
+          onPress: async () => {
+            try {
+              let url = '';
+              if (Platform.OS === 'ios') {
+                url = 'itms-apps://apps.apple.com/account/subscriptions';
+              } else if (Platform.OS === 'android') {
+                url = 'https://play.google.com/store/account/subscriptions';
+              }
 
-  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <ThemedText style={{fontSize: 18}}>Subscription Manager Coming Soon...</ThemedText>
-  </View>;
+              if (url) {
+                await Linking.openURL(url);
+              }
+            } catch (error) {
+              console.error('Error opening subscription management:', error);
+              Alert.alert(
+                'Error',
+                'Could not open subscription management. Please do it manually from your app store.'
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
 
-  // --- Estado de Carga Inicial ---
-  // if (!isReady) {
-  //   return <Loader />;
-  // }
-  // if (!customerInfo) {
-  //   return (
-  //     <View style={styles.loadingContainer}>
-  //       <Ionicons
-  //         name="cloud-offline-outline"
-  //         size={40}
-  //         color={secondaryTextColor}
-  //       />
-  //       <ThemedText style={styles.errorText}>
-  //         Subscription information could not be loaded.
-  //       </ThemedText>
-  //       <ThemedText style={styles.errorText}>
-  //         Please check your connection and try again.
-  //       </ThemedText>
-  //     </View>
-  //   );
-  // }
+  const handleUpgradeToPro = async () => {
+    setIsLoading(true);
+    try {
+      // TODO: Implement your subscription/purchase logic here
+      // For now, just simulate a purchase
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setIsPro(true);
+      Alert.alert(
+        'Success!',
+        'You are now a Pro user. Enjoy all premium features!',
+        [{ text: 'Great!', style: 'default' }]
+      );
+    } catch (error) {
+      console.error('Error upgrading:', error);
+      Alert.alert('Error', 'Could not process upgrade. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  // const proEntitlement: PurchasesEntitlementInfo | undefined =
-  //   customerInfo.entitlements.active['Pro'];
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Ionicons name="diamond" size={48} color={theme.primary} />
+        <ThemedText style={styles.title}>Subscription</ThemedText>
+        <ThemedText style={styles.subtitle}>
+          Manage your plan and billing
+        </ThemedText>
+      </View>
 
-  // return (
-  //   // Asegúrate que el contenedor padre de este componente tenga backgroundColor: darkBackground
-  //   <ScrollView contentContainerStyle={styles.scrollContainer}>
-  //     <View style={styles.card}>
-  //       <ThemedText style={styles.title}>Your Pro Subscription</ThemedText>
+      {/* Current Plan Card */}
+      <Card style={styles.card}>
+        <CardContent>
+          {isPro ? (
+            <>
+              {/* Active Subscription */}
+              <View style={styles.statusBadge}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.success}
+                />
+                <ThemedText style={[styles.statusText, styles.activeStatus]}>
+                  {subscriptionData?.status}
+                </ThemedText>
+              </View>
 
-  //       {/* --- Sección Estado Actual --- */}
-  //       <View style={styles.statusSection}>
-  //         <Ionicons
-  //           name={isPro ? 'checkmark-circle' : 'close-circle-outline'}
-  //           size={28}
-  //           color={isPro ? theme.success : theme.destructive} // Verde o Rojo claro
-  //           style={styles.statusIcon}
-  //         />
-  //         <ThemedText
-  //           style={[
-  //             styles.statusText,
-  //             { color: isPro ? theme.success : theme.destructive },
-  //           ]}
-  //         >
-  //           State: {isPro ? 'Active' : 'Inactive'}
-  //         </ThemedText>
-  //       </View>
+              <View style={styles.planInfo}>
+                <ThemedText style={styles.planName}>
+                  {subscriptionData?.plan}
+                </ThemedText>
+                <ThemedText style={styles.planPrice}>
+                  {subscriptionData?.amount}
+                </ThemedText>
+              </View>
 
-  //       {/* --- Detalles si está Activa --- */}
-  //       {isPro && proEntitlement && (
-  //         <View style={styles.detailsSection}>
-  //           <ThemedText style={styles.detailLabel}>Granted Access:</ThemedText>
-  //           <ThemedText style={styles.detailValue}>
-  //             {proEntitlement.identifier}
-  //           </ThemedText>
+              <View style={styles.divider} />
 
-  //           <ThemedText style={styles.detailLabel}>
-  //             Purchased Product:
-  //           </ThemedText>
-  //           <ThemedText style={styles.detailValue}>
-  //             {proEntitlement.productIdentifier}
-  //           </ThemedText>
+              <View style={styles.detailRow}>
+                <ThemedText style={styles.detailLabel}>
+                  Next billing date
+                </ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  {subscriptionData?.nextBilling}
+                </ThemedText>
+              </View>
 
-  //           {proEntitlement.expirationDate && (
-  //             <>
-  //               <ThemedText style={styles.detailLabel}>Valid until:</ThemedText>
-  //               <ThemedText style={styles.detailValue}>
-  //                 {new Date(proEntitlement.expirationDate).toLocaleDateString()}
-  //               </ThemedText>
-  //             </>
-  //           )}
-  //           {proEntitlement.latestPurchaseDate && (
-  //             <>
-  //               <ThemedText style={styles.detailLabel}>
-  //                 Última Facturación:
-  //               </ThemedText>
-  //               <ThemedText style={styles.detailValue}>
-  //                 {new Date(
-  //                   proEntitlement.latestPurchaseDate
-  //                 ).toLocaleDateString()}
-  //               </ThemedText>
-  //             </>
-  //           )}
-  //           <ThemedText style={styles.detailLabel}>Store:</ThemedText>
-  //           <ThemedText style={styles.detailValue}>
-  //             {proEntitlement.store === 'APP_STORE'
-  //               ? 'App Store'
-  //               : proEntitlement.store === 'PLAY_STORE'
-  //                 ? 'Google Play'
-  //                 : proEntitlement.store}
-  //           </ThemedText>
+              <View style={styles.detailRow}>
+                <ThemedText style={styles.detailLabel}>Billed via</ThemedText>
+                <ThemedText style={styles.detailValue}>
+                  {subscriptionData?.store}
+                </ThemedText>
+              </View>
 
-  //           {/* Botón para Gestionar en la Tienda */}
-  //           <TouchableOpacity
-  //             style={[styles.button, styles.manageButton]} // Botón secundario
-  //             onPress={openSubscriptionManagement}
-  //           >
-  //             <Ionicons
-  //               name="settings-outline"
-  //               size={20}
-  //               color={secondaryButtonText}
-  //               style={styles.buttonIcon}
-  //             />
-  //             <ThemedText
-  //               style={[styles.buttonText, { color: secondaryButtonText }]}
-  //             >
-  //               Manage in Store
-  //             </ThemedText>
-  //           </TouchableOpacity>
-  //         </View>
-  //       )}
+              <Button
+                variant="outline"
+                fullWidth
+                onPress={openSubscriptionManagement}
+                style={styles.manageButton}
+              >
+                <ButtonIcon name="settings-outline" />
+                <ButtonText>Manage in Store</ButtonText>
+              </Button>
+            </>
+          ) : (
+            <>
+              {/* No Subscription */}
+              <View style={styles.statusBadge}>
+                <Ionicons
+                  name="close-circle-outline"
+                  size={24}
+                  color={theme.mutedForeground}
+                />
+                <ThemedText
+                  style={[styles.statusText, styles.inactiveStatus]}
+                >
+                  Free Plan
+                </ThemedText>
+              </View>
 
-  //       {/* --- Sección para Activar si está Inactiva --- */}
-  //       {!isPro && (
-  //         <View style={styles.activateSection}>
-  //           <ThemedText style={styles.activateText}>
-  //             ¡Unlock all features by going Pro user!
-  //           </ThemedText>
-  //           {/* Botón para Activar */}
-  //           <Button
-  //             style={{ width: '100%' }}
-  //             onPress={handleGoPro}
-  //             disabled={isPaywallLoading}
-  //           >
-  //             <ButtonIcon name="sparkles-outline" />
-  //             <ButtonText>
-  //               {isPaywallLoading ? 'Loading...' : 'Go Pro'}
-  //             </ButtonText>
-  //           </Button>
-  //         </View>
-  //       )}
-  //     </View>
+              <ThemedText style={styles.freePlanText}>
+                You&apos;re currently on the free plan with limited features.
+              </ThemedText>
+            </>
+          )}
+        </CardContent>
+      </Card>
 
-  //     {/* Nota de ayuda */}
-  //     <ThemedText style={styles.footerText}>
-  //       Cancellation or changes are made directly in the{' '}
-  //       {Platform.OS === 'ios' ? 'App Store' : 'Google Play Store'}.
-  //     </ThemedText>
-  //   </ScrollView>
-  // );
+      {/* Features Section */}
+      {!isPro && (
+        <>
+          <ThemedText style={styles.sectionTitle}>
+            Upgrade to Pro and unlock:
+          </ThemedText>
+
+          <Card style={styles.card}>
+            <CardContent>
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Unlimited receipt scanning
+                </ThemedText>
+              </View>
+
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Advanced expense reports
+                </ThemedText>
+              </View>
+
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Priority support
+                </ThemedText>
+              </View>
+
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Export to multiple formats
+                </ThemedText>
+              </View>
+
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Cloud backup & sync
+                </ThemedText>
+              </View>
+
+              <View style={styles.featureItem}>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={24}
+                  color={theme.primary}
+                />
+                <ThemedText style={styles.featureText}>
+                  Ad-free experience
+                </ThemedText>
+              </View>
+            </CardContent>
+          </Card>
+
+          {/* Upgrade Button */}
+          <Button
+            fullWidth
+            onPress={handleUpgradeToPro}
+            disabled={isLoading}
+            style={styles.upgradeButton}
+          >
+            <ButtonIcon name="sparkles" />
+            <ButtonText>
+              {isLoading ? 'Processing...' : 'Upgrade to Pro'}
+            </ButtonText>
+          </Button>
+        </>
+      )}
+
+      {/* Footer Note */}
+      <ThemedText style={styles.footerText}>
+        Subscriptions are managed through the{' '}
+        {Platform.OS === 'ios' ? 'App Store' : 'Google Play Store'}. You can
+        cancel or modify your subscription at any time.
+      </ThemedText>
+    </ScrollView>
+  );
 };
 
-// --- Estilos para Fondo Oscuro (#002e5d) ---
-// const styles = StyleSheet.create({
-//   scrollContainer: {
-//     flexGrow: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//     // backgroundColor: darkBackground // Quitar si el padre ya lo tiene, si no, ponerlo aquí
-//   },
-//   loadingContainer: {
-//     flex: 1,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     padding: 20,
-//     // backgroundColor: darkBackground // Quitar si el padre ya lo tiene
-//   },
-//   loadingText: {
-//     marginTop: 15,
-//     fontSize: 16,
-//     color: secondaryTextColor, // Texto secundario claro
-//   },
-//   errorText: {
-//     marginTop: 10,
-//     fontSize: 15,
-//     color: theme.destructive, // Color de error claro
-//     textAlign: 'center',
-//   },
-//   card: {
-//     width: '100%',
-//     maxWidth: 400,
-//     backgroundColor: cardBackgroundColor, // Fondo de tarjeta semi-transparente
-//     borderRadius: 12,
-//     padding: 25,
-//     marginBottom: 20,
-//     // Sombras no suelen verse bien en fondos oscuros, quitamos o hacemos muy sutil
-//     // elevation: 0,
-//     // shadowOpacity: 0,
-//     borderWidth: 1, // Borde sutil para definir la tarjeta
-//     borderColor: separatorColor,
-//   },
-//   title: {
-//     fontSize: 24,
-//     fontWeight: 'bold',
-//     color: theme.foreground, // Texto blanco
-//     textAlign: 'center',
-//     marginBottom: 25,
-//   },
-//   statusSection: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     marginBottom: 20,
-//     paddingVertical: 10,
-//     borderRadius: 8,
-//     // Sin fondo extra, usa el de la tarjeta
-//   },
-//   statusIcon: {
-//     marginRight: 10,
-//   },
-//   statusText: {
-//     fontSize: 18,
-//     fontWeight: '600',
-//     // El color se aplica dinámicamente (activeColor/inactiveColor)
-//   },
-//   detailsSection: {
-//     marginTop: 10,
-//     marginBottom: 20,
-//     borderTopWidth: 1,
-//     borderTopColor: separatorColor, // Separador claro
-//     paddingTop: 20,
-//   },
-//   detailLabel: {
-//     fontSize: 14,
-//     color: secondaryTextColor, // Texto secundario claro
-//     marginBottom: 3,
-//   },
-//   detailValue: {
-//     fontSize: 16,
-//     color: theme.foreground, // Texto principal blanco
-//     fontWeight: '500',
-//     marginBottom: 15,
-//   },
-//   activateSection: {
-//     marginTop: 15,
-//     alignItems: 'center',
-//   },
-//   activateText: {
-//     fontSize: 16,
-//     color: secondaryTextColor, // Texto secundario claro
-//     textAlign: 'center',
-//     marginBottom: 25,
-//     lineHeight: 22,
-//   },
-//   button: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     paddingVertical: 12,
-//     paddingHorizontal: 25,
-//     borderRadius: 25,
-//     marginTop: 15,
-//     width: '100%',
-//     minHeight: 48,
-//     borderWidth: 1, // Añadimos borde a todos para consistencia
-//     borderColor: 'transparent', // Por defecto transparente
-//   },
-//   buttonIcon: {
-//     marginRight: 8,
-//   },
-//   buttonText: {
-//     fontSize: 16,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//   },
-//   manageButton: {
-//     // Botón secundario
-//     backgroundColor: secondaryButtonBackground, // Fondo semi-transparente
-//     borderColor: secondaryButtonText, // Borde con el color del texto
-//   },
-//   // El color del texto del botón primario se aplica inline
-//   footerText: {
-//     fontSize: 13,
-//     color: secondaryTextColor, // Texto secundario claro
-//     textAlign: 'center',
-//     fontStyle: 'italic',
-//     paddingHorizontal: 10,
-//   },
-// });
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.background,
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: theme.mutedForeground,
+  },
+  card: {
+    marginBottom: 24,
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    gap: 8,
+  },
+  statusText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  activeStatus: {
+    color: theme.success,
+  },
+  inactiveStatus: {
+    color: theme.mutedForeground,
+  },
+  planInfo: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  planName: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  planPrice: {
+    fontSize: 18,
+    color: theme.mutedForeground,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: theme.border,
+    marginVertical: 20,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  detailLabel: {
+    fontSize: 15,
+    color: theme.mutedForeground,
+  },
+  detailValue: {
+    fontSize: 15,
+    fontWeight: '500',
+  },
+  manageButton: {
+    marginTop: 20,
+  },
+  freePlanText: {
+    fontSize: 15,
+    color: theme.mutedForeground,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  featureText: {
+    fontSize: 15,
+    flex: 1,
+  },
+  upgradeButton: {
+    marginBottom: 24,
+  },
+  footerText: {
+    fontSize: 13,
+    color: theme.mutedForeground,
+    textAlign: 'center',
+    lineHeight: 20,
+    fontStyle: 'italic',
+  },
+});
 
 export default SubscriptionManager;
