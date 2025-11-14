@@ -25,7 +25,6 @@ export default function TabLayout() {
   }
 
   return (
-    // <RevenueCatProvider>
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: theme.primary,
@@ -41,7 +40,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="(home)/index"
+        name="(home)"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, focused }) => (
@@ -57,7 +56,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="my-bookings"
         options={{
-          href: authStatus === 'authenticated' ? '/booking' : null,
+          href: authStatus === 'authenticated' ? '/(tabs)/my-bookings/bookings' : null,
           title: 'My Bookings',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
@@ -126,6 +125,5 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
-    // </RevenueCatProvider>
   );
 }

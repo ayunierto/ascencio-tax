@@ -1,75 +1,81 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import BlogScreen from '@/components/home/blog';
-import ServicesScreen from '@/components/home/services';
-import Logo from '@/components/Logo';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/beta/Tab';
-import { View } from 'react-native';
+import { router } from 'expo-router';
+import { FlatList } from 'react-native';
+import Toast from 'react-native-toast-message';
 
-export default function TabLayout() {
-  const [activeTab, setActiveTab] = useState('services');
+import { ServiceCard } from '@/components/home/ServiceCard';
+import Loader from '@/components/Loader';
+import { useAuthStore } from '@/core/auth/store/useAuthStore';
+import { EmptyContent } from '@/core/components';
+import { useServices } from '@/core/services/hooks/useServices';
+import { Service } from '@/core/services/interfaces';
+import { useBookingStore } from '@/core/services/store/useBookingStore';
+
+const ServicesScreen = () => {
+  const { authStatus } = useAuthStore();
+  const { updateState } = useBookingStore();
+
+  const {
+    data: servicesData,
+    isPending,
+    isError,
+    error,
+    refetch,
+  } = useServices();
+
+  const selectService = (service: Service): void => {
+    updateState({ service });
+    if (authStatus !== 'authenticated') {
+      router.push('/(tabs)/auth/sign-in');
+      Toast.show({
+        type: 'info',
+        text1: 'Please, sign in',
+        text2: 'You must be authenticated to book a service.',
+      });
+      return;
+    }
+    router.push('/(tabs)/booking');
+    return;
+  };
+
+  if (isError)
+    return (
+      <EmptyContent
+        title="Something went wrong."
+        subtitle={error.response?.data.message || error.message}
+      />
+    );
+
+  if (isPending) return <Loader message="Loading services..." />;
+
+  if (!servicesData || servicesData.services.length === 0) {
+    return (
+      <EmptyContent
+        title="No services available."
+        subtitle="Please check back later."
+        onRetry={refetch}
+      />
+    );
+  }
+
   return (
-    <View style={{ flex: 1 }}>
-      <Logo />
-
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        defaultValue="services"
-      >
-        <TabsList>
-          <TabsTrigger value="services">Services</TabsTrigger>
-          <TabsTrigger value="blog">Blog</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="services">
-          <ServicesScreen />
-        </TabsContent>
-
-        <TabsContent value="blog" style={{ flex: 1 }}>
-          <BlogScreen />
-        </TabsContent>
-      </Tabs>
-
-      {/* <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: theme.primary,
-          tabBarInactiveTintColor: theme.mutedForeground,
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: theme.background,
-            paddingTop: 8,
-            height: 45,
-            elevation: 0,
-            shadowOpacity: 0,
-          },
-          animation: "shift",
-          tabBarPosition: "top",
-          tabBarIconStyle: { height: 0 },
-          tabBarIcon: undefined,
-          tabBarLabelStyle: {
-            fontSize: 13,
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: "Services",
-          }}
+    <FlatList
+      data={servicesData.services}
+      renderItem={({ item }) => (
+        <ServiceCard
+          key={item.id}
+          service={item}
+          selectService={selectService}
         />
-        <Tabs.Screen
-          name="blog"
-          options={{
-            title: "Blog",
-          }}
-        />
-      </Tabs> */}
-    </View>
+      )}
+      contentContainerStyle={{
+        padding: 10,
+        gap: 10,
+      }}
+      keyExtractor={(item) => item.id}
+    />
   );
-}
+};
+
+export default ServicesScreen;

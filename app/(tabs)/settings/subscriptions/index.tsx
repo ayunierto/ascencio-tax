@@ -1,6 +1,7 @@
-import Loader from '@/components/Loader';
+import { ThemedText } from '@/components/ui/ThemedText';
 // import { theme } from '@/components/ui/theme';
 import React from 'react';
+import { View } from 'react-native';
 // import { Alert, Linking, Platform, StyleSheet } from 'react-native';
 
 // // --- Consts Color for Dark Mode ---
@@ -105,7 +106,9 @@ const SubscriptionManager = () => {
   //   }
   // };
 
-  return <Loader />;
+  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <ThemedText style={{fontSize: 18}}>Subscription Manager Coming Soon...</ThemedText>
+  </View>;
 
   // --- Estado de Carga Inicial ---
   // if (!isReady) {

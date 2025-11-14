@@ -1,4 +1,4 @@
-import { Redirect, router } from 'expo-router';
+import { router } from 'expo-router';
 import React from 'react';
 import { Linking, StyleSheet, View } from 'react-native';
 
@@ -13,7 +13,7 @@ export default function SettingsScreen() {
 
   const handleLogout = async () => {
     await logout();
-    return <Redirect href={'/(tabs)/(home)'} />;
+    router.replace('/(tabs)/(home)');
   };
 
   return (
