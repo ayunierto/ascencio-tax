@@ -67,18 +67,15 @@ export const CancelAppointmentModal = ({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.overlay}
+        style={styles.keyboardView}
       >
-        <TouchableOpacity
-          style={styles.overlay}
-          activeOpacity={1}
-          onPress={handleClose}
-        >
+        <View style={styles.overlay}>
           <TouchableOpacity
+            style={styles.backdrop}
             activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
-            style={styles.modalContent}
-          >
+            onPress={handleClose}
+          />
+          <View style={styles.modalContent}>
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* Header */}
               <View style={styles.header}>
@@ -195,33 +192,39 @@ export const CancelAppointmentModal = ({
                 </Button>
               </View>
             </ScrollView>
-          </TouchableOpacity>
-        </TouchableOpacity>
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: 20,
+  },
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
   },
   modalContent: {
     backgroundColor: theme.background,
     borderRadius: theme.radius * 2,
-    padding: 24,
-    width: '95%',
+    padding: 20,
+    width: '100%',
     maxWidth: 600,
     maxHeight: '90%',
     elevation: 5,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
   },
   header: {
     alignItems: 'center',
