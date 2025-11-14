@@ -20,7 +20,7 @@ export const useUpdateProfileMutation = () => {
     onSuccess: (response) => {
       Toast.show({
         type: 'error',
-        text1: 'Profile update failed',
+        text1: 'Profile updated',
         text2: response.message,
       });
     },

@@ -1,15 +1,20 @@
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
-import { Linking, StyleSheet, View } from 'react-native';
+import { Linking, ScrollView, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card/Card';
+import { CardContent } from '@/components/ui/Card/CardContent';
 import { theme } from '@/components/ui/theme';
 import { ThemedText } from '@/components/ui/ThemedText';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import ListItem from '@/core/settings/components/ListItem';
 
 export default function SettingsScreen() {
-  const { logout } = useAuthStore();
+  const { logout, user } = useAuthStore();
+  const insets = useSafeAreaInsets();
 
   const handleLogout = async () => {
     await logout();
@@ -17,51 +22,87 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Main content */}
-      <View style={styles.content}>
-        {/* Account */}
+    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* User Profile Header */}
+        <Card>
+          <CardContent style={styles.profileCard}>
+            <View style={styles.avatarContainer}>
+              <Ionicons name="person" size={32} color={theme.primary} />
+            </View>
+            <View style={styles.profileInfo}>
+              <ThemedText style={styles.userName}>
+                {user?.firstName} {user?.lastName}
+              </ThemedText>
+              <ThemedText style={styles.userEmail}>{user?.email}</ThemedText>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={theme.mutedForeground} />
+          </CardContent>
+        </Card>
+
+        {/* Account Section */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Account</ThemedText>
-          <ListItem
-            icon="person-outline"
-            label="My account"
-            onPress={() => router.push('/settings/profile')}
-          />
-          <ListItem
-            icon="diamond-outline"
-            label="Subscriptions"
-            onPress={() => router.push('/settings/subscriptions')}
-          />
+          <Card>
+            <CardContent style={styles.cardContent}>
+              <ListItem
+                icon="person-outline"
+                label="My account"
+                onPress={() => router.push('/settings/profile')}
+              />
+              <View style={styles.divider} />
+              <ListItem
+                icon="diamond-outline"
+                label="Subscriptions"
+                onPress={() => router.push('/settings/subscriptions')}
+              />
+            </CardContent>
+          </Card>
         </View>
 
-        {/* Legal */}
+        {/* Legal Section */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Legal</ThemedText>
-          <ListItem
-            icon="book-outline"
-            label="Terms of use"
-            external
-            onPress={() =>
-              Linking.openURL('https://www.ascenciotax.com/termsofuse')
-            }
-          />
-          <ListItem
-            icon="shield-checkmark-outline"
-            label="Privacy policy"
-            external
-            onPress={() =>
-              Linking.openURL('https://www.ascenciotax.com/privacy')
-            }
-          />
+          <Card>
+            <CardContent style={styles.cardContent}>
+              <ListItem
+                icon="book-outline"
+                label="Terms of use"
+                external
+                onPress={() =>
+                  Linking.openURL('https://www.ascenciotax.com/termsofuse')
+                }
+              />
+              <View style={styles.divider} />
+              <ListItem
+                icon="shield-checkmark-outline"
+                label="Privacy policy"
+                external
+                onPress={() =>
+                  Linking.openURL('https://www.ascenciotax.com/privacy')
+                }
+              />
+            </CardContent>
+          </Card>
         </View>
-      </View>
+
+        {/* App Info */}
+        <View style={styles.appInfo}>
+          <ThemedText style={styles.appInfoText}>
+            Version 1.0.0
+          </ThemedText>
+        </View>
+      </ScrollView>
 
       {/* Footer */}
       <View style={styles.footer}>
         <Button variant="destructive" fullWidth onPress={handleLogout}>
-          <ButtonText>Log out</ButtonText>
           <ButtonIcon name="log-out-outline" />
+          <ButtonText>Log out</ButtonText>
         </Button>
       </View>
     </View>
@@ -71,36 +112,74 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
     padding: 10,
-    justifyContent: 'space-between',
+    gap: 20,
   },
-  content: {
-    gap: 32, // espacio entre secciones
+  profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
-  footer: {
-    marginTop: 24, // separación del contenido
+  avatarContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: theme.primary + '15',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  profileInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: theme.foreground,
+  },
+  userEmail: {
+    fontSize: 14,
+    color: theme.mutedForeground,
   },
   section: {
     gap: 8,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: theme.mutedForeground,
-    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    paddingHorizontal: 4,
   },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  cardContent: {
+    padding: 0,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: theme.border,
+    marginLeft: 50,
+    opacity: 0.5,
+  },
+  appInfo: {
     alignItems: 'center',
+    paddingVertical: 20,
   },
-  itemLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  appInfoText: {
+    fontSize: 12,
+    color: theme.mutedForeground,
   },
-  itemLabel: {
-    fontSize: 16,
-    marginLeft: 10,
-    color: theme.foreground,
+  footer: {
+    padding: 10,
+    paddingTop: 16,
+    borderTopWidth: 1,
+    borderTopColor: theme.border,
+    backgroundColor: theme.background,
   },
 });

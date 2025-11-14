@@ -1,18 +1,18 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
+  Animated,
   StyleSheet,
+  Text,
   TextInput,
   View,
-  Text,
-  Animated,
+  type NativeSyntheticEvent,
   type StyleProp,
+  type TextInputFocusEventData,
+  type TextInputProps,
   type TextStyle,
   type ViewStyle,
-  type TextInputProps,
-  type NativeSyntheticEvent,
-  type TextInputFocusEventData,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { theme } from "./theme";
 
 interface InputProps extends TextInputProps {
@@ -93,9 +93,9 @@ export const Input = ({
         ? theme.destructive
         : isFocused
           ? focusedBorderColor
-          : theme.input;
+          : theme.border;
 
-    const borderWidth = isFocused || error ? 1 : 1  ;
+    const borderWidth = error ? 2 : 1;
 
     return [styles.containerBase, { borderColor, borderWidth }, containerStyle];
   }, [isFocused, error, readOnly, focusedBorderColor, containerStyle]);
@@ -163,8 +163,8 @@ export const Input = ({
               ref={textInputRef}
               style={computedInputStyle}
               value={value}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              onFocus={handleFocus as any}
+              onBlur={handleBlur as any}
               readOnly={readOnly}
               placeholder={!label ? placeholder : ""}
               placeholderTextColor={theme.muted}
@@ -207,9 +207,10 @@ const styles = StyleSheet.create({
   },
   containerBase: {
     borderRadius: theme.radius,
-    height: 52,
-    paddingHorizontal: 12,
+    height: 54,
+    paddingHorizontal: 14,
     backgroundColor: theme.background,
+    borderWidth: 1,
   },
   inputWrapper: {
     flex: 1,
@@ -225,16 +226,20 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     backgroundColor: theme.background,
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
+    fontSize: 14,
+    fontWeight: '500',
+    borderRadius: theme.radius,
   },
   inputBase: {
     height: "100%",
     fontSize: 16,
+    paddingVertical: 0,
   },
   icon: {},
   helperTextBase: {
-    marginTop: 4,
-    fontSize: 12,
+    marginTop: 6,
+    fontSize: 13,
     paddingLeft: 4,
     color: theme.mutedForeground,
   },
