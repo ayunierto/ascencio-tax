@@ -3,14 +3,16 @@ import { Staff } from '@/core/staff/interfaces';
 export interface Service {
   id: string;
   name: string;
-  duration: number;
+  durationMinutes: number;
   price: number;
   description?: string;
   address: string;
   isAvailableOnline: boolean;
   isActive: boolean;
   imageUrl?: string;
-  createdAt: Date;
-  updatedAt?: Date;
+  createdAt: string;
+  updatedAt?: string;
   staff?: Staff[];
+  deletedAt: string;
 }
+

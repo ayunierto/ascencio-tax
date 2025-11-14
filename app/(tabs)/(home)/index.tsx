@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { FlatList } from 'react-native';
+import { FlatList, Image, RefreshControl, TextInput, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 import { ServiceCard } from '@/components/home/ServiceCard';
-import Loader from '@/components/Loader';
+import { ServiceListSkeleton } from '@/components/home/ServiceCardSkeleton';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { EmptyContent } from '@/core/components';
 import { useServices } from '@/core/services/hooks/useServices';
@@ -13,8 +16,9 @@ import { Service } from '@/core/services/interfaces';
 import { useBookingStore } from '@/core/services/store/useBookingStore';
 
 const ServicesScreen = () => {
-  const { authStatus } = useAuthStore();
+  const { authStatus, user } = useAuthStore();
   const { updateState } = useBookingStore();
+  const [searchQuery, setSearchQuery] = useState('');
 
   const {
     data: servicesData,
@@ -22,6 +26,7 @@ const ServicesScreen = () => {
     isError,
     error,
     refetch,
+    isRefetching,
   } = useServices();
 
   const selectService = (service: Service): void => {
@@ -39,6 +44,19 @@ const ServicesScreen = () => {
     return;
   };
 
+  // Filter services based on search query
+  const filteredServices = servicesData?.services.filter((service) =>
+    service.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   if (isError)
     return (
       <EmptyContent
@@ -47,7 +65,7 @@ const ServicesScreen = () => {
       />
     );
 
-  if (isPending) return <Loader message="Loading services..." />;
+  if (isPending) return <ServiceListSkeleton />;
 
   if (!servicesData || servicesData.services.length === 0) {
     return (
@@ -60,21 +78,128 @@ const ServicesScreen = () => {
   }
 
   return (
-    <FlatList
-      data={servicesData.services}
-      renderItem={({ item }) => (
-        <ServiceCard
-          key={item.id}
-          service={item}
-          selectService={selectService}
-        />
-      )}
-      contentContainerStyle={{
-        padding: 10,
-        gap: 10,
-      }}
-      keyExtractor={(item) => item.id}
-    />
+    <View style={{ flex: 1, backgroundColor: theme.background }}>
+      <FlatList
+        data={filteredServices}
+        renderItem={({ item }) => (
+          <ServiceCard
+            key={item.id}
+            service={item}
+            selectService={selectService}
+          />
+        )}
+        ListHeaderComponent={
+          <>
+            {/* Logo - Scrolleable */}
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 20,
+                marginTop: 10,
+              }}
+            >
+              <Image
+                source={require('@/assets/images/logo.png')}
+                style={{
+                  width: '70%',
+                  maxWidth: 250,
+                  resizeMode: 'contain',
+                  height: 120,
+                }}
+              />
+            </View>
+
+            {/* Greeting Header */}
+            {authStatus === 'authenticated' && user && (
+              <View style={{ marginBottom: 20 }}>
+                <ThemedText style={{ fontSize: 24, fontWeight: 'bold' }}>
+                  {getGreeting()}
+                  {user.firstName ? `, ${user.firstName}!` : '!'}
+                </ThemedText>
+                <ThemedText
+                  style={{ fontSize: 14, color: theme.mutedForeground }}
+                >
+                  Book your next appointment
+                </ThemedText>
+              </View>
+            )}
+
+            {/* Search Bar */}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: theme.card,
+                borderRadius: theme.radius,
+                borderWidth: 1,
+                borderColor: theme.border,
+                paddingHorizontal: 12,
+                marginBottom: 20,
+                height: 48,
+              }}
+            >
+              <Ionicons
+                name="search-outline"
+                size={20}
+                color={theme.mutedForeground}
+              />
+              <TextInput
+                style={{
+                  flex: 1,
+                  marginLeft: 8,
+                  fontSize: 16,
+                  color: theme.foreground,
+                }}
+                placeholder="Search services..."
+                placeholderTextColor={theme.mutedForeground}
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+              {searchQuery.length > 0 && (
+                <Ionicons
+                  name="close-circle"
+                  size={20}
+                  color={theme.mutedForeground}
+                  onPress={() => setSearchQuery('')}
+                />
+              )}
+            </View>
+
+            {/* Results count */}
+            <ThemedText
+              style={{
+                fontSize: 14,
+                color: theme.mutedForeground,
+                marginBottom: 12,
+              }}
+            >
+              {filteredServices?.length || 0}{' '}
+              {filteredServices?.length === 1 ? 'service' : 'services'} available
+            </ThemedText>
+          </>
+        }
+        ListEmptyComponent={
+          <EmptyContent
+            title="No services found"
+            subtitle="Try adjusting your search"
+          />
+        }
+        contentContainerStyle={{
+          padding: 20,
+          paddingBottom: 40,
+        }}
+        keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefetching}
+            onRefresh={refetch}
+            tintColor={theme.primary}
+            colors={[theme.primary]}
+          />
+        }
+      />
+    </View>
   );
 };
 

@@ -1,16 +1,15 @@
 import React from 'react';
-
-import Logo from '@/components/Logo';
+import { View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { theme } from '@/components/ui';
 import { Tabs } from 'expo-router';
-import { View } from 'react-native';
 
 export default function TabLayout() {
-  return (
-    <View style={{ flex: 1 }}>
-      <Logo />
+  const insets = useSafeAreaInsets();
 
+  return (
+    <View style={{ flex: 1, paddingTop: insets.top, backgroundColor: theme.background }}>
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: theme.primary,
@@ -23,8 +22,8 @@ export default function TabLayout() {
             elevation: 0,
             shadowOpacity: 0,
           },
-          animation: "shift",
-          tabBarPosition: "top",
+          animation: 'shift',
+          tabBarPosition: 'top',
           tabBarIconStyle: { height: 0 },
           tabBarIcon: undefined,
           tabBarLabelStyle: {
@@ -35,13 +34,13 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Services",
+            title: 'Services',
           }}
         />
         <Tabs.Screen
           name="blog"
           options={{
-            title: "Blog",
+            title: 'Blog',
           }}
         />
       </Tabs>

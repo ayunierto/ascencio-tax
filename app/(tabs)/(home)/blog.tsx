@@ -2,10 +2,12 @@ import React from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { ScrollView, View } from 'react-native';
+import { Image, RefreshControl, ScrollView, View } from 'react-native';
 
 import Loader from '@/components/Loader';
 import { PostCard } from '@/components/posts/PostCard';
+import { theme } from '@/components/ui/theme';
+import { ThemedText } from '@/components/ui/ThemedText';
 import { EmptyContent } from '@/core/components';
 import { ServerException } from '@/core/interfaces/server-exception.response';
 import { getPostsAction } from '@/core/posts/actions/get-posts';
@@ -17,6 +19,8 @@ const BlogScreen = () => {
     isLoading,
     isError,
     error,
+    refetch,
+    isRefetching,
   } = useQuery<Post[], AxiosError<ServerException>, Post[]>({
     queryKey: ['posts'],
     queryFn: getPostsAction,
@@ -45,8 +49,49 @@ const BlogScreen = () => {
   }
 
   return (
-    <ScrollView>
-      <View style={{ padding: 10, flex: 1 }}>
+    <ScrollView
+      style={{ flex: 1, backgroundColor: theme.background }}
+      refreshControl={
+        <RefreshControl
+          refreshing={isRefetching}
+          onRefresh={refetch}
+          tintColor={theme.primary}
+          colors={[theme.primary]}
+        />
+      }
+    >
+      <View style={{ padding: 20 }}>
+        {/* Logo - Scrolleable */}
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: 20,
+            marginTop: 10,
+          }}
+        >
+          <Image
+            source={require('@/assets/images/logo.png')}
+            style={{
+              width: '70%',
+              maxWidth: 250,
+              resizeMode: 'contain',
+              height: 120,
+            }}
+          />
+        </View>
+
+        {/* Header */}
+        <View style={{ marginBottom: 20 }}>
+          <ThemedText style={{ fontSize: 24, fontWeight: 'bold' }}>
+            Latest Articles
+          </ThemedText>
+          <ThemedText style={{ fontSize: 14, color: theme.mutedForeground }}>
+            Stay updated with tax tips and news
+          </ThemedText>
+        </View>
+
+        {/* Posts */}
         <View style={{ flexDirection: 'column', gap: 10 }}>
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
