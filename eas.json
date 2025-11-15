@@ -21,7 +21,6 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "ascenciotax@gmail.com",
         "appleTeamId": "T26Q42537L"
       }
     }
