@@ -55,8 +55,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "c1acfd6c-c968-4526-90d2-5b1d6609c0c4"
+        "projectId": "c13467f7-f531-4027-82d3-fdd0301fb674"
       }
-    }
+    },
+    "owner": "ascenciotax"
   }
 }
