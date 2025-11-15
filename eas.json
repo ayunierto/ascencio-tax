@@ -19,6 +19,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "ascenciotax@gmail.com",
+        "ascAppId": "6739214084",
+        "appleTeamId": "128228815"
+      }
+    }
   }
 }
