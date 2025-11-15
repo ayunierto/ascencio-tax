@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ascenciotax.app",
+      "bundleIdentifier": "com.ascenciotax.accounting",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.ascenciotax"
+      "package": "com.ascenciotax.accounting"
     },
     "web": {
       "output": "static",
