@@ -156,7 +156,7 @@ const ProfileScreen = () => {
             {/* Contact Information Section */}
             <Card>
               <CardContent>
-                <View style={{ gap: 12 }}>
+                <View style={{ gap: 20 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                     <Ionicons name="mail-outline" size={20} color={theme.primary} />
                     <ThemedText style={{ fontSize: 16, fontWeight: '600' }}>
@@ -191,7 +191,7 @@ const ProfileScreen = () => {
                           borderRadius: theme.radius / 2,
                         }}>
                           <Ionicons name="information-circle-outline" size={16} color={theme.mutedForeground} />
-                          <ThemedText style={{ fontSize: 12, color: theme.mutedForeground, flex: 1 }}>
+                          <ThemedText style={{  fontSize: 12, color: theme.mutedForeground, flex: 1 }}>
                             Email cannot be changed for security reasons
                           </ThemedText>
                         </View>

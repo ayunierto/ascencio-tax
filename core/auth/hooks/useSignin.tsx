@@ -13,6 +13,7 @@ export const useSignIn = () => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors: formErrors },
   } = useForm<SignInRequest>({
     resolver: zodResolver(signInSchema),
@@ -47,14 +48,24 @@ export const useSignIn = () => {
           });
           return;
         }
-        Toast.show({
-          type: 'error',
-          text1: 'Sign in failed',
-          text2:
-            error.response?.data.message ||
-            error.message ||
-            'An unexpected error occurred.',
-        });
+
+        // Handle 401 Unauthorized errors (incorrect credentials)
+        const errorMessage = error.response?.data.message || error.message || 'An unexpected error occurred.';
+        
+        if (error.response?.status === 401) {
+          // Set error in root to display above the form
+          setError('root', {
+            type: 'manual',
+            message: errorMessage,
+          });
+        } else {
+          // For other errors, show toast
+          Toast.show({
+            type: 'error',
+            text1: 'Sign in failed',
+            text2: errorMessage,
+          });
+        }
       },
     });
   };

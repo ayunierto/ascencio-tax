@@ -24,7 +24,7 @@ import { SignInRequest } from '../schemas/sign-in.schema';
 import { SignUpApiRequest } from '../schemas/sign-up.schema';
 import { VerifyCodeRequest } from '../schemas/verify-email-code.schema';
 
-type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading';
+type AuthStatus = 'authenticated' | 'unauthenticated' | 'loading' | 'network-error';
 
 export interface AuthState {
   // Properties

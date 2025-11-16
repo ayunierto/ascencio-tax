@@ -1,22 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Animated,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  type NativeSyntheticEvent,
-  type StyleProp,
-  type TextInputFocusEventData,
-  type TextInputProps,
-  type TextStyle,
-  type ViewStyle,
+    Animated,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+    type NativeSyntheticEvent,
+    type StyleProp,
+    type TextInputFocusEventData,
+    type TextInputProps,
+    type TextStyle,
+    type ViewStyle,
 } from "react-native";
 import { theme } from "./theme";
 
 interface InputProps extends TextInputProps {
-  ref?: React.Ref<TextInput>;
   label?: string;
   leadingIcon?: keyof typeof Ionicons.glyphMap;
   trailingIcon?: keyof typeof Ionicons.glyphMap;
@@ -31,7 +30,7 @@ interface InputProps extends TextInputProps {
   focusedBorderColor?: string;
 }
 
-export const Input = ({
+export const Input = forwardRef<TextInput, InputProps>(({
   label,
   value = "",
   placeholder,
@@ -50,9 +49,12 @@ export const Input = ({
   onBlur,
   readOnly,
   ...props
-}: InputProps) => {
+}, forwardedRef) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const textInputRef = useRef<TextInput>(null);
+  const internalRef = useRef<TextInput>(null);
+  
+  // Merge refs: use forwarded ref if provided, otherwise use internal ref
+  const textInputRef = forwardedRef || internalRef;
 
   // We use UseRef for the animated value so that it does not restart in each render.
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -154,13 +156,19 @@ export const Input = ({
 
           <View style={styles.inputArea}>
             {label && (
-              <Animated.Text style={animatedLabelStyles} onPress={() => textInputRef.current?.focus()}>
+              <Animated.Text style={animatedLabelStyles} onPress={() => {
+                if (typeof textInputRef === 'object' && textInputRef?.current) {
+                  textInputRef.current.focus();
+                } else if (typeof textInputRef === 'function') {
+                  // Handle callback ref
+                }
+              }}>
                 {label}
               </Animated.Text>
             )}
 
             <TextInput
-              ref={textInputRef}
+              ref={textInputRef as any}
               style={computedInputStyle}
               value={value}
               onFocus={handleFocus as any}
@@ -198,7 +206,9 @@ export const Input = ({
       )}
     </View>
   );
-};
+});
+
+Input.displayName = 'Input';
 
 const styles = StyleSheet.create({
   root: {

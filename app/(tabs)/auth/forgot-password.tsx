@@ -1,20 +1,19 @@
-import React from 'react';
-import { View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { router } from 'expo-router';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from 'expo-router';
+import React, { useCallback, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { View } from 'react-native';
+import Toast from 'react-native-toast-message';
 
-import Header from '../../../core/auth/components/Header';
 import { Button, ButtonText } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import {
-  ForgotPasswordRequest,
-  forgotPasswordSchema,
-} from '@/core/auth/schemas/forgot-password.schema';
+import { AuthFormContainer } from '@/core/auth/components/AuthFormContainer';
+import { ErrorBox } from '@/core/auth/components/ErrorBox';
+import Header from '@/core/auth/components/Header';
 import { useForgotPasswordMutation } from '@/core/auth/hooks/useForgotPasswordMutation';
+import { ForgotPasswordRequest, forgotPasswordSchema } from '@/core/auth/schemas/forgot-password.schema';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
-import Toast from 'react-native-toast-message';
+import { authStyles } from '@/core/auth/styles/authStyles';
 
 const ForgotPassword = () => {
   const { tempEmail } = useAuthStore();
@@ -31,11 +30,12 @@ const ForgotPassword = () => {
   });
 
   const { mutate: forgotPassword, isPending } = useForgotPasswordMutation();
-  const handleForgotPassword = async (values: ForgotPasswordRequest) => {
+  
+  const handleForgotPassword = useCallback((values: ForgotPasswordRequest) => {
     forgotPassword(values, {
       onSuccess: (data) => {
         Toast.show({
-          type: 'error',
+          type: 'success',
           text1: 'Email sent',
           text2: data.message,
         });
@@ -49,24 +49,22 @@ const ForgotPassword = () => {
         });
       },
     });
-  };
+  }, [forgotPassword]);
+
+  const submitButtonText = useMemo(
+    () => (isPending ? 'Sending...' : 'Send'),
+    [isPending]
+  );
 
   return (
-    <ScrollView>
-      <View
-        style={{
-          flex: 1,
-          gap: 20,
-          padding: 20,
-          width: '100%',
-          maxWidth: 360,
-          marginHorizontal: 'auto',
-        }}
-      >
-        <Header
-          title="Find your account"
-          subtitle="Please enter your email or mobile number to search for your account."
-        />
+    <AuthFormContainer maxWidth={360}>
+      <Header
+        title="Find your account"
+        subtitle="Please enter your email or mobile number to search for your account."
+      />
+
+      <View style={authStyles.fieldsContainer}>
+        <ErrorBox message={errors.root?.message} />
 
         <Controller
           control={control}
@@ -80,30 +78,32 @@ const ForgotPassword = () => {
               placeholder="Email"
               autoCapitalize="none"
               keyboardType="email-address"
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(handleForgotPassword)}
               errorMessage={errors.email?.message}
               error={!!errors.email}
             />
           )}
         />
-
-        <View>
-          <Button
-            disabled={isPending}
-            isLoading={isPending}
-            onPress={handleSubmit(handleForgotPassword)}
-          >
-            <ButtonText>{isPending ? 'Sending...' : 'Send'}</ButtonText>
-          </Button>
-
-          <Button
-            variant="outline"
-            onPress={() => router.replace('/auth/sign-in')}
-          >
-            <ButtonText>Back</ButtonText>
-          </Button>
-        </View>
       </View>
-    </ScrollView>
+
+      <View style={authStyles.buttonGroup}>
+        <Button
+          disabled={isPending}
+          isLoading={isPending}
+          onPress={handleSubmit(handleForgotPassword)}
+        >
+          <ButtonText>{submitButtonText}</ButtonText>
+        </Button>
+
+        <Button
+          variant="outline"
+          onPress={() => router.replace('/auth/sign-in')}
+        >
+          <ButtonText>Back</ButtonText>
+        </Button>
+      </View>
+    </AuthFormContainer>
   );
 };
 
