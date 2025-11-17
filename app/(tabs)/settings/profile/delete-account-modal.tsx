@@ -18,6 +18,8 @@ import {
 } from '@/core/auth/schemas/delete-account.schema';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import ErrorMessage from '@/core/components/ErrorMessage';
+import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 const DeleteAccountModal = () => {
   const { user } = useAuthStore();
@@ -33,7 +35,24 @@ const DeleteAccountModal = () => {
   const { mutate: deleteAccount, isPending } = useDeleteAccountMutation();
 
   const handleAccountDeletion = async ({ password }: DeleteAccountRequest) => {
-    deleteAccount({ password });
+    deleteAccount({ password }, {
+      onSuccess: () => {
+            Toast.show({
+              text1: 'Account deleted successfully',
+              text2: 'We hope to see you again soon.',
+            });
+            router.replace('/auth/sign-in');
+          },
+          onError: (error) => {
+            Toast.show({
+              type: 'error',
+              text1: 'Account Deletion Failed',
+              text2:
+                error.message ||
+                'An error occurred while deleting the account. Please try again later.',
+            });
+          },
+    });
   };
 
   return (

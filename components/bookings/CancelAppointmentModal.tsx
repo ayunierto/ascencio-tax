@@ -1,19 +1,19 @@
-import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { Button, ButtonText } from '@/components/ui/Button';
-import { theme } from '@/components/ui/theme';
-import { ThemedText } from '@/components/ui/ThemedText';
+import { Button, ButtonText } from "@/components/ui/Button";
+import { theme } from "@/components/ui/theme";
+import { ThemedText } from "@/components/ui/ThemedText";
 
 interface CancelAppointmentModalProps {
   visible: boolean;
@@ -24,13 +24,13 @@ interface CancelAppointmentModalProps {
 }
 
 const CANCEL_REASONS = [
-  'Schedule conflict',
-  'No longer needed',
-  'Found another provider',
-  'Personal reasons',
-  'Weather/Transportation issues',
-  'Health issues',
-  'Other',
+  "Schedule conflict",
+  "No longer needed",
+  "Found another provider",
+  "Personal reasons",
+  "Weather/Transportation issues",
+  "Health issues",
+  "Other",
 ];
 
 export const CancelAppointmentModal = ({
@@ -40,23 +40,22 @@ export const CancelAppointmentModal = ({
   isLoading = false,
   appointmentTitle,
 }: CancelAppointmentModalProps) => {
-  const [selectedReason, setSelectedReason] = useState('');
-  const [customReason, setCustomReason] = useState('');
+  const [selectedReason, setSelectedReason] = useState("");
+  const [customReason, setCustomReason] = useState("");
 
   const handleConfirm = () => {
-    const reason =
-      selectedReason === 'Other' ? customReason : selectedReason;
+    const reason = selectedReason === "Other" ? customReason : selectedReason;
     onConfirm(reason);
   };
 
   const handleClose = () => {
-    setSelectedReason('');
-    setCustomReason('');
+    setSelectedReason("");
+    setCustomReason("");
     onClose();
   };
 
   const isValid =
-    selectedReason && (selectedReason !== 'Other' || customReason.trim());
+    selectedReason && (selectedReason !== "Other" || customReason.trim());
 
   return (
     <Modal
@@ -66,7 +65,7 @@ export const CancelAppointmentModal = ({
       onRequestClose={handleClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardView}
       >
         <View style={styles.overlay}>
@@ -123,8 +122,7 @@ export const CancelAppointmentModal = ({
                     <ThemedText
                       style={[
                         styles.reasonText,
-                        selectedReason === reason &&
-                          styles.reasonTextSelected,
+                        selectedReason === reason && styles.reasonTextSelected,
                       ]}
                     >
                       {reason}
@@ -134,11 +132,9 @@ export const CancelAppointmentModal = ({
               </View>
 
               {/* Custom reason input */}
-              {selectedReason === 'Other' && (
+              {selectedReason === "Other" && (
                 <View style={styles.customReasonContainer}>
-                  <ThemedText style={styles.label}>
-                    Please specify:
-                  </ThemedText>
+                  <ThemedText style={styles.label}>Please specify:</ThemedText>
                   <TextInput
                     style={styles.textInput}
                     placeholder="Enter your reason..."
@@ -187,7 +183,7 @@ export const CancelAppointmentModal = ({
                   isLoading={isLoading}
                 >
                   <ButtonText>
-                    {isLoading ? 'Cancelling...' : 'Yes, Cancel'}
+                    {isLoading ? "Cancelling..." : "Yes, Cancel"}
                   </ButtonText>
                 </Button>
               </View>
@@ -205,29 +201,29 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 20,
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
   },
   modalContent: {
     backgroundColor: theme.background,
     borderRadius: theme.radius * 2,
     padding: 20,
-    width: '100%',
+    width: "100%",
     maxWidth: 600,
-    maxHeight: '90%',
+    maxHeight: "90%",
     elevation: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 24,
   },
   iconContainer: {
@@ -235,27 +231,27 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 14,
     color: theme.mutedForeground,
-    textAlign: 'center',
+    textAlign: "center",
   },
   reasonsContainer: {
     marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 12,
     color: theme.foreground,
   },
   reasonOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 12,
     borderRadius: theme.radius,
     borderWidth: 1,
@@ -265,7 +261,7 @@ const styles = StyleSheet.create({
   },
   reasonOptionSelected: {
     borderColor: theme.primary,
-    backgroundColor: theme.primary + '10',
+    backgroundColor: theme.primary + "10",
   },
   radio: {
     width: 20,
@@ -274,8 +270,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: theme.border,
     marginRight: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   radioSelected: {
     borderColor: theme.primary,
@@ -293,7 +289,7 @@ const styles = StyleSheet.create({
   },
   reasonTextSelected: {
     color: theme.primary,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   customReasonContainer: {
     marginBottom: 20,
@@ -311,13 +307,13 @@ const styles = StyleSheet.create({
   charCount: {
     fontSize: 12,
     color: theme.mutedForeground,
-    textAlign: 'right',
+    textAlign: "right",
     marginTop: 4,
   },
   warningContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    backgroundColor: theme.muted + '30',
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: theme.muted + "30",
     padding: 12,
     borderRadius: theme.radius,
     marginBottom: 20,
@@ -330,7 +326,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   buttonsContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   button: {

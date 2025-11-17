@@ -22,6 +22,7 @@ export const useSignUp = () => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors },
     setValue,
   } = useForm<SignUpRequest>({
@@ -36,7 +37,7 @@ export const useSignUp = () => {
     control,
     errors,
     callingCode,
-
+    setError,
     handleSubmit,
     setValue,
   };

@@ -25,22 +25,26 @@ export const useTimer = (
   );
 
   useEffect(() => {
-    if (isRunning && timeRemaining > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeRemaining((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (timeRemaining === 0 && isRunning) {
-      clearInterval(timerRef.current);
-      setIsRunning(false);
-      onTimerEnd();
-    }
-
+    if (!isRunning) return;
+    timerRef.current = setInterval(() => {
+      setTimeRemaining((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timerRef.current);
+          timerRef.current = undefined;
+          setIsRunning(false);
+          onTimerEnd();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = undefined;
       }
     };
-  }, [isRunning, timeRemaining, onTimerEnd]);
+  }, [isRunning, onTimerEnd]);
 
   const startTimer = () => {
     setIsRunning(true);

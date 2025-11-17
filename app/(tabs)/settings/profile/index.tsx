@@ -34,6 +34,7 @@ import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { useCountryCodes } from '@/core/hooks/useCountryCodes';
 import useIPGeolocation from '@/core/hooks/useIPGeolocation';
 import { useUpdateProfileMutation } from '@/core/user/hooks/useUpdateProfileMutation';
+import Toast from 'react-native-toast-message';
 import Signin from '../../auth/sign-in';
 
 const ProfileScreen = () => {
@@ -70,7 +71,25 @@ const ProfileScreen = () => {
 
   const { mutate: updateProfile, isPending } = useUpdateProfileMutation();
   const handleUpdateProfile = async (values: UpdateProfileRequest) => {
-    updateProfile(values);
+    updateProfile(values,{
+       onSuccess: (response) => {
+            Toast.show({
+              type: 'success',
+              text1: 'Profile updated',
+              text2: response.message,
+            });
+          },
+          onError: (error) => {
+            Toast.show({
+              type: 'error',
+              text1: 'Profile update failed',
+              text2:
+                error.response?.data.message ||
+                error.message ||
+                'An error occurred while updating the profile.',
+            });
+          },
+    });
   };
 
   if (!user) {
@@ -281,6 +300,7 @@ const ProfileScreen = () => {
                           error={!!errors.password}
                           errorMessage={errors.password?.message || ''}
                         />
+
                         <View style={{ 
                           flexDirection: 'row', 
                           alignItems: 'center', 
@@ -291,6 +311,7 @@ const ProfileScreen = () => {
                           borderRadius: theme.radius / 2,
                         }}>
                           <Ionicons name="shield-checkmark-outline" size={16} color={theme.mutedForeground} />
+
                           <ThemedText style={{ fontSize: 12, color: theme.mutedForeground, flex: 1 }}>
                             Leave blank to keep current password
                           </ThemedText>

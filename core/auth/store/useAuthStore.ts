@@ -122,7 +122,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   deleteAccount: async (data: DeleteAccountRequest) => {
     const response = await deleteAccountAction(data);
 
-    await StorageAdapter.removeItem('access_token');
+    await StorageAdapter.removeItem('access_token'); // Clear token on account deletion
     set({ user: null, access_token: null, authStatus: 'unauthenticated' });
     return response;
   },

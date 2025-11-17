@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    View,
-    type ViewStyle,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+  type ViewStyle,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -65,6 +65,6 @@ const styles = StyleSheet.create({
     width: '100%',
     marginHorizontal: 'auto',
     marginBottom: 20,
-    padding: 20,
+    padding: 10,
   },
 });

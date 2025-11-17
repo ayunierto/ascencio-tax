@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 import React, {
   createContext,
   useCallback,
@@ -6,7 +6,7 @@ import React, {
   useEffect,
   useMemo,
   useState,
-} from 'react';
+} from "react";
 import {
   Modal,
   ScrollView,
@@ -17,9 +17,9 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-} from 'react-native';
-import { theme } from './theme';
-import { ThemedText } from './ThemedText';
+} from "react-native";
+import { theme } from "./theme";
+import { ThemedText } from "./ThemedText";
 
 type SelectContextType = {
   value?: string;
@@ -68,8 +68,8 @@ export function Select({
         const props: any = child.props;
         if (
           props &&
-          typeof props.value === 'string' &&
-          typeof props.label === 'string'
+          typeof props.value === "string" &&
+          typeof props.label === "string"
         ) {
           out.push({ val: props.value, lbl: props.label });
         }
@@ -149,12 +149,12 @@ export function Select({
 
 function useSelectContext() {
   const ctx = useContext(SelectContext);
-  if (!ctx) throw new Error('Select components must be used within <Select>');
+  if (!ctx) throw new Error("Select components must be used within <Select>");
   return ctx;
 }
 
 export function SelectTrigger({
-  placeholder = 'Select...',
+  placeholder = "Select...",
   labelText,
   style,
 }: {
@@ -227,7 +227,7 @@ export function SelectTrigger({
 
 export function SelectContent({
   children,
-  maxHeight = '60%',
+  maxHeight = "80%",
 }: {
   children: React.ReactNode;
   maxHeight?: number | `${number}%`;
@@ -333,7 +333,7 @@ export function SelectItem({
       <Text style={textStyles}>{label}</Text>
       {isSelected && (
         <Text style={styles.checkmark}>
-          <Ionicons name="checkmark" size={24} />
+          <Ionicons name="checkmark" size={18} />
         </Text>
       )}
     </TouchableOpacity>
@@ -348,9 +348,9 @@ const styles = StyleSheet.create({
     borderColor: theme.border,
     borderRadius: theme.radius,
     backgroundColor: theme.background,
-    justifyContent: 'center',
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
   },
   triggerError: {
     borderColor: theme.destructive,
@@ -358,37 +358,37 @@ const styles = StyleSheet.create({
   },
   triggerDisabled: {
     opacity: 0.5,
-    backgroundColor: theme.muted + '10',
+    backgroundColor: theme.muted + "10",
   },
   floatingLabel: {
-    position: 'absolute',
+    position: "absolute",
     top: -8,
     left: 15,
     backgroundColor: theme.background,
     paddingHorizontal: 6,
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
     borderRadius: theme.radius,
   },
   chevron: {
-    marginLeft: 'auto',
+    marginLeft: "auto",
     fontSize: 12,
     color: theme.mutedForeground,
   },
   overlay: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
     padding: 20,
   },
   content: {
-    backgroundColor: theme.card,
+    backgroundColor: theme.popover,
     borderRadius: theme.radius,
     padding: 8,
-    width: '90%',
-    maxHeight: '60%',
-    shadowColor: '#000',
+    width: "90%",
+    maxHeight: "80%",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -397,14 +397,14 @@ const styles = StyleSheet.create({
   item: {
     paddingVertical: 16,
     paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderRadius: 8,
     marginVertical: 2,
   },
   itemSelected: {
-    backgroundColor: theme.primary + '20',
+    backgroundColor: theme.primary + "20",
   },
   itemDisabled: {
     opacity: 0.5,
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
   },
   itemTextSelected: {
     color: theme.primary,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   itemTextDisabled: {
     color: theme.mutedForeground,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
   checkmark: {
     fontSize: 16,
     color: theme.primary,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 8,
   },
   helperTextBase: {

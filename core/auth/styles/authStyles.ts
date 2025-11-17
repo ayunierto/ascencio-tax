@@ -29,6 +29,6 @@ export const authStyles = StyleSheet.create({
     flex: 2,
   },
   buttonGroup: {
-    gap: 10,
+    gap: 0,
   },
 });

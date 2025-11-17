@@ -1,21 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 
-import { useQuery } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { router, useFocusEffect } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
-import Toast from 'react-native-toast-message';
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { router, useFocusEffect } from "expo-router";
+import { StyleSheet, View } from "react-native";
+import Toast from "react-native-toast-message";
 
-import Loader from '@/components/Loader';
-import { getExpenses } from '@/core/accounting/expenses/actions';
-import { ExpenseResponse } from '@/core/accounting/expenses/interfaces';
-import { EmptyContent } from '@/core/components';
-import { ServerException } from '@/core/interfaces/server-exception.response';
-import { getLogs } from '@/core/logs/actions';
-import { Log } from '@/core/logs/interfaces';
-import { Metrics } from './Metrics';
-import { QuickActions } from './QuickActions/QuickActions';
-import { RecentActivity } from './RecentActivity';
+import Loader from "@/components/Loader";
+import { getExpenses } from "@/core/accounting/expenses/actions";
+import { ExpenseResponse } from "@/core/accounting/expenses/interfaces";
+import { EmptyContent } from "@/core/components";
+import { ServerException } from "@/core/interfaces/server-exception.response";
+import { getLogs } from "@/core/logs/actions";
+import { Log } from "@/core/logs/interfaces";
+import { Metrics } from "./Metrics";
+import { QuickActions } from "./QuickActions/QuickActions";
+import { RecentActivity } from "./RecentActivity";
 
 const ReceiptsDashboard = () => {
   const [totalExpenses, setTotalExpenses] = useState(0);
@@ -26,7 +26,7 @@ const ReceiptsDashboard = () => {
     isError: isErrorExpenses,
     error: errorExpenses,
   } = useQuery<ExpenseResponse[], AxiosError<ServerException>>({
-    queryKey: ['totalExpenses'],
+    queryKey: ["totalExpenses"],
     queryFn: () => getExpenses(),
     staleTime: 1000 * 60 * 60, // 1 hour
   });
@@ -38,7 +38,7 @@ const ReceiptsDashboard = () => {
     isError: isErrorLogs,
     error: errorLogs,
   } = useQuery<Log[], AxiosError<ServerException>>({
-    queryKey: ['logs'],
+    queryKey: ["logs"],
     queryFn: () => getLogs(),
     staleTime: 1000 * 60 * 60, // 1 hour
   });
@@ -51,14 +51,12 @@ const ReceiptsDashboard = () => {
   );
 
   useEffect(() => {
-    if (expenses && !('error' in expenses)) {
-      if (expenses.length > 0) {
-        const total = expenses.reduce(
-          (acc: number, receipt: ExpenseResponse) => acc + +receipt.total,
-          0
-        );
-        setTotalExpenses(total);
-      }
+    if (expenses && expenses.length >= 0) {
+      const total = expenses.reduce(
+        (acc: number, receipt: ExpenseResponse) => acc + +receipt.total,
+        0
+      );
+      setTotalExpenses(total);
     }
   }, [expenses]);
 
@@ -66,7 +64,9 @@ const ReceiptsDashboard = () => {
     return (
       <EmptyContent
         title="Error"
-        subtitle={errorLogs.response?.data.message || errorLogs.message}
+        subtitle={
+          errorLogs.response?.data.message || "Failed to load recent activity."
+        }
       />
     );
   }
@@ -75,7 +75,9 @@ const ReceiptsDashboard = () => {
     return (
       <EmptyContent
         title="Error"
-        subtitle={errorExpenses.response?.data.message || errorExpenses.message}
+        subtitle={
+          errorExpenses.response?.data.message || "Failed to load expenses."
+        }
       />
     );
   }
@@ -85,13 +87,13 @@ const ReceiptsDashboard = () => {
   const getReport = () => {
     if (expenses.length === 0) {
       Toast.show({
-        type: 'info',
-        text1: 'Info',
-        text2: 'No expenses to generate report',
+        type: "info",
+        text1: "Info",
+        text2: "No expenses to generate report",
       });
       return;
     }
-    router.push('/(tabs)/accounting/reports');
+    router.push("/(tabs)/accounting/reports");
   };
 
   const keyMetrics = [
@@ -99,29 +101,29 @@ const ReceiptsDashboard = () => {
     // { label: 'Today', value: `$${totalExpenses}` },
     // { label: 'This Week', value: `$${totalExpenses}` },
     // { label: 'This month', value: `$${totalExpenses}` },
-    { label: 'Total Expenses', value: `$${totalExpenses}` },
+    { label: "Total Expenses", value: `$${totalExpenses}` },
     // { label: 'Net Profit', value: '$4,000' },
   ];
 
   const quickActions = [
     {
-      label: 'Add Expense',
+      label: "Add Expense",
       onPress: () => addExpense(),
     },
     {
-      label: 'Scan Expense',
+      label: "Scan Expense",
       onPress: () => scanExpense(),
     },
     // { label: 'Add Income', onPress: () => addIncome('Add Income') },
-    { label: 'View Reports', onPress: () => viewReport() },
+    { label: "View Reports", onPress: () => viewReport() },
   ];
 
   const addExpense = () => {
-    router.push('/(tabs)/accounting/receipts/expense/new');
+    router.push("/(tabs)/accounting/receipts/expense/new");
   };
 
   const scanExpense = () => {
-    router.push({ pathname: '/scan-receipts', params: { id: 'new' } });
+    router.push({ pathname: "/scan-receipts", params: { id: "new" } });
   };
 
   const viewReport = () => {
@@ -148,7 +150,7 @@ const ReceiptsDashboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 10,
     gap: 10,
   },
 });

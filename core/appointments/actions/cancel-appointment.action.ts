@@ -1,4 +1,4 @@
-import { api } from '@/core/api/api';
+import { api } from "@/core/api/api";
 
 export const cancelAppointment = async (
   appointmentId: string,
@@ -9,7 +9,7 @@ export const cancelAppointment = async (
       cancellationReason: reason,
     });
   } catch (error) {
-    console.error('Error cancelling appointment:', error);
+    console.error("Error cancelling appointment:", error);
     throw error;
   }
 };

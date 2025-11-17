@@ -25,7 +25,7 @@ import { ServerException } from '@/core/interfaces/server-exception.response';
 const SignUp = () => {
   const { countryCodes } = useCountryCodes();
   const { signUp } = useAuthStore();
-  const { errors, control, handleSubmit } = useSignUp();
+  const { errors, control, handleSubmit, setError } = useSignUp();
 
   // Refs for input navigation
   const lastNameRef = useRef<TextInput>(null);
@@ -51,14 +51,26 @@ const SignUp = () => {
       });
     },
     onError: (error) => {
-      Toast.show({
-        type: 'error',
-        text1: 'Sign up failed',
-        text2:
-          error.response?.data.message ||
-          error.message ||
-          'An error occurred during sign up.',
-      });
+      const errorMessage =
+        error.response?.data.message ||
+        error.message ||
+        'An error occurred during sign up.';
+
+      // Handle validation and conflict errors (400, 409)
+      if (error.response?.status === 400 || error.response?.status === 409) {
+        // Set error in root to display above the form
+        setError('root', {
+          type: 'manual',
+          message: errorMessage,
+        });
+      } else {
+        // For other errors, show toast
+        Toast.show({
+          type: 'error',
+          text1: 'Sign up failed',
+          text2: errorMessage,
+        });
+      }
     },
   });
 

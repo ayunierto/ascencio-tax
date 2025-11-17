@@ -11,19 +11,19 @@ import { AuthFormContainer } from '@/core/auth/components/AuthFormContainer';
 import { ErrorBox } from '@/core/auth/components/ErrorBox';
 import Header from '@/core/auth/components/Header';
 import {
-    useResendResetPasswordMutation,
-    useResetPasswordMutation,
-    useTimer,
+  useResendResetPasswordMutation,
+  useResetPasswordMutation,
+  useTimer,
 } from '@/core/auth/hooks';
 import {
-    ResetPasswordRequest,
-    resetPasswordSchema,
+  ResetPasswordRequest,
+  resetPasswordSchema,
 } from '@/core/auth/schemas/reset-password.schema';
 import { useAuthStore } from '@/core/auth/store/useAuthStore';
 import { authStyles } from '@/core/auth/styles/authStyles';
 
 const VerifyCode = () => {
-  const { user, tempEmail } = useAuthStore();
+  const {  tempEmail } = useAuthStore();
   const { isRunning, timeRemaining, startTimer, resetTimer } = useTimer(30);
   
   const newPasswordRef = useRef<TextInput>(null);
@@ -38,16 +38,16 @@ const VerifyCode = () => {
   });
 
   useEffect(() => {
-    startTimer();
     setValue('email', tempEmail || '');
-
+    startTimer(); // Inicia el timer solo una vez al montar
     return () => {
       resetTimer();
     };
-  }, [resetTimer, setValue, startTimer, tempEmail]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { mutate: verifyEmail, isPending } = useResetPasswordMutation();
-  const { mutate: resendResetPasswordCode } = useResendResetPasswordMutation();
+  const { mutate: resendResetPasswordCode, isPending: isResending } = useResendResetPasswordMutation();
 
   if (!tempEmail) {
     return <Redirect href={'/auth/sign-in'} />;
@@ -71,28 +71,32 @@ const VerifyCode = () => {
         });
       },
     });
-    resetTimer();
-    startTimer();
   }, [verifyEmail, resetTimer, startTimer]);
 
   const handleResendPasswordCode = useCallback(() => {
     if (isRunning) return;
-    resendResetPasswordCode(user?.email || '');
-    startTimer();
-  }, [isRunning, resendResetPasswordCode, user?.email, startTimer]);
+    resendResetPasswordCode(tempEmail || '', {
+      onSuccess: () => {
+        resetTimer();
+        startTimer();
+        Toast.show({
+          type: 'success',
+          text1: 'Code resent',
+          text2: 'A new code has been sent to your email.'
+        });
+      }
+    });
+  }, [isRunning, resendResetPasswordCode, tempEmail, resetTimer, startTimer]);
 
   const submitButtonText = useMemo(
     () => (isPending ? 'Verifying...' : 'Verify'),
     [isPending]
   );
 
-  const resendButtonText = useMemo(
-    () => (timeRemaining === 0 ? 'Resend code' : `Resend in ${timeRemaining}s`),
-    [timeRemaining]
-  );
+  // ...existing code...
 
   return (
-    <AuthFormContainer maxWidth={320}>
+    <AuthFormContainer>
       <Header
         title={'Change your password'}
         subtitle={
@@ -160,11 +164,15 @@ const VerifyCode = () => {
         </Button>
 
         <Button
-          disabled={isPending || isRunning}
+          disabled={isRunning}
           onPress={handleResendPasswordCode}
           variant="outline"
         >
-          <ButtonText>{resendButtonText}</ButtonText>
+          <ButtonText>
+            {timeRemaining === 0
+              ? 'Resend code'
+              : `Resend in ${timeRemaining}s`}
+          </ButtonText>
         </Button>
       </View>
     </AuthFormContainer>

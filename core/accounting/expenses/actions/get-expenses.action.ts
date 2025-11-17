@@ -1,5 +1,5 @@
-import { api } from '@/core/api/api';
-import { ExpenseResponse } from '../interfaces';
+import { api } from "@/core/api/api";
+import { ExpenseResponse } from "../interfaces";
 
 export const getExpenses = async (
   limit = 20,
